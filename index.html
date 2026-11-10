@@ -1,2673 +1,1538 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>MR FIX IT — Workshop Tool Management</title>
-    <style>
-      :root {
-        --navy: #101c2c;
-        --blue: #237bdb;
-        --bg: #f3f6fa;
-        --ink: #172536;
-        --muted: #65758a;
-        --line: #e1e8f0;
-        --green: #168653;
-        --red: #c44343;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        background: var(--bg);
-        font:
-          15px system-ui,
-          -apple-system,
-          Segoe UI,
-          sans-serif;
-        color: var(--ink);
-      }
-      header {
-        background: var(--navy);
-        color: #fff;
-        padding: 16px max(18px, calc((100% - 1100px) / 2));
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-      .logo {
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
-        background: var(--blue);
-        display: grid;
-        place-items: center;
-        font-size: 24px;
-      }
-      header h1 {
-        font-size: 20px;
-        margin: 0;
-      }
-      header small {
-        color: #b9cce0;
-      }
-      main {
-        max-width: 1100px;
-        margin: 22px auto;
-        padding: 0 16px;
-      }
-      .top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-      h2 {
-        margin: 0 0 5px;
-        font-size: 22px;
-      }
-      .muted {
-        color: var(--muted);
-        font-size: 13px;
-      }
-      nav {
-        display: flex;
-        gap: 8px;
-        overflow: auto;
-        margin: 18px 0;
-      }
-      button {
-        border: 0;
-        border-radius: 10px;
-        padding: 11px 14px;
-        font-weight: 650;
-        cursor: pointer;
-        background: #e7edf5;
-        color: var(--ink);
-      }
-      button.primary,
-      .tab.active {
-        background: var(--blue);
-        color: #fff;
-      }
-      button.dark {
-        background: var(--navy);
-        color: white;
-      }
-      button.danger {
-        background: #fde9e9;
-        color: #9d2828;
-      }
-      button:disabled {
-        opacity: 0.45;
-        cursor: not-allowed;
-      }
-      .cards {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-        margin: 16px 0;
-      }
-      .card,
-      .panel {
-        background: #fff;
-        border: 1px solid var(--line);
-        border-radius: 15px;
-        padding: 16px;
-      }
-      .card .num {
-        font-size: 27px;
-        font-weight: 750;
-        margin-top: 6px;
-      }
-      .panel {
-        margin: 14px 0;
-      }
-      .grid2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-      }
-      .people {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-      }
-      .person {
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 13px;
-        background: #fff;
-      }
-      .person strong {
-        display: block;
-      }
-      .count {
-        font-size: 23px;
-        font-weight: 750;
-        color: var(--blue);
-      }
-      .row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-      }
-      input,
-      select,
-      textarea {
-        width: 100%;
-        padding: 11px;
-        border: 1px solid #ccd7e3;
-        border-radius: 9px;
-        background: white;
-        font: inherit;
-        color: var(--ink);
-      }
-      label {
-        display: block;
-        font-size: 13px;
-        font-weight: 650;
-        margin: 10px 0 5px;
-      }
-      form .fields {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-      }
-      .tool {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        border-bottom: 1px solid var(--line);
-        padding: 12px 0;
-      }
-      .category-heading {
-        margin: 20px 0 6px;
-        padding: 9px 12px;
-        background: #edf3fa;
-        border-radius: 9px;
-        color: #203b59;
-        font-size: 14px;
-      }
-      .tool-controls {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 10px;
-        margin: 16px 0;
-      }
-      .tool-count {
-        margin: 4px 0 10px;
-      }
-      @media (max-width: 700px) {
-        .tool-controls {
-          grid-template-columns: 1fr;
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MR FIX IT — Workshop Tool Management</title>
+<style>
+:root{--navy:#101c2c;--blue:#237bdb;--bg:#f3f6fa;--ink:#172536;--muted:#65758a;--line:#e1e8f0;--green:#168653;--red:#c44343}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
+header{background:var(--navy);color:#fff;padding:16px max(18px,calc((100% - 1100px)/2));display:flex;align-items:center;gap:12px}
+.logo{width:44px;height:44px;border-radius:12px;background:var(--blue);display:grid;place-items:center;font-size:24px}
+header h1{font-size:20px;margin:0}header small{color:#b9cce0}
+main{max-width:1100px;margin:22px auto;padding:0 16px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h2{margin:0 0 5px;font-size:22px}.muted{color:var(--muted);font-size:13px}
+nav{display:flex;gap:8px;overflow:auto;margin:18px 0}
+button{border:0;border-radius:10px;padding:11px 14px;font-weight:650;cursor:pointer;background:#e7edf5;color:var(--ink)}
+button.primary,.tab.active{background:var(--blue);color:#fff}button.dark{background:var(--navy);color:white}button.danger{background:#fde9e9;color:#9d2828}button:disabled{opacity:.45;cursor:not-allowed}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}.card,.panel{background:#fff;border:1px solid var(--line);border-radius:15px;padding:16px}
+.card .num{font-size:27px;font-weight:750;margin-top:6px}.panel{margin:14px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.people{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.person{border:1px solid var(--line);border-radius:12px;padding:13px;background:#fff}.person strong{display:block}.count{font-size:23px;font-weight:750;color:var(--blue)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+input,select,textarea{width:100%;padding:11px;border:1px solid #ccd7e3;border-radius:9px;background:white;font:inherit;color:var(--ink)}
+label{display:block;font-size:13px;font-weight:650;margin:10px 0 5px}form .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tool{display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding:12px 0}.category-heading{margin:20px 0 6px;padding:9px 12px;background:#edf3fa;border-radius:9px;color:#203b59;font-size:14px}.tool-controls{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin:16px 0}.tool-count{margin:4px 0 10px}@media(max-width:700px){.tool-controls{grid-template-columns:1fr}}.tool img{width:58px;height:58px;object-fit:cover;border-radius:10px;background:#e8eef5}.qrrow{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}.tool img.qrimg{width:76px;height:76px;object-fit:contain;background:#fff;border:1px solid var(--line);padding:4px;border-radius:6px}.qrrow button{font-size:12px;padding:7px 10px}
+.pill{font-size:11px;font-weight:700;padding:4px 8px;border-radius:30px;background:#e9f2ff;color:#175da8;white-space:nowrap}
+.pill.green{background:#e6f5ed;color:#147345}.pill.red{background:#fde9e9;color:#a52e2e}.pill.orange{background:#fff0db;color:#925400}.pill.grey{background:#edf0f4;color:#4d5b6a}.form-note{font-size:12px;color:var(--muted);margin-top:4px}
+.hidden{display:none!important}.notice{padding:12px;border-radius:10px;background:#fff7df;color:#76530b;font-size:13px}
+.actions{display:flex;gap:7px;flex-wrap:wrap}.actions button{padding:8px 10px;font-size:12px}
+small{color:var(--muted)}.empty{text-align:center;padding:28px;color:var(--muted)}
+#login{max-width:440px;margin:8vh auto}.error{color:#a52e2e;background:#fde9e9;padding:10px;border-radius:8px;margin:10px 0}
+@media(max-width:700px){.cards{grid-template-columns:repeat(2,1fr)}.people{grid-template-columns:repeat(2,1fr)}.grid2,form .fields{grid-template-columns:1fr}main{margin:16px auto}header{padding:14px 16px}}
+</style>
+</head>
+<body>
+<header><div class="logo">🔧</div><div><h1>MR FIX IT</h1><small>EVERY TOOL. EVERY JOB. ACCOUNTED FOR.</small></div></header>
+<section id="login" class="panel">
+<h2>Workshop sign in</h2><p class="muted">Use the account created for you by an administrator.</p>
+<form id="loginForm"><label>Email address</label><input id="email" type="email" required autocomplete="username"><label>Password</label><input id="password" type="password" required autocomplete="current-password"><div class="actions" style="margin-top:14px"><button class="primary">Sign in</button><button type="button" onclick="forgotPassword()">Forgot password?</button></div></form>
+<div class="actions" style="margin-top:10px"><button type="button" class="dark" onclick="signInPasskey()">Sign in with Face ID / fingerprint / passkey</button></div>
+<div id="loginError"></div><p class="muted" style="margin-top:14px">Passkey sign-in uses your device's built-in Face ID, fingerprint, PIN or Windows Hello where supported. Your face or fingerprint data stays with your device.</p><div id="resetPanel" class="hidden"><hr><h3>Choose a new password</h3><label>New password</label><input id="newPassword" type="password" autocomplete="new-password" minlength="8"><button class="primary" type="button" onclick="saveNewPassword()" style="margin-top:10px">Update password</button></div>
+</section>
+<main id="app" class="hidden">
+<div class="top"><div><h2 id="pageTitle">Workshop dashboard</h2><div class="muted">Shared workshop inventory</div></div><div><span id="whoami" class="muted"></span> <button onclick="registerPasskey()">Set up Face ID / fingerprint</button> <button onclick="signOut()">Sign out</button></div></div>
+<nav><button class="tab active" data-page="dashboard">Dashboard</button><button class="tab" data-page="tools">Tool register</button><button class="tab" data-page="bins">Team bins</button><button class="tab" data-page="activity">History</button><button class="tab" data-page="repairs">Damage & Maintenance</button></nav>
+<section id="dashboard"><div class="cards">
+<div class="card"><div class="muted">Registered tools</div><div class="num" id="total">0</div></div><div class="card"><div class="muted">Available</div><div class="num" id="available">0</div></div><div class="card"><div class="muted">In Use / Borrowed</div><div class="num" id="borrowed">0</div></div><div class="card"><div class="muted">Under Maintenance</div><div class="num" id="maintenanceCount">0</div></div><div class="card"><div class="muted">Damaged</div><div class="num" id="damagedCount">0</div></div><div class="card"><div class="muted">14+ day reminders due</div><div class="num" id="overdue">0</div></div></div>
+<div class="panel"><strong>Borrow or return</strong><div class="muted">Enter the tool ID printed below the QR label, or scan a QR label with your phone camera to open this workshop page with the tool ID filled in.</div>
+<div class="grid2"><div><label>Tool ID</label><input id="scanId" placeholder="e.g. MRF-0001"></div><div><label>Action</label><select id="scanAction"><option value="borrow">Borrow tool</option><option value="return">Return tool</option></select></div></div>
+<div class="grid2"><div><label>Job card / site reference (for borrowing)</label><input id="jobRef" placeholder="e.g. Job card 007988"></div><div><label>Expected return date</label><input id="dueDate" type="date"></div></div>
+<div class="actions" style="margin-top:10px"><button class="dark" onclick="processToolAction()">Submit</button></div></div>
+<div class="panel"><strong>Six personal borrowing bins</strong><div class="people" id="dashPeople" style="margin-top:12px"></div></div>
+<div class="notice">Email notifications go to Omm at elias@rea.za.com. Borrowed tools receive a reminder after 14 days and every 14 days until returned, once the email service and schedule are configured.</div></section>
+<section id="tools" class="hidden"><div class="panel"><div class="row"><div><strong>Tool register</strong><div class="muted">Only administrators can register tools. A unique QR code is generated from each tool ID.</div></div><button class="primary" id="addBtn" onclick="showForm()">＋ Add tool</button></div>
+<div id="toolForm" class="hidden"><form id="addToolForm"><div class="fields"><div><label>Tool name *</label><input id="fName" required></div><div><label>Make</label><input id="fMake"></div><div><label>Model</label><input id="fModel"></div><div><label>Serial number</label><input id="fSerial"></div>
+<div><label>Category *</label><select id="fCategory" required>
+<option value="">Select category</option><option>Power Tools</option><option>Hand Tools</option><option>Electrical Tools</option><option>Measuring Tools</option><option>Safety Equipment</option><option>Building Tools</option><option>Painting Tools</option><option>Other</option>
+</select></div>
+<div><label>Location *</label><select id="fLocation" required><option value="">Select location</option><option>Workshop</option><option>Storeroom</option><option>HQ</option><option>Other</option></select></div>
+<div><label>Condition</label><select id="fCondition"><option>Good</option><option>New</option><option>Worn</option><option>Damaged</option><option>Faulty</option></select></div><div><label>Tool photo</label><input id="fPhoto" type="file" accept="image/jpeg,image/png,image/webp"><small>JPG, PNG or WEBP. Maximum size: 3 MB.</small><div id="photoPreviewWrap" class="hidden" style="margin-top:8px"><img id="photoPreview" alt="Selected tool photo preview" style="width:120px;height:100px;object-fit:cover;border-radius:10px"></div></div></div><div class="actions" style="margin-top:12px"><button class="primary">Save tool</button><button type="button" onclick="hideForm()">Cancel</button></div></form></div><div class="tool-controls"><input id="toolSearch" type="search" placeholder="Search tools by name, make, model, serial number or tool ID..."><select id="categoryFilter"><option value="">All tool types</option><option>Power Tools</option><option>Hand Tools</option><option>Electrical Tools</option><option>Measuring Tools</option><option>Safety Equipment</option><option>Building Tools</option><option>Painting Tools</option><option>Other</option></select></div><div id="toolCount" class="muted tool-count"></div><div id="toolList"></div></div></section>
+<section id="bins" class="hidden"><div class="panel"><strong>Personal tool bins</strong><p class="muted">Select a technician to view assigned tools.</p><div id="binList" class="people"></div><div id="binDetail" style="margin-top:16px"></div></div></section>
+<section id="activity" class="hidden"><div class="panel"><strong>Transaction history</strong><div id="historyList"></div></div></section>
+<section id="repairs" class="hidden">
+ <div class="panel"><strong>Report damaged tool</strong><p class="muted">Technicians must complete all details. The report is saved in the tool history and Omm is notified by email.</p>
+ <form id="damageForm"><div class="fields"><div><label>Tool *</label><select id="damageTool" required></select></div><div><label>Date damage happened *</label><input id="damageDate" type="date" required></div><div><label>Where did it happen? *</label><input id="damageLocation" required placeholder="e.g. Customer site / Workshop"></div><div><label>Photo evidence</label><input id="damagePhoto" type="file" accept="image/jpeg,image/png,image/webp" required><small>Required: JPG, PNG or WEBP, maximum 3 MB.</small></div></div><label>Describe the damage *</label><textarea id="damageDescription" rows="3" required placeholder="Explain what happened and what is damaged"></textarea><div class="actions" style="margin-top:12px"><button class="primary">Submit damage report</button></div></form></div>
+ <div class="panel"><strong>Maintenance records</strong><p class="muted">Only Omm (administrator) can send tools for maintenance or mark repairs as complete.</p><div id="maintenanceList"></div></div>
+ <div class="panel"><strong>Damage reports</strong><div id="damageList"></div></div>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0"></script>
+<script>
+/* Embedded QR encoder: no CDN or external QR service required. */
+(function(){
+ const factories={"QR8bitByte": function(require,module,exports){
+var QRMode = require('./QRMode');
+
+function QR8bitByte(data) {
+	this.mode = QRMode.MODE_8BIT_BYTE;
+	this.data = data;
+}
+
+QR8bitByte.prototype = {
+
+	getLength : function() {
+		return this.data.length;
+	},
+	
+	write : function(buffer) {
+		for (var i = 0; i < this.data.length; i++) {
+			// not JIS ...
+			buffer.put(this.data.charCodeAt(i), 8);
+		}
+	}
+};
+
+module.exports = QR8bitByte;
+
+},
+"QRBitBuffer": function(require,module,exports){
+function QRBitBuffer() {
+	this.buffer = [];
+	this.length = 0;
+}
+
+QRBitBuffer.prototype = {
+
+	get : function(index) {
+		var bufIndex = Math.floor(index / 8);
+		return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+	},
+	
+	put : function(num, length) {
+		for (var i = 0; i < length; i++) {
+			this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+		}
+	},
+	
+	getLengthInBits : function() {
+		return this.length;
+	},
+	
+	putBit : function(bit) {
+	
+		var bufIndex = Math.floor(this.length / 8);
+		if (this.buffer.length <= bufIndex) {
+			this.buffer.push(0);
+		}
+	
+		if (bit) {
+			this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
+		}
+	
+		this.length++;
+	}
+};
+
+module.exports = QRBitBuffer;
+
+},
+"QRErrorCorrectLevel": function(require,module,exports){
+module.exports = {
+	L : 1,
+	M : 0,
+	Q : 3,
+	H : 2
+};
+
+
+},
+"QRMaskPattern": function(require,module,exports){
+module.exports = {
+	PATTERN000 : 0,
+	PATTERN001 : 1,
+	PATTERN010 : 2,
+	PATTERN011 : 3,
+	PATTERN100 : 4,
+	PATTERN101 : 5,
+	PATTERN110 : 6,
+	PATTERN111 : 7
+};
+
+},
+"QRMath": function(require,module,exports){
+var QRMath = {
+
+	glog : function(n) {
+	
+		if (n < 1) {
+			throw new Error("glog(" + n + ")");
+		}
+		
+		return QRMath.LOG_TABLE[n];
+	},
+	
+	gexp : function(n) {
+	
+		while (n < 0) {
+			n += 255;
+		}
+	
+		while (n >= 256) {
+			n -= 255;
+		}
+	
+		return QRMath.EXP_TABLE[n];
+	},
+	
+	EXP_TABLE : new Array(256),
+	
+	LOG_TABLE : new Array(256)
+
+};
+	
+for (var i = 0; i < 8; i++) {
+	QRMath.EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i++) {
+	QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
+		^ QRMath.EXP_TABLE[i - 5]
+		^ QRMath.EXP_TABLE[i - 6]
+		^ QRMath.EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i++) {
+	QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
+}
+
+module.exports = QRMath;
+
+},
+"QRMode": function(require,module,exports){
+module.exports = {
+    MODE_NUMBER :       1 << 0,
+    MODE_ALPHA_NUM :    1 << 1,
+    MODE_8BIT_BYTE :    1 << 2,
+    MODE_KANJI :        1 << 3
+};
+
+},
+"QRPolynomial": function(require,module,exports){
+var QRMath = require('./QRMath');
+
+function QRPolynomial(num, shift) {
+	if (num.length === undefined) {
+		throw new Error(num.length + "/" + shift);
+	}
+
+	var offset = 0;
+
+	while (offset < num.length && num[offset] === 0) {
+		offset++;
+	}
+
+	this.num = new Array(num.length - offset + shift);
+	for (var i = 0; i < num.length - offset; i++) {
+		this.num[i] = num[i + offset];
+	}
+}
+
+QRPolynomial.prototype = {
+
+	get : function(index) {
+		return this.num[index];
+	},
+	
+	getLength : function() {
+		return this.num.length;
+	},
+	
+	multiply : function(e) {
+	
+		var num = new Array(this.getLength() + e.getLength() - 1);
+	
+		for (var i = 0; i < this.getLength(); i++) {
+			for (var j = 0; j < e.getLength(); j++) {
+				num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i) ) + QRMath.glog(e.get(j) ) );
+			}
+		}
+	
+		return new QRPolynomial(num, 0);
+	},
+	
+	mod : function(e) {
+	
+		if (this.getLength() - e.getLength() < 0) {
+			return this;
+		}
+	
+		var ratio = QRMath.glog(this.get(0) ) - QRMath.glog(e.get(0) );
+	
+		var num = new Array(this.getLength() );
+		
+		for (var i = 0; i < this.getLength(); i++) {
+			num[i] = this.get(i);
+		}
+		
+		for (var x = 0; x < e.getLength(); x++) {
+			num[x] ^= QRMath.gexp(QRMath.glog(e.get(x) ) + ratio);
+		}
+	
+		// recursive call
+		return new QRPolynomial(num, 0).mod(e);
+	}
+};
+
+module.exports = QRPolynomial;
+
+},
+"QRRSBlock": function(require,module,exports){
+var QRErrorCorrectLevel = require('./QRErrorCorrectLevel');
+
+function QRRSBlock(totalCount, dataCount) {
+	this.totalCount = totalCount;
+	this.dataCount  = dataCount;
+}
+
+QRRSBlock.RS_BLOCK_TABLE = [
+
+	// L
+	// M
+	// Q
+	// H
+
+	// 1
+	[1, 26, 19],
+	[1, 26, 16],
+	[1, 26, 13],
+	[1, 26, 9],
+	
+	// 2
+	[1, 44, 34],
+	[1, 44, 28],
+	[1, 44, 22],
+	[1, 44, 16],
+
+	// 3
+	[1, 70, 55],
+	[1, 70, 44],
+	[2, 35, 17],
+	[2, 35, 13],
+
+	// 4		
+	[1, 100, 80],
+	[2, 50, 32],
+	[2, 50, 24],
+	[4, 25, 9],
+	
+	// 5
+	[1, 134, 108],
+	[2, 67, 43],
+	[2, 33, 15, 2, 34, 16],
+	[2, 33, 11, 2, 34, 12],
+	
+	// 6
+	[2, 86, 68],
+	[4, 43, 27],
+	[4, 43, 19],
+	[4, 43, 15],
+	
+	// 7		
+	[2, 98, 78],
+	[4, 49, 31],
+	[2, 32, 14, 4, 33, 15],
+	[4, 39, 13, 1, 40, 14],
+	
+	// 8
+	[2, 121, 97],
+	[2, 60, 38, 2, 61, 39],
+	[4, 40, 18, 2, 41, 19],
+	[4, 40, 14, 2, 41, 15],
+	
+	// 9
+	[2, 146, 116],
+	[3, 58, 36, 2, 59, 37],
+	[4, 36, 16, 4, 37, 17],
+	[4, 36, 12, 4, 37, 13],
+	
+	// 10		
+	[2, 86, 68, 2, 87, 69],
+	[4, 69, 43, 1, 70, 44],
+	[6, 43, 19, 2, 44, 20],
+	[6, 43, 15, 2, 44, 16],
+
+	// 11
+	[4, 101, 81],
+	[1, 80, 50, 4, 81, 51],
+	[4, 50, 22, 4, 51, 23],
+	[3, 36, 12, 8, 37, 13],
+
+	// 12
+	[2, 116, 92, 2, 117, 93],
+	[6, 58, 36, 2, 59, 37],
+	[4, 46, 20, 6, 47, 21],
+	[7, 42, 14, 4, 43, 15],
+
+	// 13
+	[4, 133, 107],
+	[8, 59, 37, 1, 60, 38],
+	[8, 44, 20, 4, 45, 21],
+	[12, 33, 11, 4, 34, 12],
+
+	// 14
+	[3, 145, 115, 1, 146, 116],
+	[4, 64, 40, 5, 65, 41],
+	[11, 36, 16, 5, 37, 17],
+	[11, 36, 12, 5, 37, 13],
+
+	// 15
+	[5, 109, 87, 1, 110, 88],
+	[5, 65, 41, 5, 66, 42],
+	[5, 54, 24, 7, 55, 25],
+	[11, 36, 12],
+
+	// 16
+	[5, 122, 98, 1, 123, 99],
+	[7, 73, 45, 3, 74, 46],
+	[15, 43, 19, 2, 44, 20],
+	[3, 45, 15, 13, 46, 16],
+
+	// 17
+	[1, 135, 107, 5, 136, 108],
+	[10, 74, 46, 1, 75, 47],
+	[1, 50, 22, 15, 51, 23],
+	[2, 42, 14, 17, 43, 15],
+
+	// 18
+	[5, 150, 120, 1, 151, 121],
+	[9, 69, 43, 4, 70, 44],
+	[17, 50, 22, 1, 51, 23],
+	[2, 42, 14, 19, 43, 15],
+
+	// 19
+	[3, 141, 113, 4, 142, 114],
+	[3, 70, 44, 11, 71, 45],
+	[17, 47, 21, 4, 48, 22],
+	[9, 39, 13, 16, 40, 14],
+
+	// 20
+	[3, 135, 107, 5, 136, 108],
+	[3, 67, 41, 13, 68, 42],
+	[15, 54, 24, 5, 55, 25],
+	[15, 43, 15, 10, 44, 16],
+
+	// 21
+	[4, 144, 116, 4, 145, 117],
+	[17, 68, 42],
+	[17, 50, 22, 6, 51, 23],
+	[19, 46, 16, 6, 47, 17],
+
+	// 22
+	[2, 139, 111, 7, 140, 112],
+	[17, 74, 46],
+	[7, 54, 24, 16, 55, 25],
+	[34, 37, 13],
+
+	// 23
+	[4, 151, 121, 5, 152, 122],
+	[4, 75, 47, 14, 76, 48],
+	[11, 54, 24, 14, 55, 25],
+	[16, 45, 15, 14, 46, 16],
+
+	// 24
+	[6, 147, 117, 4, 148, 118],
+	[6, 73, 45, 14, 74, 46],
+	[11, 54, 24, 16, 55, 25],
+	[30, 46, 16, 2, 47, 17],
+
+	// 25
+	[8, 132, 106, 4, 133, 107],
+	[8, 75, 47, 13, 76, 48],
+	[7, 54, 24, 22, 55, 25],
+	[22, 45, 15, 13, 46, 16],
+
+	// 26
+	[10, 142, 114, 2, 143, 115],
+	[19, 74, 46, 4, 75, 47],
+	[28, 50, 22, 6, 51, 23],
+	[33, 46, 16, 4, 47, 17],
+
+	// 27
+	[8, 152, 122, 4, 153, 123],
+	[22, 73, 45, 3, 74, 46],
+	[8, 53, 23, 26, 54, 24],
+	[12, 45, 15, 28, 46, 16],
+
+	// 28
+	[3, 147, 117, 10, 148, 118],
+	[3, 73, 45, 23, 74, 46],
+	[4, 54, 24, 31, 55, 25],
+	[11, 45, 15, 31, 46, 16],
+
+	// 29
+	[7, 146, 116, 7, 147, 117],
+	[21, 73, 45, 7, 74, 46],
+	[1, 53, 23, 37, 54, 24],
+	[19, 45, 15, 26, 46, 16],
+
+	// 30
+	[5, 145, 115, 10, 146, 116],
+	[19, 75, 47, 10, 76, 48],
+	[15, 54, 24, 25, 55, 25],
+	[23, 45, 15, 25, 46, 16],
+
+	// 31
+	[13, 145, 115, 3, 146, 116],
+	[2, 74, 46, 29, 75, 47],
+	[42, 54, 24, 1, 55, 25],
+	[23, 45, 15, 28, 46, 16],
+
+	// 32
+	[17, 145, 115],
+	[10, 74, 46, 23, 75, 47],
+	[10, 54, 24, 35, 55, 25],
+	[19, 45, 15, 35, 46, 16],
+
+	// 33
+	[17, 145, 115, 1, 146, 116],
+	[14, 74, 46, 21, 75, 47],
+	[29, 54, 24, 19, 55, 25],
+	[11, 45, 15, 46, 46, 16],
+
+	// 34
+	[13, 145, 115, 6, 146, 116],
+	[14, 74, 46, 23, 75, 47],
+	[44, 54, 24, 7, 55, 25],
+	[59, 46, 16, 1, 47, 17],
+
+	// 35
+	[12, 151, 121, 7, 152, 122],
+	[12, 75, 47, 26, 76, 48],
+	[39, 54, 24, 14, 55, 25],
+	[22, 45, 15, 41, 46, 16],
+
+	// 36
+	[6, 151, 121, 14, 152, 122],
+	[6, 75, 47, 34, 76, 48],
+	[46, 54, 24, 10, 55, 25],
+	[2, 45, 15, 64, 46, 16],
+
+	// 37
+	[17, 152, 122, 4, 153, 123],
+	[29, 74, 46, 14, 75, 47],
+	[49, 54, 24, 10, 55, 25],
+	[24, 45, 15, 46, 46, 16],
+
+	// 38
+	[4, 152, 122, 18, 153, 123],
+	[13, 74, 46, 32, 75, 47],
+	[48, 54, 24, 14, 55, 25],
+	[42, 45, 15, 32, 46, 16],
+
+	// 39
+	[20, 147, 117, 4, 148, 118],
+	[40, 75, 47, 7, 76, 48],
+	[43, 54, 24, 22, 55, 25],
+	[10, 45, 15, 67, 46, 16],
+
+	// 40
+	[19, 148, 118, 6, 149, 119],
+	[18, 75, 47, 31, 76, 48],
+	[34, 54, 24, 34, 55, 25],
+	[20, 45, 15, 61, 46, 16]
+];
+
+QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+	
+	var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+	
+	if (rsBlock === undefined) {
+		throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
+	}
+
+	var length = rsBlock.length / 3;
+	
+	var list = [];
+	
+	for (var i = 0; i < length; i++) {
+
+		var count = rsBlock[i * 3 + 0];
+		var totalCount = rsBlock[i * 3 + 1];
+		var dataCount  = rsBlock[i * 3 + 2];
+
+		for (var j = 0; j < count; j++) {
+			list.push(new QRRSBlock(totalCount, dataCount) );	
+		}
+	}
+	
+	return list;
+};
+
+QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+
+	switch(errorCorrectLevel) {
+	case QRErrorCorrectLevel.L :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+	case QRErrorCorrectLevel.M :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+	case QRErrorCorrectLevel.Q :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+	case QRErrorCorrectLevel.H :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+	default :
+		return undefined;
+	}
+};
+
+module.exports = QRRSBlock;
+
+},
+"QRUtil": function(require,module,exports){
+var QRMode = require('./QRMode');
+var QRPolynomial = require('./QRPolynomial');
+var QRMath = require('./QRMath');
+var QRMaskPattern = require('./QRMaskPattern');
+
+var QRUtil = {
+
+    PATTERN_POSITION_TABLE : [
+        [],
+        [6, 18],
+        [6, 22],
+        [6, 26],
+        [6, 30],
+        [6, 34],
+        [6, 22, 38],
+        [6, 24, 42],
+        [6, 26, 46],
+        [6, 28, 50],
+        [6, 30, 54],        
+        [6, 32, 58],
+        [6, 34, 62],
+        [6, 26, 46, 66],
+        [6, 26, 48, 70],
+        [6, 26, 50, 74],
+        [6, 30, 54, 78],
+        [6, 30, 56, 82],
+        [6, 30, 58, 86],
+        [6, 34, 62, 90],
+        [6, 28, 50, 72, 94],
+        [6, 26, 50, 74, 98],
+        [6, 30, 54, 78, 102],
+        [6, 28, 54, 80, 106],
+        [6, 32, 58, 84, 110],
+        [6, 30, 58, 86, 114],
+        [6, 34, 62, 90, 118],
+        [6, 26, 50, 74, 98, 122],
+        [6, 30, 54, 78, 102, 126],
+        [6, 26, 52, 78, 104, 130],
+        [6, 30, 56, 82, 108, 134],
+        [6, 34, 60, 86, 112, 138],
+        [6, 30, 58, 86, 114, 142],
+        [6, 34, 62, 90, 118, 146],
+        [6, 30, 54, 78, 102, 126, 150],
+        [6, 24, 50, 76, 102, 128, 154],
+        [6, 28, 54, 80, 106, 132, 158],
+        [6, 32, 58, 84, 110, 136, 162],
+        [6, 26, 54, 82, 110, 138, 166],
+        [6, 30, 58, 86, 114, 142, 170]
+    ],
+
+    G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+    G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+    G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)    | (1 << 4) | (1 << 1),
+
+    getBCHTypeInfo : function(data) {
+        var d = data << 10;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+            d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) );    
         }
-      }
-      .tool img {
-        width: 58px;
-        height: 58px;
-        object-fit: cover;
-        border-radius: 10px;
-        background: #e8eef5;
-      }
-      .qrrow {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 8px;
-        flex-wrap: wrap;
-      }
-      .tool img.qrimg {
-        width: 76px;
-        height: 76px;
-        object-fit: contain;
-        background: #fff;
-        border: 1px solid var(--line);
-        padding: 4px;
-        border-radius: 6px;
-      }
-      .qrrow button {
-        font-size: 12px;
-        padding: 7px 10px;
-      }
-      .pill {
-        font-size: 11px;
-        font-weight: 700;
-        padding: 4px 8px;
-        border-radius: 30px;
-        background: #e9f2ff;
-        color: #175da8;
-        white-space: nowrap;
-      }
-      .pill.green {
-        background: #e6f5ed;
-        color: #147345;
-      }
-      .pill.red {
-        background: #fde9e9;
-        color: #a52e2e;
-      }
-      .pill.orange {
-        background: #fff0db;
-        color: #925400;
-      }
-      .pill.grey {
-        background: #edf0f4;
-        color: #4d5b6a;
-      }
-      .form-note {
-        font-size: 12px;
-        color: var(--muted);
-        margin-top: 4px;
-      }
-      .hidden {
-        display: none !important;
-      }
-      .notice {
-        padding: 12px;
-        border-radius: 10px;
-        background: #fff7df;
-        color: #76530b;
-        font-size: 13px;
-      }
-      .actions {
-        display: flex;
-        gap: 7px;
-        flex-wrap: wrap;
-      }
-      .actions button {
-        padding: 8px 10px;
-        font-size: 12px;
-      }
-      small {
-        color: var(--muted);
-      }
-      .empty {
-        text-align: center;
-        padding: 28px;
-        color: var(--muted);
-      }
-      #login {
-        max-width: 440px;
-        margin: 8vh auto;
-      }
-      .error {
-        color: #a52e2e;
-        background: #fde9e9;
-        padding: 10px;
-        border-radius: 8px;
-        margin: 10px 0;
-      }
-      @media (max-width: 700px) {
-        .cards {
-          grid-template-columns: repeat(2, 1fr);
+        return ( (data << 10) | d) ^ QRUtil.G15_MASK;
+    },
+
+    getBCHTypeNumber : function(data) {
+        var d = data << 12;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+            d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) );    
         }
-        .people {
-          grid-template-columns: repeat(2, 1fr);
+        return (data << 12) | d;
+    },
+
+    getBCHDigit : function(data) {
+
+        var digit = 0;
+
+        while (data !== 0) {
+            digit++;
+            data >>>= 1;
         }
-        .grid2,
-        form .fields {
-          grid-template-columns: 1fr;
+
+        return digit;
+    },
+
+    getPatternPosition : function(typeNumber) {
+        return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
+    },
+
+    getMask : function(maskPattern, i, j) {
+        
+        switch (maskPattern) {
+            
+        case QRMaskPattern.PATTERN000 : return (i + j) % 2 === 0;
+        case QRMaskPattern.PATTERN001 : return i % 2 === 0;
+        case QRMaskPattern.PATTERN010 : return j % 3 === 0;
+        case QRMaskPattern.PATTERN011 : return (i + j) % 3 === 0;
+        case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 === 0;
+        case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 === 0;
+        case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 === 0;
+        case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 === 0;
+
+        default :
+            throw new Error("bad maskPattern:" + maskPattern);
         }
-        main {
-          margin: 16px auto;
+    },
+
+    getErrorCorrectPolynomial : function(errorCorrectLength) {
+
+        var a = new QRPolynomial([1], 0);
+
+        for (var i = 0; i < errorCorrectLength; i++) {
+            a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0) );
         }
-        header {
-          padding: 14px 16px;
+
+        return a;
+    },
+
+    getLengthInBits : function(mode, type) {
+
+        if (1 <= type && type < 10) {
+
+            // 1 - 9
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 10;
+            case QRMode.MODE_ALPHA_NUM  : return 9;
+            case QRMode.MODE_8BIT_BYTE  : return 8;
+            case QRMode.MODE_KANJI      : return 8;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 27) {
+
+            // 10 - 26
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 12;
+            case QRMode.MODE_ALPHA_NUM  : return 11;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 10;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 41) {
+
+            // 27 - 40
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 14;
+            case QRMode.MODE_ALPHA_NUM  : return 13;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 12;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else {
+            throw new Error("type:" + type);
         }
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <div class="logo">🔧</div>
-      <div>
-        <h1>MR FIX IT</h1>
-        <small>EVERY TOOL. EVERY JOB. ACCOUNTED FOR.</small>
-      </div>
-    </header>
-    <section id="login" class="panel">
-      <h2>Workshop sign in</h2>
-      <p class="muted">Use the account created for you by an administrator.</p>
-      <form id="loginForm">
-        <label>Email address</label
-        ><input id="email" type="email" required autocomplete="username" /><label>Password</label
-        ><input id="password" type="password" required autocomplete="current-password" />
-        <div class="actions" style="margin-top: 14px">
-          <button class="primary">Sign in</button
-          ><button type="button" onclick="forgotPassword()">Forgot password?</button>
-        </div>
-      </form>
-      <div class="actions" style="margin-top: 10px">
-        <button type="button" class="dark" onclick="signInPasskey()">
-          Sign in with Face ID / fingerprint / passkey
-        </button>
-      </div>
-      <div id="loginError"></div>
-      <p class="muted" style="margin-top: 14px">
-        Passkey sign-in uses your device's built-in Face ID, fingerprint, PIN or Windows Hello where
-        supported. Your face or fingerprint data stays with your device.
-      </p>
-      <div id="resetPanel" class="hidden">
-        <hr />
-        <h3>Choose a new password</h3>
-        <label>New password</label
-        ><input id="newPassword" type="password" autocomplete="new-password" minlength="8" /><button
-          class="primary"
-          type="button"
-          onclick="saveNewPassword()"
-          style="margin-top: 10px"
-        >
-          Update password
-        </button>
-      </div>
-    </section>
-    <main id="app" class="hidden">
-      <div class="top">
-        <div>
-          <h2 id="pageTitle">Workshop dashboard</h2>
-          <div class="muted">Shared workshop inventory</div>
-        </div>
-        <div>
-          <span id="whoami" class="muted"></span>
-          <button onclick="registerPasskey()">Set up Face ID / fingerprint</button>
-          <button onclick="signOut()">Sign out</button>
-        </div>
-      </div>
-      <nav>
-        <button class="tab active" data-page="dashboard">Dashboard</button
-        ><button class="tab" data-page="tools">Tool register</button
-        ><button class="tab" data-page="bins">Team bins</button
-        ><button class="tab" data-page="activity">History</button
-        ><button class="tab" data-page="repairs">Damage & Maintenance</button>
-      </nav>
-      <section id="dashboard">
-        <div class="cards">
-          <div class="card">
-            <div class="muted">Registered tools</div>
-            <div class="num" id="total">0</div>
-          </div>
-          <div class="card">
-            <div class="muted">Available</div>
-            <div class="num" id="available">0</div>
-          </div>
-          <div class="card">
-            <div class="muted">In Use / Borrowed</div>
-            <div class="num" id="borrowed">0</div>
-          </div>
-          <div class="card">
-            <div class="muted">Under Maintenance</div>
-            <div class="num" id="maintenanceCount">0</div>
-          </div>
-          <div class="card">
-            <div class="muted">Damaged</div>
-            <div class="num" id="damagedCount">0</div>
-          </div>
-          <div class="card">
-            <div class="muted">14+ day reminders due</div>
-            <div class="num" id="overdue">0</div>
-          </div>
-        </div>
-        <div class="panel">
-          <strong>Borrow or return</strong>
-          <div class="muted">
-            Enter the tool ID printed below the QR label, or scan a QR label with your phone camera
-            to open this workshop page with the tool ID filled in.
-          </div>
-          <div class="grid2">
-            <div><label>Tool ID</label><input id="scanId" placeholder="e.g. MRF-0001" /></div>
-            <div>
-              <label>Action</label
-              ><select id="scanAction">
-                <option value="borrow">Borrow tool</option>
-                <option value="return">Return tool</option>
-              </select>
-            </div>
-          </div>
-          <div class="grid2">
-            <div>
-              <label>Job card / site reference (for borrowing)</label
-              ><input id="jobRef" placeholder="e.g. Job card 007988" />
-            </div>
-            <div><label>Expected return date</label><input id="dueDate" type="date" /></div>
-          </div>
-          <div class="actions" style="margin-top: 10px">
-            <button class="dark" onclick="processToolAction()">Submit</button>
-          </div>
-        </div>
-        <div class="panel">
-          <strong>Six personal borrowing bins</strong>
-          <div class="people" id="dashPeople" style="margin-top: 12px"></div>
-        </div>
-        <div class="notice">
-          Email notifications go to Omm at elias@rea.za.com. Borrowed tools receive a reminder after
-          14 days and every 14 days until returned, once the email service and schedule are
-          configured.
-        </div>
-      </section>
-      <section id="tools" class="hidden">
-        <div class="panel">
-          <div class="row">
-            <div>
-              <strong>Tool register</strong>
-              <div class="muted">
-                Only administrators can register tools. A unique QR code is generated from each tool
-                ID.
-              </div>
-            </div>
-            <button class="primary" id="addBtn" onclick="showForm()">＋ Add tool</button>
-          </div>
-          <div id="toolForm" class="hidden">
-            <form id="addToolForm">
-              <div class="fields">
-                <div><label>Tool name *</label><input id="fName" required /></div>
-                <div><label>Make</label><input id="fMake" /></div>
-                <div><label>Model</label><input id="fModel" /></div>
-                <div><label>Serial number</label><input id="fSerial" /></div>
-                <div>
-                  <label>Category *</label
-                  ><select id="fCategory" required>
-                    <option value="">Select category</option>
-                    <option>Power Tools</option>
-                    <option>Hand Tools</option>
-                    <option>Electrical Tools</option>
-                    <option>Measuring Tools</option>
-                    <option>Safety Equipment</option>
-                    <option>Building Tools</option>
-                    <option>Painting Tools</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-                <div>
-                  <label>Location *</label
-                  ><select id="fLocation" required>
-                    <option value="">Select location</option>
-                    <option>Workshop</option>
-                    <option>Storeroom</option>
-                    <option>HQ</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-                <div>
-                  <label>Condition</label
-                  ><select id="fCondition">
-                    <option>Good</option>
-                    <option>New</option>
-                    <option>Worn</option>
-                    <option>Damaged</option>
-                    <option>Faulty</option>
-                  </select>
-                </div>
-                <div>
-                  <label>Tool photo</label
-                  ><input id="fPhoto" type="file" accept="image/jpeg,image/png,image/webp" /><small
-                    >JPG, PNG or WEBP. Maximum size: 3 MB.</small
-                  >
-                  <div id="photoPreviewWrap" class="hidden" style="margin-top: 8px">
-                    <img
-                      id="photoPreview"
-                      alt="Selected tool photo preview"
-                      style="width: 120px; height: 100px; object-fit: cover; border-radius: 10px"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="actions" style="margin-top: 12px">
-                <button class="primary">Save tool</button
-                ><button type="button" onclick="hideForm()">Cancel</button>
-              </div>
-            </form>
-          </div>
-          <div class="tool-controls">
-            <input
-              id="toolSearch"
-              type="search"
-              placeholder="Search tools by name, make, model, serial number or tool ID..."
-            /><select id="categoryFilter">
-              <option value="">All tool types</option>
-              <option>Power Tools</option>
-              <option>Hand Tools</option>
-              <option>Electrical Tools</option>
-              <option>Measuring Tools</option>
-              <option>Safety Equipment</option>
-              <option>Building Tools</option>
-              <option>Painting Tools</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div id="toolCount" class="muted tool-count"></div>
-          <div id="toolList"></div>
-        </div>
-      </section>
-      <section id="bins" class="hidden">
-        <div class="panel">
-          <strong>Personal tool bins</strong>
-          <p class="muted">Select a technician to view assigned tools.</p>
-          <div id="binList" class="people"></div>
-          <div id="binDetail" style="margin-top: 16px"></div>
-        </div>
-      </section>
-      <section id="activity" class="hidden">
-        <div class="panel">
-          <strong>Transaction history</strong>
-          <div id="historyList"></div>
-        </div>
-      </section>
-      <section id="repairs" class="hidden">
-        <div class="panel">
-          <strong>Report damaged tool</strong>
-          <p class="muted">
-            Technicians must complete all details. The report is saved in the tool history and Omm
-            is notified by email.
-          </p>
-          <form id="damageForm">
-            <div class="fields">
-              <div>
-                <label>Tool *</label
-                ><select id="damageTool" required></select>
-              </div>
-              <div>
-                <label>Date damage happened *</label><input id="damageDate" type="date" required />
-              </div>
-              <div>
-                <label>Where did it happen? *</label
-                ><input id="damageLocation" required placeholder="e.g. Customer site / Workshop" />
-              </div>
-              <div>
-                <label>Photo evidence</label
-                ><input
-                  id="damagePhoto"
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  required
-                /><small>Required: JPG, PNG or WEBP, maximum 3 MB.</small>
-              </div>
-            </div>
-            <label>Describe the damage *</label
-            ><textarea
-              id="damageDescription"
-              rows="3"
-              required
-              placeholder="Explain what happened and what is damaged"
-            ></textarea>
-            <div class="actions" style="margin-top: 12px">
-              <button class="primary">Submit damage report</button>
-            </div>
-          </form>
-        </div>
-        <div class="panel">
-          <strong>Maintenance records</strong>
-          <p class="muted">
-            Only Omm (administrator) can send tools for maintenance or mark repairs as complete.
-          </p>
-          <div id="maintenanceList"></div>
-        </div>
-        <div class="panel">
-          <strong>Damage reports</strong>
-          <div id="damageList"></div>
-        </div>
-      </section>
-    </main>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0"></script>
-    <script>
-      /* Embedded QR encoder: no CDN or external QR service required. */
-      (function () {
-        const factories = {
-          QR8bitByte: function (require, module, exports) {
-            var QRMode = require("./QRMode");
+    },
 
-            function QR8bitByte(data) {
-              this.mode = QRMode.MODE_8BIT_BYTE;
-              this.data = data;
-            }
+    getLostPoint : function(qrCode) {
+        
+        var moduleCount = qrCode.getModuleCount();
+        var lostPoint = 0;
+        var row = 0; 
+        var col = 0;
 
-            QR8bitByte.prototype = {
-              getLength: function () {
-                return this.data.length;
-              },
+        
+        // LEVEL1
+        
+        for (row = 0; row < moduleCount; row++) {
 
-              write: function (buffer) {
-                for (var i = 0; i < this.data.length; i++) {
-                  // not JIS ...
-                  buffer.put(this.data.charCodeAt(i), 8);
-                }
-              },
-            };
+            for (col = 0; col < moduleCount; col++) {
 
-            module.exports = QR8bitByte;
-          },
-          QRBitBuffer: function (require, module, exports) {
-            function QRBitBuffer() {
-              this.buffer = [];
-              this.length = 0;
-            }
+                var sameCount = 0;
+                var dark = qrCode.isDark(row, col);
 
-            QRBitBuffer.prototype = {
-              get: function (index) {
-                var bufIndex = Math.floor(index / 8);
-                return ((this.buffer[bufIndex] >>> (7 - (index % 8))) & 1) == 1;
-              },
+                for (var r = -1; r <= 1; r++) {
 
-              put: function (num, length) {
-                for (var i = 0; i < length; i++) {
-                  this.putBit(((num >>> (length - i - 1)) & 1) == 1);
-                }
-              },
-
-              getLengthInBits: function () {
-                return this.length;
-              },
-
-              putBit: function (bit) {
-                var bufIndex = Math.floor(this.length / 8);
-                if (this.buffer.length <= bufIndex) {
-                  this.buffer.push(0);
-                }
-
-                if (bit) {
-                  this.buffer[bufIndex] |= 0x80 >>> (this.length % 8);
-                }
-
-                this.length++;
-              },
-            };
-
-            module.exports = QRBitBuffer;
-          },
-          QRErrorCorrectLevel: function (require, module, exports) {
-            module.exports = {
-              L: 1,
-              M: 0,
-              Q: 3,
-              H: 2,
-            };
-          },
-          QRMaskPattern: function (require, module, exports) {
-            module.exports = {
-              PATTERN000: 0,
-              PATTERN001: 1,
-              PATTERN010: 2,
-              PATTERN011: 3,
-              PATTERN100: 4,
-              PATTERN101: 5,
-              PATTERN110: 6,
-              PATTERN111: 7,
-            };
-          },
-          QRMath: function (require, module, exports) {
-            var QRMath = {
-              glog: function (n) {
-                if (n < 1) {
-                  throw new Error("glog(" + n + ")");
-                }
-
-                return QRMath.LOG_TABLE[n];
-              },
-
-              gexp: function (n) {
-                while (n < 0) {
-                  n += 255;
-                }
-
-                while (n >= 256) {
-                  n -= 255;
-                }
-
-                return QRMath.EXP_TABLE[n];
-              },
-
-              EXP_TABLE: new Array(256),
-
-              LOG_TABLE: new Array(256),
-            };
-
-            for (var i = 0; i < 8; i++) {
-              QRMath.EXP_TABLE[i] = 1 << i;
-            }
-            for (var i = 8; i < 256; i++) {
-              QRMath.EXP_TABLE[i] =
-                QRMath.EXP_TABLE[i - 4] ^
-                QRMath.EXP_TABLE[i - 5] ^
-                QRMath.EXP_TABLE[i - 6] ^
-                QRMath.EXP_TABLE[i - 8];
-            }
-            for (var i = 0; i < 255; i++) {
-              QRMath.LOG_TABLE[QRMath.EXP_TABLE[i]] = i;
-            }
-
-            module.exports = QRMath;
-          },
-          QRMode: function (require, module, exports) {
-            module.exports = {
-              MODE_NUMBER: 1 << 0,
-              MODE_ALPHA_NUM: 1 << 1,
-              MODE_8BIT_BYTE: 1 << 2,
-              MODE_KANJI: 1 << 3,
-            };
-          },
-          QRPolynomial: function (require, module, exports) {
-            var QRMath = require("./QRMath");
-
-            function QRPolynomial(num, shift) {
-              if (num.length === undefined) {
-                throw new Error(num.length + "/" + shift);
-              }
-
-              var offset = 0;
-
-              while (offset < num.length && num[offset] === 0) {
-                offset++;
-              }
-
-              this.num = new Array(num.length - offset + shift);
-              for (var i = 0; i < num.length - offset; i++) {
-                this.num[i] = num[i + offset];
-              }
-            }
-
-            QRPolynomial.prototype = {
-              get: function (index) {
-                return this.num[index];
-              },
-
-              getLength: function () {
-                return this.num.length;
-              },
-
-              multiply: function (e) {
-                var num = new Array(this.getLength() + e.getLength() - 1);
-
-                for (var i = 0; i < this.getLength(); i++) {
-                  for (var j = 0; j < e.getLength(); j++) {
-                    num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i)) + QRMath.glog(e.get(j)));
-                  }
-                }
-
-                return new QRPolynomial(num, 0);
-              },
-
-              mod: function (e) {
-                if (this.getLength() - e.getLength() < 0) {
-                  return this;
-                }
-
-                var ratio = QRMath.glog(this.get(0)) - QRMath.glog(e.get(0));
-
-                var num = new Array(this.getLength());
-
-                for (var i = 0; i < this.getLength(); i++) {
-                  num[i] = this.get(i);
-                }
-
-                for (var x = 0; x < e.getLength(); x++) {
-                  num[x] ^= QRMath.gexp(QRMath.glog(e.get(x)) + ratio);
-                }
-
-                // recursive call
-                return new QRPolynomial(num, 0).mod(e);
-              },
-            };
-
-            module.exports = QRPolynomial;
-          },
-          QRRSBlock: function (require, module, exports) {
-            var QRErrorCorrectLevel = require("./QRErrorCorrectLevel");
-
-            function QRRSBlock(totalCount, dataCount) {
-              this.totalCount = totalCount;
-              this.dataCount = dataCount;
-            }
-
-            QRRSBlock.RS_BLOCK_TABLE = [
-              // L
-              // M
-              // Q
-              // H
-
-              // 1
-              [1, 26, 19],
-              [1, 26, 16],
-              [1, 26, 13],
-              [1, 26, 9],
-
-              // 2
-              [1, 44, 34],
-              [1, 44, 28],
-              [1, 44, 22],
-              [1, 44, 16],
-
-              // 3
-              [1, 70, 55],
-              [1, 70, 44],
-              [2, 35, 17],
-              [2, 35, 13],
-
-              // 4
-              [1, 100, 80],
-              [2, 50, 32],
-              [2, 50, 24],
-              [4, 25, 9],
-
-              // 5
-              [1, 134, 108],
-              [2, 67, 43],
-              [2, 33, 15, 2, 34, 16],
-              [2, 33, 11, 2, 34, 12],
-
-              // 6
-              [2, 86, 68],
-              [4, 43, 27],
-              [4, 43, 19],
-              [4, 43, 15],
-
-              // 7
-              [2, 98, 78],
-              [4, 49, 31],
-              [2, 32, 14, 4, 33, 15],
-              [4, 39, 13, 1, 40, 14],
-
-              // 8
-              [2, 121, 97],
-              [2, 60, 38, 2, 61, 39],
-              [4, 40, 18, 2, 41, 19],
-              [4, 40, 14, 2, 41, 15],
-
-              // 9
-              [2, 146, 116],
-              [3, 58, 36, 2, 59, 37],
-              [4, 36, 16, 4, 37, 17],
-              [4, 36, 12, 4, 37, 13],
-
-              // 10
-              [2, 86, 68, 2, 87, 69],
-              [4, 69, 43, 1, 70, 44],
-              [6, 43, 19, 2, 44, 20],
-              [6, 43, 15, 2, 44, 16],
-
-              // 11
-              [4, 101, 81],
-              [1, 80, 50, 4, 81, 51],
-              [4, 50, 22, 4, 51, 23],
-              [3, 36, 12, 8, 37, 13],
-
-              // 12
-              [2, 116, 92, 2, 117, 93],
-              [6, 58, 36, 2, 59, 37],
-              [4, 46, 20, 6, 47, 21],
-              [7, 42, 14, 4, 43, 15],
-
-              // 13
-              [4, 133, 107],
-              [8, 59, 37, 1, 60, 38],
-              [8, 44, 20, 4, 45, 21],
-              [12, 33, 11, 4, 34, 12],
-
-              // 14
-              [3, 145, 115, 1, 146, 116],
-              [4, 64, 40, 5, 65, 41],
-              [11, 36, 16, 5, 37, 17],
-              [11, 36, 12, 5, 37, 13],
-
-              // 15
-              [5, 109, 87, 1, 110, 88],
-              [5, 65, 41, 5, 66, 42],
-              [5, 54, 24, 7, 55, 25],
-              [11, 36, 12],
-
-              // 16
-              [5, 122, 98, 1, 123, 99],
-              [7, 73, 45, 3, 74, 46],
-              [15, 43, 19, 2, 44, 20],
-              [3, 45, 15, 13, 46, 16],
-
-              // 17
-              [1, 135, 107, 5, 136, 108],
-              [10, 74, 46, 1, 75, 47],
-              [1, 50, 22, 15, 51, 23],
-              [2, 42, 14, 17, 43, 15],
-
-              // 18
-              [5, 150, 120, 1, 151, 121],
-              [9, 69, 43, 4, 70, 44],
-              [17, 50, 22, 1, 51, 23],
-              [2, 42, 14, 19, 43, 15],
-
-              // 19
-              [3, 141, 113, 4, 142, 114],
-              [3, 70, 44, 11, 71, 45],
-              [17, 47, 21, 4, 48, 22],
-              [9, 39, 13, 16, 40, 14],
-
-              // 20
-              [3, 135, 107, 5, 136, 108],
-              [3, 67, 41, 13, 68, 42],
-              [15, 54, 24, 5, 55, 25],
-              [15, 43, 15, 10, 44, 16],
-
-              // 21
-              [4, 144, 116, 4, 145, 117],
-              [17, 68, 42],
-              [17, 50, 22, 6, 51, 23],
-              [19, 46, 16, 6, 47, 17],
-
-              // 22
-              [2, 139, 111, 7, 140, 112],
-              [17, 74, 46],
-              [7, 54, 24, 16, 55, 25],
-              [34, 37, 13],
-
-              // 23
-              [4, 151, 121, 5, 152, 122],
-              [4, 75, 47, 14, 76, 48],
-              [11, 54, 24, 14, 55, 25],
-              [16, 45, 15, 14, 46, 16],
-
-              // 24
-              [6, 147, 117, 4, 148, 118],
-              [6, 73, 45, 14, 74, 46],
-              [11, 54, 24, 16, 55, 25],
-              [30, 46, 16, 2, 47, 17],
-
-              // 25
-              [8, 132, 106, 4, 133, 107],
-              [8, 75, 47, 13, 76, 48],
-              [7, 54, 24, 22, 55, 25],
-              [22, 45, 15, 13, 46, 16],
-
-              // 26
-              [10, 142, 114, 2, 143, 115],
-              [19, 74, 46, 4, 75, 47],
-              [28, 50, 22, 6, 51, 23],
-              [33, 46, 16, 4, 47, 17],
-
-              // 27
-              [8, 152, 122, 4, 153, 123],
-              [22, 73, 45, 3, 74, 46],
-              [8, 53, 23, 26, 54, 24],
-              [12, 45, 15, 28, 46, 16],
-
-              // 28
-              [3, 147, 117, 10, 148, 118],
-              [3, 73, 45, 23, 74, 46],
-              [4, 54, 24, 31, 55, 25],
-              [11, 45, 15, 31, 46, 16],
-
-              // 29
-              [7, 146, 116, 7, 147, 117],
-              [21, 73, 45, 7, 74, 46],
-              [1, 53, 23, 37, 54, 24],
-              [19, 45, 15, 26, 46, 16],
-
-              // 30
-              [5, 145, 115, 10, 146, 116],
-              [19, 75, 47, 10, 76, 48],
-              [15, 54, 24, 25, 55, 25],
-              [23, 45, 15, 25, 46, 16],
-
-              // 31
-              [13, 145, 115, 3, 146, 116],
-              [2, 74, 46, 29, 75, 47],
-              [42, 54, 24, 1, 55, 25],
-              [23, 45, 15, 28, 46, 16],
-
-              // 32
-              [17, 145, 115],
-              [10, 74, 46, 23, 75, 47],
-              [10, 54, 24, 35, 55, 25],
-              [19, 45, 15, 35, 46, 16],
-
-              // 33
-              [17, 145, 115, 1, 146, 116],
-              [14, 74, 46, 21, 75, 47],
-              [29, 54, 24, 19, 55, 25],
-              [11, 45, 15, 46, 46, 16],
-
-              // 34
-              [13, 145, 115, 6, 146, 116],
-              [14, 74, 46, 23, 75, 47],
-              [44, 54, 24, 7, 55, 25],
-              [59, 46, 16, 1, 47, 17],
-
-              // 35
-              [12, 151, 121, 7, 152, 122],
-              [12, 75, 47, 26, 76, 48],
-              [39, 54, 24, 14, 55, 25],
-              [22, 45, 15, 41, 46, 16],
-
-              // 36
-              [6, 151, 121, 14, 152, 122],
-              [6, 75, 47, 34, 76, 48],
-              [46, 54, 24, 10, 55, 25],
-              [2, 45, 15, 64, 46, 16],
-
-              // 37
-              [17, 152, 122, 4, 153, 123],
-              [29, 74, 46, 14, 75, 47],
-              [49, 54, 24, 10, 55, 25],
-              [24, 45, 15, 46, 46, 16],
-
-              // 38
-              [4, 152, 122, 18, 153, 123],
-              [13, 74, 46, 32, 75, 47],
-              [48, 54, 24, 14, 55, 25],
-              [42, 45, 15, 32, 46, 16],
-
-              // 39
-              [20, 147, 117, 4, 148, 118],
-              [40, 75, 47, 7, 76, 48],
-              [43, 54, 24, 22, 55, 25],
-              [10, 45, 15, 67, 46, 16],
-
-              // 40
-              [19, 148, 118, 6, 149, 119],
-              [18, 75, 47, 31, 76, 48],
-              [34, 54, 24, 34, 55, 25],
-              [20, 45, 15, 61, 46, 16],
-            ];
-
-            QRRSBlock.getRSBlocks = function (typeNumber, errorCorrectLevel) {
-              var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
-
-              if (rsBlock === undefined) {
-                throw new Error(
-                  "bad rs block @ typeNumber:" +
-                    typeNumber +
-                    "/errorCorrectLevel:" +
-                    errorCorrectLevel,
-                );
-              }
-
-              var length = rsBlock.length / 3;
-
-              var list = [];
-
-              for (var i = 0; i < length; i++) {
-                var count = rsBlock[i * 3 + 0];
-                var totalCount = rsBlock[i * 3 + 1];
-                var dataCount = rsBlock[i * 3 + 2];
-
-                for (var j = 0; j < count; j++) {
-                  list.push(new QRRSBlock(totalCount, dataCount));
-                }
-              }
-
-              return list;
-            };
-
-            QRRSBlock.getRsBlockTable = function (typeNumber, errorCorrectLevel) {
-              switch (errorCorrectLevel) {
-                case QRErrorCorrectLevel.L:
-                  return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
-                case QRErrorCorrectLevel.M:
-                  return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
-                case QRErrorCorrectLevel.Q:
-                  return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
-                case QRErrorCorrectLevel.H:
-                  return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
-                default:
-                  return undefined;
-              }
-            };
-
-            module.exports = QRRSBlock;
-          },
-          QRUtil: function (require, module, exports) {
-            var QRMode = require("./QRMode");
-            var QRPolynomial = require("./QRPolynomial");
-            var QRMath = require("./QRMath");
-            var QRMaskPattern = require("./QRMaskPattern");
-
-            var QRUtil = {
-              PATTERN_POSITION_TABLE: [
-                [],
-                [6, 18],
-                [6, 22],
-                [6, 26],
-                [6, 30],
-                [6, 34],
-                [6, 22, 38],
-                [6, 24, 42],
-                [6, 26, 46],
-                [6, 28, 50],
-                [6, 30, 54],
-                [6, 32, 58],
-                [6, 34, 62],
-                [6, 26, 46, 66],
-                [6, 26, 48, 70],
-                [6, 26, 50, 74],
-                [6, 30, 54, 78],
-                [6, 30, 56, 82],
-                [6, 30, 58, 86],
-                [6, 34, 62, 90],
-                [6, 28, 50, 72, 94],
-                [6, 26, 50, 74, 98],
-                [6, 30, 54, 78, 102],
-                [6, 28, 54, 80, 106],
-                [6, 32, 58, 84, 110],
-                [6, 30, 58, 86, 114],
-                [6, 34, 62, 90, 118],
-                [6, 26, 50, 74, 98, 122],
-                [6, 30, 54, 78, 102, 126],
-                [6, 26, 52, 78, 104, 130],
-                [6, 30, 56, 82, 108, 134],
-                [6, 34, 60, 86, 112, 138],
-                [6, 30, 58, 86, 114, 142],
-                [6, 34, 62, 90, 118, 146],
-                [6, 30, 54, 78, 102, 126, 150],
-                [6, 24, 50, 76, 102, 128, 154],
-                [6, 28, 54, 80, 106, 132, 158],
-                [6, 32, 58, 84, 110, 136, 162],
-                [6, 26, 54, 82, 110, 138, 166],
-                [6, 30, 58, 86, 114, 142, 170],
-              ],
-
-              G15: (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
-              G18:
-                (1 << 12) |
-                (1 << 11) |
-                (1 << 10) |
-                (1 << 9) |
-                (1 << 8) |
-                (1 << 5) |
-                (1 << 2) |
-                (1 << 0),
-              G15_MASK: (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1),
-
-              getBCHTypeInfo: function (data) {
-                var d = data << 10;
-                while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
-                  d ^= QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15));
-                }
-                return ((data << 10) | d) ^ QRUtil.G15_MASK;
-              },
-
-              getBCHTypeNumber: function (data) {
-                var d = data << 12;
-                while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
-                  d ^= QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18));
-                }
-                return (data << 12) | d;
-              },
-
-              getBCHDigit: function (data) {
-                var digit = 0;
-
-                while (data !== 0) {
-                  digit++;
-                  data >>>= 1;
-                }
-
-                return digit;
-              },
-
-              getPatternPosition: function (typeNumber) {
-                return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
-              },
-
-              getMask: function (maskPattern, i, j) {
-                switch (maskPattern) {
-                  case QRMaskPattern.PATTERN000:
-                    return (i + j) % 2 === 0;
-                  case QRMaskPattern.PATTERN001:
-                    return i % 2 === 0;
-                  case QRMaskPattern.PATTERN010:
-                    return j % 3 === 0;
-                  case QRMaskPattern.PATTERN011:
-                    return (i + j) % 3 === 0;
-                  case QRMaskPattern.PATTERN100:
-                    return (Math.floor(i / 2) + Math.floor(j / 3)) % 2 === 0;
-                  case QRMaskPattern.PATTERN101:
-                    return ((i * j) % 2) + ((i * j) % 3) === 0;
-                  case QRMaskPattern.PATTERN110:
-                    return (((i * j) % 2) + ((i * j) % 3)) % 2 === 0;
-                  case QRMaskPattern.PATTERN111:
-                    return (((i * j) % 3) + ((i + j) % 2)) % 2 === 0;
-
-                  default:
-                    throw new Error("bad maskPattern:" + maskPattern);
-                }
-              },
-
-              getErrorCorrectPolynomial: function (errorCorrectLength) {
-                var a = new QRPolynomial([1], 0);
-
-                for (var i = 0; i < errorCorrectLength; i++) {
-                  a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0));
-                }
-
-                return a;
-              },
-
-              getLengthInBits: function (mode, type) {
-                if (1 <= type && type < 10) {
-                  // 1 - 9
-
-                  switch (mode) {
-                    case QRMode.MODE_NUMBER:
-                      return 10;
-                    case QRMode.MODE_ALPHA_NUM:
-                      return 9;
-                    case QRMode.MODE_8BIT_BYTE:
-                      return 8;
-                    case QRMode.MODE_KANJI:
-                      return 8;
-                    default:
-                      throw new Error("mode:" + mode);
-                  }
-                } else if (type < 27) {
-                  // 10 - 26
-
-                  switch (mode) {
-                    case QRMode.MODE_NUMBER:
-                      return 12;
-                    case QRMode.MODE_ALPHA_NUM:
-                      return 11;
-                    case QRMode.MODE_8BIT_BYTE:
-                      return 16;
-                    case QRMode.MODE_KANJI:
-                      return 10;
-                    default:
-                      throw new Error("mode:" + mode);
-                  }
-                } else if (type < 41) {
-                  // 27 - 40
-
-                  switch (mode) {
-                    case QRMode.MODE_NUMBER:
-                      return 14;
-                    case QRMode.MODE_ALPHA_NUM:
-                      return 13;
-                    case QRMode.MODE_8BIT_BYTE:
-                      return 16;
-                    case QRMode.MODE_KANJI:
-                      return 12;
-                    default:
-                      throw new Error("mode:" + mode);
-                  }
-                } else {
-                  throw new Error("type:" + type);
-                }
-              },
-
-              getLostPoint: function (qrCode) {
-                var moduleCount = qrCode.getModuleCount();
-                var lostPoint = 0;
-                var row = 0;
-                var col = 0;
-
-                // LEVEL1
-
-                for (row = 0; row < moduleCount; row++) {
-                  for (col = 0; col < moduleCount; col++) {
-                    var sameCount = 0;
-                    var dark = qrCode.isDark(row, col);
-
-                    for (var r = -1; r <= 1; r++) {
-                      if (row + r < 0 || moduleCount <= row + r) {
+                    if (row + r < 0 || moduleCount <= row + r) {
                         continue;
-                      }
+                    }
 
-                      for (var c = -1; c <= 1; c++) {
+                    for (var c = -1; c <= 1; c++) {
+
                         if (col + c < 0 || moduleCount <= col + c) {
-                          continue;
+                            continue;
                         }
 
                         if (r === 0 && c === 0) {
-                          continue;
+                            continue;
                         }
 
-                        if (dark === qrCode.isDark(row + r, col + c)) {
-                          sameCount++;
+                        if (dark === qrCode.isDark(row + r, col + c) ) {
+                            sameCount++;
                         }
-                      }
                     }
-
-                    if (sameCount > 5) {
-                      lostPoint += 3 + sameCount - 5;
-                    }
-                  }
                 }
 
-                // LEVEL2
-
-                for (row = 0; row < moduleCount - 1; row++) {
-                  for (col = 0; col < moduleCount - 1; col++) {
-                    var count = 0;
-                    if (qrCode.isDark(row, col)) count++;
-                    if (qrCode.isDark(row + 1, col)) count++;
-                    if (qrCode.isDark(row, col + 1)) count++;
-                    if (qrCode.isDark(row + 1, col + 1)) count++;
-                    if (count === 0 || count === 4) {
-                      lostPoint += 3;
-                    }
-                  }
+                if (sameCount > 5) {
+                    lostPoint += (3 + sameCount - 5);
                 }
-
-                // LEVEL3
-
-                for (row = 0; row < moduleCount; row++) {
-                  for (col = 0; col < moduleCount - 6; col++) {
-                    if (
-                      qrCode.isDark(row, col) &&
-                      !qrCode.isDark(row, col + 1) &&
-                      qrCode.isDark(row, col + 2) &&
-                      qrCode.isDark(row, col + 3) &&
-                      qrCode.isDark(row, col + 4) &&
-                      !qrCode.isDark(row, col + 5) &&
-                      qrCode.isDark(row, col + 6)
-                    ) {
-                      lostPoint += 40;
-                    }
-                  }
-                }
-
-                for (col = 0; col < moduleCount; col++) {
-                  for (row = 0; row < moduleCount - 6; row++) {
-                    if (
-                      qrCode.isDark(row, col) &&
-                      !qrCode.isDark(row + 1, col) &&
-                      qrCode.isDark(row + 2, col) &&
-                      qrCode.isDark(row + 3, col) &&
-                      qrCode.isDark(row + 4, col) &&
-                      !qrCode.isDark(row + 5, col) &&
-                      qrCode.isDark(row + 6, col)
-                    ) {
-                      lostPoint += 40;
-                    }
-                  }
-                }
-
-                // LEVEL4
-
-                var darkCount = 0;
-
-                for (col = 0; col < moduleCount; col++) {
-                  for (row = 0; row < moduleCount; row++) {
-                    if (qrCode.isDark(row, col)) {
-                      darkCount++;
-                    }
-                  }
-                }
-
-                var ratio = Math.abs((100 * darkCount) / moduleCount / moduleCount - 50) / 5;
-                lostPoint += ratio * 10;
-
-                return lostPoint;
-              },
-            };
-
-            module.exports = QRUtil;
-          },
-          index: function (require, module, exports) {
-            //---------------------------------------------------------------------
-            // QRCode for JavaScript
-            //
-            // Copyright (c) 2009 Kazuhiko Arase
-            //
-            // URL: http://www.d-project.com/
-            //
-            // Licensed under the MIT license:
-            //   http://www.opensource.org/licenses/mit-license.php
-            //
-            // The word "QR Code" is registered trademark of
-            // DENSO WAVE INCORPORATED
-            //   http://www.denso-wave.com/qrcode/faqpatent-e.html
-            //
-            //---------------------------------------------------------------------
-            // Modified to work in node for this project (and some refactoring)
-            //---------------------------------------------------------------------
-
-            var QR8bitByte = require("./QR8bitByte");
-            var QRUtil = require("./QRUtil");
-            var QRPolynomial = require("./QRPolynomial");
-            var QRRSBlock = require("./QRRSBlock");
-            var QRBitBuffer = require("./QRBitBuffer");
-
-            function QRCode(typeNumber, errorCorrectLevel) {
-              this.typeNumber = typeNumber;
-              this.errorCorrectLevel = errorCorrectLevel;
-              this.modules = null;
-              this.moduleCount = 0;
-              this.dataCache = null;
-              this.dataList = [];
             }
-
-            QRCode.prototype = {
-              addData: function (data) {
-                var newData = new QR8bitByte(data);
-                this.dataList.push(newData);
-                this.dataCache = null;
-              },
-
-              isDark: function (row, col) {
-                if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
-                  throw new Error(row + "," + col);
-                }
-                return this.modules[row][col];
-              },
-
-              getModuleCount: function () {
-                return this.moduleCount;
-              },
-
-              make: function () {
-                // Calculate automatically typeNumber if provided is < 1
-                if (this.typeNumber < 1) {
-                  var typeNumber = 1;
-                  for (typeNumber = 1; typeNumber < 40; typeNumber++) {
-                    var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
-
-                    var buffer = new QRBitBuffer();
-                    var totalDataCount = 0;
-                    for (var i = 0; i < rsBlocks.length; i++) {
-                      totalDataCount += rsBlocks[i].dataCount;
-                    }
-
-                    for (var x = 0; x < this.dataList.length; x++) {
-                      var data = this.dataList[x];
-                      buffer.put(data.mode, 4);
-                      buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber));
-                      data.write(buffer);
-                    }
-                    if (buffer.getLengthInBits() <= totalDataCount * 8) break;
-                  }
-                  this.typeNumber = typeNumber;
-                }
-                this.makeImpl(false, this.getBestMaskPattern());
-              },
-
-              makeImpl: function (test, maskPattern) {
-                this.moduleCount = this.typeNumber * 4 + 17;
-                this.modules = new Array(this.moduleCount);
-
-                for (var row = 0; row < this.moduleCount; row++) {
-                  this.modules[row] = new Array(this.moduleCount);
-
-                  for (var col = 0; col < this.moduleCount; col++) {
-                    this.modules[row][col] = null; //(col + row) % 3;
-                  }
-                }
-
-                this.setupPositionProbePattern(0, 0);
-                this.setupPositionProbePattern(this.moduleCount - 7, 0);
-                this.setupPositionProbePattern(0, this.moduleCount - 7);
-                this.setupPositionAdjustPattern();
-                this.setupTimingPattern();
-                this.setupTypeInfo(test, maskPattern);
-
-                if (this.typeNumber >= 7) {
-                  this.setupTypeNumber(test);
-                }
-
-                if (this.dataCache === null) {
-                  this.dataCache = QRCode.createData(
-                    this.typeNumber,
-                    this.errorCorrectLevel,
-                    this.dataList,
-                  );
-                }
-
-                this.mapData(this.dataCache, maskPattern);
-              },
-
-              setupPositionProbePattern: function (row, col) {
-                for (var r = -1; r <= 7; r++) {
-                  if (row + r <= -1 || this.moduleCount <= row + r) continue;
-
-                  for (var c = -1; c <= 7; c++) {
-                    if (col + c <= -1 || this.moduleCount <= col + c) continue;
-
-                    if (
-                      (0 <= r && r <= 6 && (c === 0 || c === 6)) ||
-                      (0 <= c && c <= 6 && (r === 0 || r === 6)) ||
-                      (2 <= r && r <= 4 && 2 <= c && c <= 4)
-                    ) {
-                      this.modules[row + r][col + c] = true;
-                    } else {
-                      this.modules[row + r][col + c] = false;
-                    }
-                  }
-                }
-              },
-
-              getBestMaskPattern: function () {
-                var minLostPoint = 0;
-                var pattern = 0;
-
-                for (var i = 0; i < 8; i++) {
-                  this.makeImpl(true, i);
-
-                  var lostPoint = QRUtil.getLostPoint(this);
-
-                  if (i === 0 || minLostPoint > lostPoint) {
-                    minLostPoint = lostPoint;
-                    pattern = i;
-                  }
-                }
-
-                return pattern;
-              },
-
-              createMovieClip: function (target_mc, instance_name, depth) {
-                var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
-                var cs = 1;
-
-                this.make();
-
-                for (var row = 0; row < this.modules.length; row++) {
-                  var y = row * cs;
-
-                  for (var col = 0; col < this.modules[row].length; col++) {
-                    var x = col * cs;
-                    var dark = this.modules[row][col];
-
-                    if (dark) {
-                      qr_mc.beginFill(0, 100);
-                      qr_mc.moveTo(x, y);
-                      qr_mc.lineTo(x + cs, y);
-                      qr_mc.lineTo(x + cs, y + cs);
-                      qr_mc.lineTo(x, y + cs);
-                      qr_mc.endFill();
-                    }
-                  }
-                }
-
-                return qr_mc;
-              },
-
-              setupTimingPattern: function () {
-                for (var r = 8; r < this.moduleCount - 8; r++) {
-                  if (this.modules[r][6] !== null) {
-                    continue;
-                  }
-                  this.modules[r][6] = r % 2 === 0;
-                }
-
-                for (var c = 8; c < this.moduleCount - 8; c++) {
-                  if (this.modules[6][c] !== null) {
-                    continue;
-                  }
-                  this.modules[6][c] = c % 2 === 0;
-                }
-              },
-
-              setupPositionAdjustPattern: function () {
-                var pos = QRUtil.getPatternPosition(this.typeNumber);
-
-                for (var i = 0; i < pos.length; i++) {
-                  for (var j = 0; j < pos.length; j++) {
-                    var row = pos[i];
-                    var col = pos[j];
-
-                    if (this.modules[row][col] !== null) {
-                      continue;
-                    }
-
-                    for (var r = -2; r <= 2; r++) {
-                      for (var c = -2; c <= 2; c++) {
-                        if (Math.abs(r) === 2 || Math.abs(c) === 2 || (r === 0 && c === 0)) {
-                          this.modules[row + r][col + c] = true;
-                        } else {
-                          this.modules[row + r][col + c] = false;
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-
-              setupTypeNumber: function (test) {
-                var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
-                var mod;
-
-                for (var i = 0; i < 18; i++) {
-                  mod = !test && ((bits >> i) & 1) === 1;
-                  this.modules[Math.floor(i / 3)][(i % 3) + this.moduleCount - 8 - 3] = mod;
-                }
-
-                for (var x = 0; x < 18; x++) {
-                  mod = !test && ((bits >> x) & 1) === 1;
-                  this.modules[(x % 3) + this.moduleCount - 8 - 3][Math.floor(x / 3)] = mod;
-                }
-              },
-
-              setupTypeInfo: function (test, maskPattern) {
-                var data = (this.errorCorrectLevel << 3) | maskPattern;
-                var bits = QRUtil.getBCHTypeInfo(data);
-                var mod;
-
-                // vertical
-                for (var v = 0; v < 15; v++) {
-                  mod = !test && ((bits >> v) & 1) === 1;
-
-                  if (v < 6) {
-                    this.modules[v][8] = mod;
-                  } else if (v < 8) {
-                    this.modules[v + 1][8] = mod;
-                  } else {
-                    this.modules[this.moduleCount - 15 + v][8] = mod;
-                  }
-                }
-
-                // horizontal
-                for (var h = 0; h < 15; h++) {
-                  mod = !test && ((bits >> h) & 1) === 1;
-
-                  if (h < 8) {
-                    this.modules[8][this.moduleCount - h - 1] = mod;
-                  } else if (h < 9) {
-                    this.modules[8][15 - h - 1 + 1] = mod;
-                  } else {
-                    this.modules[8][15 - h - 1] = mod;
-                  }
-                }
-
-                // fixed module
-                this.modules[this.moduleCount - 8][8] = !test;
-              },
-
-              mapData: function (data, maskPattern) {
-                var inc = -1;
-                var row = this.moduleCount - 1;
-                var bitIndex = 7;
-                var byteIndex = 0;
-
-                for (var col = this.moduleCount - 1; col > 0; col -= 2) {
-                  if (col === 6) col--;
-
-                  while (true) {
-                    for (var c = 0; c < 2; c++) {
-                      if (this.modules[row][col - c] === null) {
-                        var dark = false;
-
-                        if (byteIndex < data.length) {
-                          dark = ((data[byteIndex] >>> bitIndex) & 1) === 1;
-                        }
-
-                        var mask = QRUtil.getMask(maskPattern, row, col - c);
-
-                        if (mask) {
-                          dark = !dark;
-                        }
-
-                        this.modules[row][col - c] = dark;
-                        bitIndex--;
-
-                        if (bitIndex === -1) {
-                          byteIndex++;
-                          bitIndex = 7;
-                        }
-                      }
-                    }
-
-                    row += inc;
-
-                    if (row < 0 || this.moduleCount <= row) {
-                      row -= inc;
-                      inc = -inc;
-                      break;
-                    }
-                  }
-                }
-              },
-            };
-
-            QRCode.PAD0 = 0xec;
-            QRCode.PAD1 = 0x11;
-
-            QRCode.createData = function (typeNumber, errorCorrectLevel, dataList) {
-              var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
-
-              var buffer = new QRBitBuffer();
-
-              for (var i = 0; i < dataList.length; i++) {
-                var data = dataList[i];
-                buffer.put(data.mode, 4);
-                buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber));
-                data.write(buffer);
-              }
-
-              // calc num max data.
-              var totalDataCount = 0;
-              for (var x = 0; x < rsBlocks.length; x++) {
-                totalDataCount += rsBlocks[x].dataCount;
-              }
-
-              if (buffer.getLengthInBits() > totalDataCount * 8) {
-                throw new Error(
-                  "code length overflow. (" +
-                    buffer.getLengthInBits() +
-                    ">" +
-                    totalDataCount * 8 +
-                    ")",
-                );
-              }
-
-              // end code
-              if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
-                buffer.put(0, 4);
-              }
-
-              // padding
-              while (buffer.getLengthInBits() % 8 !== 0) {
-                buffer.putBit(false);
-              }
-
-              // padding
-              while (true) {
-                if (buffer.getLengthInBits() >= totalDataCount * 8) {
-                  break;
-                }
-                buffer.put(QRCode.PAD0, 8);
-
-                if (buffer.getLengthInBits() >= totalDataCount * 8) {
-                  break;
-                }
-                buffer.put(QRCode.PAD1, 8);
-              }
-
-              return QRCode.createBytes(buffer, rsBlocks);
-            };
-
-            QRCode.createBytes = function (buffer, rsBlocks) {
-              var offset = 0;
-
-              var maxDcCount = 0;
-              var maxEcCount = 0;
-
-              var dcdata = new Array(rsBlocks.length);
-              var ecdata = new Array(rsBlocks.length);
-
-              for (var r = 0; r < rsBlocks.length; r++) {
-                var dcCount = rsBlocks[r].dataCount;
-                var ecCount = rsBlocks[r].totalCount - dcCount;
-
-                maxDcCount = Math.max(maxDcCount, dcCount);
-                maxEcCount = Math.max(maxEcCount, ecCount);
-
-                dcdata[r] = new Array(dcCount);
-
-                for (var i = 0; i < dcdata[r].length; i++) {
-                  dcdata[r][i] = 0xff & buffer.buffer[i + offset];
-                }
-                offset += dcCount;
-
-                var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
-                var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
-
-                var modPoly = rawPoly.mod(rsPoly);
-                ecdata[r] = new Array(rsPoly.getLength() - 1);
-                for (var x = 0; x < ecdata[r].length; x++) {
-                  var modIndex = x + modPoly.getLength() - ecdata[r].length;
-                  ecdata[r][x] = modIndex >= 0 ? modPoly.get(modIndex) : 0;
-                }
-              }
-
-              var totalCodeCount = 0;
-              for (var y = 0; y < rsBlocks.length; y++) {
-                totalCodeCount += rsBlocks[y].totalCount;
-              }
-
-              var data = new Array(totalCodeCount);
-              var index = 0;
-
-              for (var z = 0; z < maxDcCount; z++) {
-                for (var s = 0; s < rsBlocks.length; s++) {
-                  if (z < dcdata[s].length) {
-                    data[index++] = dcdata[s][z];
-                  }
-                }
-              }
-
-              for (var xx = 0; xx < maxEcCount; xx++) {
-                for (var t = 0; t < rsBlocks.length; t++) {
-                  if (xx < ecdata[t].length) {
-                    data[index++] = ecdata[t][xx];
-                  }
-                }
-              }
-
-              return data;
-            };
-
-            module.exports = QRCode;
-          },
-        };
-        const cache = {};
-        function load(id) {
-          if (cache[id]) return cache[id].exports;
-          const factory = factories[id];
-          if (!factory) throw new Error("Missing QR module " + id);
-          const module = { exports: {} };
-          cache[id] = module;
-          factory(
-            function (path) {
-              const key = path.replace(/^\.\//, "").replace(/\.js$/, "");
-              return load(key);
-            },
-            module,
-            module.exports,
-          );
-          return module.exports;
         }
-        const Core = load("index");
-        const Levels = load("QRErrorCorrectLevel");
-        window.QRCode = {
-          toDataURL: function (value, opts) {
-            opts = opts || {};
-            return new Promise(function (resolve, reject) {
-              try {
-                const qr = new Core(-1, Levels[opts.errorCorrectionLevel || "M"] || Levels.M);
-                qr.addData(String(value));
-                qr.make();
-                const count = qr.getModuleCount(),
-                  width = Math.max(128, Number(opts.width) || 180),
-                  margin = Math.max(0, Number(opts.margin ?? 2));
-                const canvas = document.createElement("canvas");
-                canvas.width = width;
-                canvas.height = width;
-                const ctx = canvas.getContext("2d");
-                if (!ctx) throw new Error("Canvas is not available in this browser.");
-                ctx.fillStyle = "#fff";
-                ctx.fillRect(0, 0, width, width);
-                ctx.fillStyle = "#000";
-                const cell = width / (count + margin * 2);
-                const offset = margin * cell;
-                for (let r = 0; r < count; r++)
-                  for (let c = 0; c < count; c++)
-                    if (qr.modules[r][c]) {
-                      const x = Math.floor(offset + c * cell),
-                        y = Math.floor(offset + r * cell),
-                        right = Math.ceil(offset + (c + 1) * cell),
-                        bottom = Math.ceil(offset + (r + 1) * cell);
-                      ctx.fillRect(x, y, right - x, bottom - y);
-                    }
-                resolve(canvas.toDataURL("image/png"));
-              } catch (e) {
-                reject(e);
-              }
-            });
-          },
-        };
-      })();
-    </script>
-    <script>
-      const SUPABASE_URL = "https://dlrfyamgfwkcdzgafghb.supabase.co";
-      const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_toP1wnV1eVtsBvCeFcBCaw_UomR3IE9";
-      const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-        auth: { experimental: { passkey: true } },
-      });
-      let profile = null,
-        tools = [],
-        people = [],
-        history = [],
-        damageReports = [],
-        maintenanceRecords = [],
-        selectedBin = null;
-      const OMM_EMAIL = "elias@rea.za.com";
-      function ensureQrLibrary() {
-        return Promise.resolve(window.QRCode);
-      }
-      const $ = (id) => document.getElementById(id),
-        today = () => new Date().toISOString().slice(0, 10);
-      const esc = (s) =>
-        String(s ?? "").replace(
-          /[&<>"']/g,
-          (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c],
-        );
-      function isAdmin() {
-        return profile?.is_admin === true;
-      }
-      function showError(id, msg) {
-        $(id).innerHTML = '<div class="error">' + esc(msg) + "</div>";
-      }
-      async function signIn(e) {
-        e.preventDefault();
-        $("loginError").innerHTML = "";
-        const { error } = await db.auth.signInWithPassword({
-          email: $("email").value.trim(),
-          password: $("password").value,
-        });
-        if (error) {
-          showError("loginError", error.message);
-          return;
-        }
-        await startApp();
-      }
-      async function forgotPassword() {
-        const email = $("email").value.trim();
-        if (!email) {
-          showError("loginError", "Enter your email address first, then choose Forgot password.");
-          return;
-        }
-        const redirectTo = location.origin + location.pathname;
-        const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo });
-        if (error) {
-          showError("loginError", error.message);
-          return;
-        }
-        $("loginError").innerHTML =
-          '<div class="notice">If this email belongs to an MR FIX IT account, a password reset link has been sent. Check your inbox and spam folder.</div>';
-      }
-      async function saveNewPassword() {
-        const password = $("newPassword").value;
-        if (password.length < 8)
-          return showError("loginError", "Use at least 8 characters for your new password.");
-        const { error } = await db.auth.updateUser({ password });
-        if (error) return showError("loginError", error.message);
-        $("resetPanel").classList.add("hidden");
-        $("loginError").innerHTML =
-          '<div class="notice">Password updated. You can now sign in with your new password.</div>';
-        $("password").value = "";
-      }
-      async function signInPasskey() {
-        $("loginError").innerHTML = "";
-        try {
-          const { error } = await db.auth.signInWithPasskey();
-          if (error) {
-            showError("loginError", error.message);
-            return;
-          }
-          await startApp();
-        } catch (e) {
-          showError(
-            "loginError",
-            e.message || "Passkey sign-in is not available on this device or domain yet.",
-          );
-        }
-      }
-      async function registerPasskey() {
-        try {
-          const { data, error } = await db.auth.registerPasskey();
-          if (error) {
-            alert("Could not set up passkey: " + error.message);
-            return;
-          }
-          alert(
-            "Passkey registered on this device. Next time, use the Face ID / fingerprint button to sign in.",
-          );
-        } catch (e) {
-          alert("Passkey setup is not available yet: " + (e.message || e));
-        }
-      }
-      async function signOut() {
-        await db.auth.signOut();
-        profile = null;
-        $("app").classList.add("hidden");
-        $("login").classList.remove("hidden");
-      }
-      async function startApp() {
-        const {
-          data: { user },
-          error,
-        } = await db.auth.getUser();
-        if (error || !user) return;
-        const { data: p, error: pe } = await db
-          .from("profiles")
-          .select("id,full_name,job_title,is_admin,active")
-          .eq("id", user.id)
-          .single();
-        if (pe || !p || !p.active) {
-          await db.auth.signOut();
-          showError(
-            "loginError",
-            "Your Supabase login is valid, but your MR FIX IT team profile is missing or inactive. Run the updated setup SQL in your Supabase SQL Editor, then sign in again.",
-          );
-          return;
-        }
-        profile = p;
-        $("login").classList.add("hidden");
-        $("app").classList.remove("hidden");
-        $("whoami").textContent = p.full_name + (p.is_admin ? " · Administrator" : " · Technician");
-        await loadData();
-        const incomingTool = new URLSearchParams(location.search).get("tool");
-        if (incomingTool) {
-          $("scanId").value = incomingTool;
-          go("dashboard");
-        }
-        db.removeAllChannels();
-        db.channel("mr-fix-it-live")
-          .on("postgres_changes", { event: "*", schema: "public", table: "tools" }, loadData)
-          .on(
-            "postgres_changes",
-            { event: "*", schema: "public", table: "tool_movements" },
-            loadData,
-          )
-          .on(
-            "postgres_changes",
-            { event: "*", schema: "public", table: "damage_reports" },
-            loadData,
-          )
-          .on(
-            "postgres_changes",
-            { event: "*", schema: "public", table: "maintenance_records" },
-            loadData,
-          )
-          .subscribe();
-      }
-      async function loadData() {
-        const [tr, pr, hr, dr, mr] = await Promise.all([
-          db.from("tools").select("*").order("created_at", { ascending: false }),
-          db
-            .from("profiles")
-            .select("id,full_name,job_title,is_admin")
-            .eq("active", true)
-            .order("full_name"),
-          db
-            .from("tool_movements")
-            .select("*")
-            .order("created_at", { ascending: false })
-            .limit(300),
-          db
-            .from("damage_reports")
-            .select("*")
-            .order("created_at", { ascending: false })
-            .limit(100),
-          db
-            .from("maintenance_records")
-            .select("*")
-            .order("created_at", { ascending: false })
-            .limit(100),
-        ]);
-        if (tr.error || pr.error || hr.error || dr.error || mr.error) {
-          alert(
-            "Could not load workshop records. Run the Mr Fix It Damage and Maintenance SQL update in Supabase, then refresh. Details: " +
-              (tr.error || pr.error || hr.error || dr.error || mr.error).message,
-          );
-          console.error(tr.error, pr.error, hr.error, dr.error, mr.error);
-          return;
-        }
-        tools = tr.data || [];
-        people = pr.data || [];
-        history = hr.data || [];
-        damageReports = dr.data || [];
-        maintenanceRecords = mr.data || [];
-        if (!selectedBin) selectedBin = profile.id;
-        render();
-      }
-      function go(page) {
-        document.querySelectorAll("main>section").forEach((s) => s.classList.add("hidden"));
-        $(page).classList.remove("hidden");
-        document
-          .querySelectorAll(".tab")
-          .forEach((b) => b.classList.toggle("active", b.dataset.page === page));
-        $("pageTitle").textContent = {
-          dashboard: "Workshop dashboard",
-          tools: "Tool register",
-          bins: "Technician bins",
-          activity: "Activity history",
-          repairs: "Damage & Maintenance",
-        }[page];
-      }
-      document.querySelectorAll(".tab").forEach((b) => (b.onclick = () => go(b.dataset.page)));
-      function toolStatus(t) {
-        return t.status || (t.borrower_id ? "In Use" : "Available");
-      }
-      function statusPill(t) {
-        const st = toolStatus(t);
-        const cls =
-          st === "Available"
-            ? "green"
-            : st === "Damaged"
-              ? "red"
-              : st === "Under Maintenance"
-                ? "orange"
-                : st === "Lost"
-                  ? "grey"
-                  : "red";
-        return `<span class="pill ${cls}">${esc(st)}</span>`;
-      }
-      async function notifyOmm(event, toolId, details = {}) {
-        try {
-          const {
-            data: { session },
-          } = await db.auth.getSession();
-          if (!session?.access_token) return;
-          const { error } = await db.functions.invoke("mr-fix-it-notify", {
-            body: { event, toolId, details },
-          });
-          if (error) console.warn("Email notification could not be sent:", error.message);
-        } catch (err) {
-          console.warn("Email notification error:", err);
-        }
-      }
-      function showForm() {
-        if (!isAdmin()) return;
-        $("toolForm").classList.remove("hidden");
-      }
-      function hideForm() {
-        $("toolForm").classList.add("hidden");
-      }
-      async function saveTool(e) {
-        e.preventDefault();
-        if (!isAdmin()) return alert("Administrator access required.");
-        const file = $("fPhoto").files[0];
-        let photo_url = null;
-        if (file) {
-          const ext = (file.name.split(".").pop() || "jpg")
-            .replace(/[^a-z0-9]/gi, "")
-            .toLowerCase();
-          const path = crypto.randomUUID() + "." + ext;
-          const { error } = await db.storage
-            .from("tool-photos")
-            .upload(path, file, { upsert: false, contentType: file.type });
-          if (error) return alert("Photo upload failed: " + error.message);
-          photo_url = db.storage.from("tool-photos").getPublicUrl(path).data.publicUrl;
-        }
-        const payload = {
-          name: $("fName").value.trim(),
-          make: $("fMake").value.trim(),
-          model: $("fModel").value.trim(),
-          serial_number: $("fSerial").value.trim(),
-          category: $("fCategory").value,
-          location: $("fLocation").value.trim(),
-          condition: $("fCondition").value,
-          photo_url,
-        };
-        const { data: saved, error } = await db.from("tools").insert(payload).select("*").single();
-        if (error) {
-          if (/category|location|column/i.test(error.message)) {
-            return alert(
-              "The database needs the Category and Location update first. Run the supplied MR_FIX_IT_Category_Location_Update.sql file in Supabase SQL Editor, then try again. Details: " +
-                error.message,
-            );
-          }
-          return alert("Could not save tool: " + error.message);
-        }
-        e.target.reset();
-        hideForm();
-        await loadData();
-        if (saved?.tool_code)
-          alert("Tool registered. Its QR code is now available in the Tool Register.");
-      }
-      async function processToolAction() {
-        const id = $("scanId").value.trim();
-        const t = tools.find((x) => (x.tool_code || "").toLowerCase() === id.toLowerCase());
-        if (!t) return alert("Tool ID not found.");
-        if ($("scanAction").value === "borrow") {
-          if (t.borrower_id) return alert("This tool is already assigned.");
-          if (toolStatus(t) !== "Available")
-            return alert("This tool is not available. Current status: " + toolStatus(t));
-          const job = $("jobRef").value.trim();
-          const due = $("dueDate").value;
-          if (!job) return alert("Enter the job card or site reference.");
-          if (!due) return alert("Enter an expected return date.");
-          const { error } = await db
-            .from("tools")
-            .update({
-              borrower_id: profile.id,
-              job_reference: job,
-              borrowed_at: new Date().toISOString(),
-              due_date: due,
-              returned_at: null,
-              status: "In Use",
-              last_reminder_at: null,
-            })
-            .eq("id", t.id)
-            .is("borrower_id", null);
-          if (error) return alert("Borrow failed: " + error.message);
-          await db
-            .from("tool_movements")
-            .insert({
-              tool_id: t.id,
-              actor_id: profile.id,
-              action: "Borrowed",
-              job_reference: job,
-              condition: t.condition,
-            });
-          await notifyOmm("borrowed", t.id, {
-            job_reference: job,
-            due_date: due,
-            borrower: profile.full_name,
-          });
-        } else {
-          if (!t.borrower_id) return alert("This tool is already available.");
-          if (t.borrower_id !== profile.id && !isAdmin())
-            return alert("Only the assigned technician or an administrator can return this tool.");
-          const condition = prompt(
-            "Return condition (Good / Worn / Damaged / Faulty):",
-            t.condition,
-          );
-          if (condition === null) return;
-          const { error } = await db
-            .from("tools")
-            .update({
-              borrower_id: null,
-              job_reference: null,
-              borrowed_at: null,
-              due_date: null,
-              returned_at: new Date().toISOString(),
-              condition,
-              status:
-                toolStatus(t) === "Damaged" || /damag|faulty|broken|needs repair/i.test(condition)
-                  ? "Damaged"
-                  : "Available",
-            })
-            .eq("id", t.id);
-          if (error) return alert("Return failed: " + error.message);
-          await db
-            .from("tool_movements")
-            .insert({ tool_id: t.id, actor_id: profile.id, action: "Returned", condition });
-          if (/damag|faulty|broken|needs repair/i.test(condition)) {
-            await notifyOmm("damaged", t.id, {
-              description: "Tool returned with condition: " + condition,
-              location: t.location || "Not specified",
-              incident_date: today(),
-            });
-          }
-        }
-        $("scanId").value = "";
-        $("jobRef").value = "";
-        await loadData();
-      }
-      function toolQrPayload(t) {
-        const url = new URL(location.href);
-        url.search = "";
-        url.hash = "";
-        url.searchParams.set("tool", t.tool_code);
-        return url.toString();
-      }
-      async function renderToolQrs() {
-        const qrImages = tools.filter((t) => t.tool_code && $("qr-" + t.id));
-        if (!qrImages.length) return;
-        try {
-          await ensureQrLibrary();
-        } catch (err) {
-          console.error(err);
-          qrImages.forEach((t) => {
-            const img = $("qr-" + t.id);
-            if (img) img.alt = "QR generator unavailable — refresh the page to retry";
-          });
-          return;
-        }
-        for (const t of qrImages) {
-          const img = $("qr-" + t.id);
-          if (!img) continue;
-          try {
-            img.src = await window.QRCode.toDataURL(toolQrPayload(t), {
-              width: 180,
-              margin: 1,
-              errorCorrectionLevel: "M",
-            });
-          } catch (err) {
-            console.error("QR generation failed", err);
-          }
-        }
-      }
-      async function printQr(toolId) {
-        const t = tools.find((x) => x.id === toolId);
-        if (!t || !t.tool_code) return alert("This tool does not have a generated tool ID yet.");
-        try {
-          await ensureQrLibrary();
-          const qr = await window.QRCode.toDataURL(toolQrPayload(t), {
-            width: 360,
-            margin: 2,
-            errorCorrectionLevel: "M",
-          });
-          const w = window.open("", "_blank", "width=480,height=420");
-          if (!w) return alert("Please allow pop-ups to print QR labels.");
-          w.document.write(
-            `<!doctype html><html><head><title>Tool label ${esc(t.tool_code)}</title><style>body{font-family:Arial,sans-serif;text-align:center;padding:24px}.label{border:1px solid #333;border-radius:10px;padding:18px;display:inline-block;min-width:260px}img{width:190px;height:190px}h2{margin:8px 0}p{margin:5px 0}</style></head><body><div class="label"><h2>MR FIX IT</h2><img src="${qr}"><h2>${esc(t.tool_code)}</h2><p>${esc(t.name)}</p><p>${esc(t.category || "")} · ${esc(t.location || "")}</p><p style="font-size:11px">Scan to open MR FIX IT</p></div><script>window.onload=()=>window.print()<\/script></body></html>`,
-          );
-          w.document.close();
-        } catch (err) {
-          alert(err.message || "Could not prepare QR label: " + err);
-        }
-      }
 
-      function renderToolRegister() {
-        const query = ($("toolSearch")?.value || "").trim().toLowerCase();
-        const category = $("categoryFilter")?.value || "";
-        const filtered = tools.filter((t) => {
-          const haystack = [
-            t.name,
-            t.make,
-            t.model,
-            t.serial_number,
-            t.tool_code,
-            t.category,
-            t.location,
-            t.condition,
-          ]
-            .join(" ")
-            .toLowerCase();
-          return (
-            (!query || haystack.includes(query)) &&
-            (!category || (t.category || "Uncategorised") === category)
-          );
-        });
-        if ($("toolCount"))
-          $("toolCount").textContent = `Showing ${filtered.length} of ${tools.length} tools`;
-        if (!tools.length) {
-          $("toolList").innerHTML = '<div class="empty">No tools registered yet.</div>';
-          return;
+        // LEVEL2
+
+        for (row = 0; row < moduleCount - 1; row++) {
+            for (col = 0; col < moduleCount - 1; col++) {
+                var count = 0;
+                if (qrCode.isDark(row,     col    ) ) count++;
+                if (qrCode.isDark(row + 1, col    ) ) count++;
+                if (qrCode.isDark(row,     col + 1) ) count++;
+                if (qrCode.isDark(row + 1, col + 1) ) count++;
+                if (count === 0 || count === 4) {
+                    lostPoint += 3;
+                }
+            }
         }
-        if (!filtered.length) {
-          $("toolList").innerHTML =
-            '<div class="empty">No matching tools found. Try another search or tool type.</div>';
-          return;
+
+        // LEVEL3
+
+        for (row = 0; row < moduleCount; row++) {
+            for (col = 0; col < moduleCount - 6; col++) {
+                if (qrCode.isDark(row, col) && 
+                        !qrCode.isDark(row, col + 1) && 
+                         qrCode.isDark(row, col + 2) && 
+                         qrCode.isDark(row, col + 3) && 
+                         qrCode.isDark(row, col + 4) && 
+                        !qrCode.isDark(row, col + 5) && 
+                         qrCode.isDark(row, col + 6) ) {
+                    lostPoint += 40;
+                }
+            }
         }
-        const groups = {};
-        filtered.forEach((t) => {
-          const type = t.category || "Uncategorised";
-          (groups[type] ||= []).push(t);
-        });
-        const sortedTypes = Object.keys(groups).sort((a, b) => a.localeCompare(b));
-        $("toolList").innerHTML = sortedTypes
-          .map(
-            (type) =>
-              `<section class="tool-group"><h3 class="category-heading">${esc(type)} <small>(${groups[type].length})</small></h3>${groups[
-                type
-              ]
-                .map(
-                  (t) => `<div class="tool">
-  <img src="${esc(t.photo_url || "")}" onerror="this.style.visibility='hidden'">
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount - 6; row++) {
+                if (qrCode.isDark(row, col) &&
+                        !qrCode.isDark(row + 1, col) &&
+                         qrCode.isDark(row + 2, col) &&
+                         qrCode.isDark(row + 3, col) &&
+                         qrCode.isDark(row + 4, col) &&
+                        !qrCode.isDark(row + 5, col) &&
+                         qrCode.isDark(row + 6, col) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        // LEVEL4
+        
+        var darkCount = 0;
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount; row++) {
+                if (qrCode.isDark(row, col) ) {
+                    darkCount++;
+                }
+            }
+        }
+        
+        var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+        lostPoint += ratio * 10;
+
+        return lostPoint;       
+    }
+
+};
+
+module.exports = QRUtil;
+
+},
+"index": function(require,module,exports){
+//---------------------------------------------------------------------
+// QRCode for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//   http://www.opensource.org/licenses/mit-license.php
+//
+// The word "QR Code" is registered trademark of 
+// DENSO WAVE INCORPORATED
+//   http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+// Modified to work in node for this project (and some refactoring)
+//---------------------------------------------------------------------
+
+var QR8bitByte = require('./QR8bitByte');
+var QRUtil = require('./QRUtil');
+var QRPolynomial = require('./QRPolynomial');
+var QRRSBlock = require('./QRRSBlock');
+var QRBitBuffer = require('./QRBitBuffer');
+
+function QRCode(typeNumber, errorCorrectLevel) {
+	this.typeNumber = typeNumber;
+	this.errorCorrectLevel = errorCorrectLevel;
+	this.modules = null;
+	this.moduleCount = 0;
+	this.dataCache = null;
+	this.dataList = [];
+}
+
+QRCode.prototype = {
+	
+	addData : function(data) {
+		var newData = new QR8bitByte(data);
+		this.dataList.push(newData);
+		this.dataCache = null;
+	},
+	
+	isDark : function(row, col) {
+		if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+			throw new Error(row + "," + col);
+		}
+		return this.modules[row][col];
+	},
+
+	getModuleCount : function() {
+		return this.moduleCount;
+	},
+	
+	make : function() {
+		// Calculate automatically typeNumber if provided is < 1
+		if (this.typeNumber < 1 ){
+			var typeNumber = 1;
+			for (typeNumber = 1; typeNumber < 40; typeNumber++) {
+				var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+
+				var buffer = new QRBitBuffer();
+				var totalDataCount = 0;
+				for (var i = 0; i < rsBlocks.length; i++) {
+					totalDataCount += rsBlocks[i].dataCount;
+				}
+
+				for (var x = 0; x < this.dataList.length; x++) {
+					var data = this.dataList[x];
+					buffer.put(data.mode, 4);
+					buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+					data.write(buffer);
+				}
+				if (buffer.getLengthInBits() <= totalDataCount * 8)
+					break;
+			}
+			this.typeNumber = typeNumber;
+		}
+		this.makeImpl(false, this.getBestMaskPattern() );
+	},
+	
+	makeImpl : function(test, maskPattern) {
+		
+		this.moduleCount = this.typeNumber * 4 + 17;
+		this.modules = new Array(this.moduleCount);
+		
+		for (var row = 0; row < this.moduleCount; row++) {
+			
+			this.modules[row] = new Array(this.moduleCount);
+			
+			for (var col = 0; col < this.moduleCount; col++) {
+				this.modules[row][col] = null;//(col + row) % 3;
+			}
+		}
+	
+		this.setupPositionProbePattern(0, 0);
+		this.setupPositionProbePattern(this.moduleCount - 7, 0);
+		this.setupPositionProbePattern(0, this.moduleCount - 7);
+		this.setupPositionAdjustPattern();
+		this.setupTimingPattern();
+		this.setupTypeInfo(test, maskPattern);
+		
+		if (this.typeNumber >= 7) {
+			this.setupTypeNumber(test);
+		}
+	
+		if (this.dataCache === null) {
+			this.dataCache = QRCode.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+		}
+	
+		this.mapData(this.dataCache, maskPattern);
+	},
+
+	setupPositionProbePattern : function(row, col)  {
+		
+		for (var r = -1; r <= 7; r++) {
+			
+			if (row + r <= -1 || this.moduleCount <= row + r) continue;
+			
+			for (var c = -1; c <= 7; c++) {
+				
+				if (col + c <= -1 || this.moduleCount <= col + c) continue;
+				
+				if ( (0 <= r && r <= 6 && (c === 0 || c === 6) ) || 
+                     (0 <= c && c <= 6 && (r === 0 || r === 6) ) || 
+                     (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+					this.modules[row + r][col + c] = true;
+				} else {
+					this.modules[row + r][col + c] = false;
+				}
+			}		
+		}		
+	},
+	
+	getBestMaskPattern : function() {
+	
+		var minLostPoint = 0;
+		var pattern = 0;
+	
+		for (var i = 0; i < 8; i++) {
+			
+			this.makeImpl(true, i);
+	
+			var lostPoint = QRUtil.getLostPoint(this);
+	
+			if (i === 0 || minLostPoint >  lostPoint) {
+				minLostPoint = lostPoint;
+				pattern = i;
+			}
+		}
+	
+		return pattern;
+	},
+	
+	createMovieClip : function(target_mc, instance_name, depth) {
+	
+		var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
+		var cs = 1;
+	
+		this.make();
+
+		for (var row = 0; row < this.modules.length; row++) {
+			
+			var y = row * cs;
+			
+			for (var col = 0; col < this.modules[row].length; col++) {
+	
+				var x = col * cs;
+				var dark = this.modules[row][col];
+			
+				if (dark) {
+					qr_mc.beginFill(0, 100);
+					qr_mc.moveTo(x, y);
+					qr_mc.lineTo(x + cs, y);
+					qr_mc.lineTo(x + cs, y + cs);
+					qr_mc.lineTo(x, y + cs);
+					qr_mc.endFill();
+				}
+			}
+		}
+		
+		return qr_mc;
+	},
+
+	setupTimingPattern : function() {
+		
+		for (var r = 8; r < this.moduleCount - 8; r++) {
+			if (this.modules[r][6] !== null) {
+				continue;
+			}
+			this.modules[r][6] = (r % 2 === 0);
+		}
+	
+		for (var c = 8; c < this.moduleCount - 8; c++) {
+			if (this.modules[6][c] !== null) {
+				continue;
+			}
+			this.modules[6][c] = (c % 2 === 0);
+		}
+	},
+	
+	setupPositionAdjustPattern : function() {
+	
+		var pos = QRUtil.getPatternPosition(this.typeNumber);
+		
+		for (var i = 0; i < pos.length; i++) {
+		
+			for (var j = 0; j < pos.length; j++) {
+			
+				var row = pos[i];
+				var col = pos[j];
+				
+				if (this.modules[row][col] !== null) {
+					continue;
+				}
+				
+				for (var r = -2; r <= 2; r++) {
+				
+					for (var c = -2; c <= 2; c++) {
+					
+						if (Math.abs(r) === 2 || 
+                            Math.abs(c) === 2 ||
+                            (r === 0 && c === 0) ) {
+							this.modules[row + r][col + c] = true;
+						} else {
+							this.modules[row + r][col + c] = false;
+						}
+					}
+				}
+			}
+		}
+	},
+	
+	setupTypeNumber : function(test) {
+	
+		var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+        var mod;
+	
+		for (var i = 0; i < 18; i++) {
+			mod = (!test && ( (bits >> i) & 1) === 1);
+			this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
+		}
+	
+		for (var x = 0; x < 18; x++) {
+			mod = (!test && ( (bits >> x) & 1) === 1);
+			this.modules[x % 3 + this.moduleCount - 8 - 3][Math.floor(x / 3)] = mod;
+		}
+	},
+	
+	setupTypeInfo : function(test, maskPattern) {
+	
+		var data = (this.errorCorrectLevel << 3) | maskPattern;
+		var bits = QRUtil.getBCHTypeInfo(data);
+        var mod;
+	
+		// vertical		
+		for (var v = 0; v < 15; v++) {
+	
+			mod = (!test && ( (bits >> v) & 1) === 1);
+	
+			if (v < 6) {
+				this.modules[v][8] = mod;
+			} else if (v < 8) {
+				this.modules[v + 1][8] = mod;
+			} else {
+				this.modules[this.moduleCount - 15 + v][8] = mod;
+			}
+		}
+	
+		// horizontal
+		for (var h = 0; h < 15; h++) {
+	
+			mod = (!test && ( (bits >> h) & 1) === 1);
+			
+			if (h < 8) {
+				this.modules[8][this.moduleCount - h - 1] = mod;
+			} else if (h < 9) {
+				this.modules[8][15 - h - 1 + 1] = mod;
+			} else {
+				this.modules[8][15 - h - 1] = mod;
+			}
+		}
+	
+		// fixed module
+		this.modules[this.moduleCount - 8][8] = (!test);
+	
+	},
+	
+	mapData : function(data, maskPattern) {
+		
+		var inc = -1;
+		var row = this.moduleCount - 1;
+		var bitIndex = 7;
+		var byteIndex = 0;
+		
+		for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+	
+			if (col === 6) col--;
+	
+			while (true) {
+	
+				for (var c = 0; c < 2; c++) {
+					
+					if (this.modules[row][col - c] === null) {
+						
+						var dark = false;
+	
+						if (byteIndex < data.length) {
+							dark = ( ( (data[byteIndex] >>> bitIndex) & 1) === 1);
+						}
+	
+						var mask = QRUtil.getMask(maskPattern, row, col - c);
+	
+						if (mask) {
+							dark = !dark;
+						}
+						
+						this.modules[row][col - c] = dark;
+						bitIndex--;
+	
+						if (bitIndex === -1) {
+							byteIndex++;
+							bitIndex = 7;
+						}
+					}
+				}
+								
+				row += inc;
+	
+				if (row < 0 || this.moduleCount <= row) {
+					row -= inc;
+					inc = -inc;
+					break;
+				}
+			}
+		}
+		
+	}
+
+};
+
+QRCode.PAD0 = 0xEC;
+QRCode.PAD1 = 0x11;
+
+QRCode.createData = function(typeNumber, errorCorrectLevel, dataList) {
+	
+	var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+	
+	var buffer = new QRBitBuffer();
+	
+	for (var i = 0; i < dataList.length; i++) {
+		var data = dataList[i];
+		buffer.put(data.mode, 4);
+		buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+		data.write(buffer);
+	}
+
+	// calc num max data.
+	var totalDataCount = 0;
+	for (var x = 0; x < rsBlocks.length; x++) {
+		totalDataCount += rsBlocks[x].dataCount;
+	}
+
+	if (buffer.getLengthInBits() > totalDataCount * 8) {
+		throw new Error("code length overflow. (" + 
+            buffer.getLengthInBits() + 
+            ">" +  
+            totalDataCount * 8 + 
+            ")");
+	}
+
+	// end code
+	if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+		buffer.put(0, 4);
+	}
+
+	// padding
+	while (buffer.getLengthInBits() % 8 !== 0) {
+		buffer.putBit(false);
+	}
+
+	// padding
+	while (true) {
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD0, 8);
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD1, 8);
+	}
+
+	return QRCode.createBytes(buffer, rsBlocks);
+};
+
+QRCode.createBytes = function(buffer, rsBlocks) {
+
+	var offset = 0;
+	
+	var maxDcCount = 0;
+	var maxEcCount = 0;
+	
+	var dcdata = new Array(rsBlocks.length);
+	var ecdata = new Array(rsBlocks.length);
+	
+	for (var r = 0; r < rsBlocks.length; r++) {
+
+		var dcCount = rsBlocks[r].dataCount;
+		var ecCount = rsBlocks[r].totalCount - dcCount;
+
+		maxDcCount = Math.max(maxDcCount, dcCount);
+		maxEcCount = Math.max(maxEcCount, ecCount);
+		
+		dcdata[r] = new Array(dcCount);
+		
+		for (var i = 0; i < dcdata[r].length; i++) {
+			dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+		}
+		offset += dcCount;
+		
+		var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+		var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+		var modPoly = rawPoly.mod(rsPoly);
+		ecdata[r] = new Array(rsPoly.getLength() - 1);
+		for (var x = 0; x < ecdata[r].length; x++) {
+            var modIndex = x + modPoly.getLength() - ecdata[r].length;
+			ecdata[r][x] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+		}
+
+	}
+	
+	var totalCodeCount = 0;
+	for (var y = 0; y < rsBlocks.length; y++) {
+		totalCodeCount += rsBlocks[y].totalCount;
+	}
+
+	var data = new Array(totalCodeCount);
+	var index = 0;
+
+	for (var z = 0; z < maxDcCount; z++) {
+		for (var s = 0; s < rsBlocks.length; s++) {
+			if (z < dcdata[s].length) {
+				data[index++] = dcdata[s][z];
+			}
+		}
+	}
+
+	for (var xx = 0; xx < maxEcCount; xx++) {
+		for (var t = 0; t < rsBlocks.length; t++) {
+			if (xx < ecdata[t].length) {
+				data[index++] = ecdata[t][xx];
+			}
+		}
+	}
+
+	return data;
+
+};
+
+module.exports = QRCode;
+
+}};
+ const cache={};
+ function load(id){ if(cache[id]) return cache[id].exports; const factory=factories[id]; if(!factory) throw new Error('Missing QR module '+id); const module={exports:{}}; cache[id]=module; factory(function(path){const key=path.replace(/^\.\//,'').replace(/\.js$/,'');return load(key);},module,module.exports); return module.exports; }
+ const Core=load('index'); const Levels=load('QRErrorCorrectLevel');
+ window.QRCode={toDataURL:function(value,opts){opts=opts||{};return new Promise(function(resolve,reject){try{
+   const qr=new Core(-1,Levels[opts.errorCorrectionLevel||'M']||Levels.M); qr.addData(String(value)); qr.make();
+   const count=qr.getModuleCount(), width=Math.max(128,Number(opts.width)||180), margin=Math.max(0,Number(opts.margin??2));
+   const canvas=document.createElement('canvas'); canvas.width=width;canvas.height=width; const ctx=canvas.getContext('2d');
+   if(!ctx) throw new Error('Canvas is not available in this browser.');
+   ctx.fillStyle='#fff';ctx.fillRect(0,0,width,width);ctx.fillStyle='#000';
+   const cell=width/(count+margin*2); const offset=margin*cell;
+   for(let r=0;r<count;r++)for(let c=0;c<count;c++)if(qr.modules[r][c]){const x=Math.floor(offset+c*cell),y=Math.floor(offset+r*cell),right=Math.ceil(offset+(c+1)*cell),bottom=Math.ceil(offset+(r+1)*cell);ctx.fillRect(x,y,right-x,bottom-y);}
+   resolve(canvas.toDataURL('image/png'));
+ }catch(e){reject(e);}});}};
+})();
+</script>
+<script>
+const SUPABASE_URL="https://dlrfyamgfwkcdzgafghb.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_toP1wnV1eVtsBvCeFcBCaw_UomR3IE9";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{experimental:{passkey:true}}});
+let profile=null, tools=[], people=[], history=[], damageReports=[], maintenanceRecords=[], selectedBin=null;
+const OMM_EMAIL="elias@rea.za.com";
+function ensureQrLibrary(){return Promise.resolve(window.QRCode);}
+const $=id=>document.getElementById(id), today=()=>new Date().toISOString().slice(0,10);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function isAdmin(){return profile?.is_admin===true}
+function showError(id,msg){$(id).innerHTML='<div class="error">'+esc(msg)+'</div>'}
+async function signIn(e){e.preventDefault();$("loginError").innerHTML="";const {error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error){showError("loginError",error.message);return}await startApp()}
+async function forgotPassword(){const email=$("email").value.trim();if(!email){showError("loginError","Enter your email address first, then choose Forgot password.");return}const redirectTo=location.origin+location.pathname;const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo});if(error){showError("loginError",error.message);return}$("loginError").innerHTML='<div class="notice">If this email belongs to an MR FIX IT account, a password reset link has been sent. Check your inbox and spam folder.</div>'}
+async function saveNewPassword(){const password=$("newPassword").value;if(password.length<8)return showError("loginError","Use at least 8 characters for your new password.");const {error}=await db.auth.updateUser({password});if(error)return showError("loginError",error.message);$("resetPanel").classList.add("hidden");$("loginError").innerHTML='<div class="notice">Password updated. You can now sign in with your new password.</div>';$("password").value=""}
+async function signInPasskey(){ $("loginError").innerHTML="";try{const {error}=await db.auth.signInWithPasskey();if(error){showError("loginError",error.message);return}await startApp()}catch(e){showError("loginError",e.message||"Passkey sign-in is not available on this device or domain yet.")}}
+async function registerPasskey(){try{const {data,error}=await db.auth.registerPasskey();if(error){alert("Could not set up passkey: "+error.message);return}alert("Passkey registered on this device. Next time, use the Face ID / fingerprint button to sign in.")}catch(e){alert("Passkey setup is not available yet: "+(e.message||e))}}
+async function signOut(){await db.auth.signOut();profile=null;$("app").classList.add("hidden");$("login").classList.remove("hidden")}
+async function startApp(){
+ const {data:{user},error}=await db.auth.getUser();if(error||!user)return;
+ const {data:p,error:pe}=await db.from("profiles").select("id,full_name,job_title,is_admin,active").eq("id",user.id).single();
+ if(pe||!p||!p.active){await db.auth.signOut();showError("loginError","Your Supabase login is valid, but your MR FIX IT team profile is missing or inactive. Run the updated setup SQL in your Supabase SQL Editor, then sign in again.");return}
+ profile=p;$("login").classList.add("hidden");$("app").classList.remove("hidden");$("whoami").textContent=p.full_name+(p.is_admin?" · Administrator":" · Technician");
+ await loadData();
+ const incomingTool=new URLSearchParams(location.search).get("tool");
+ if(incomingTool){$("scanId").value=incomingTool;go("dashboard");}
+ db.removeAllChannels();
+ db.channel("mr-fix-it-live").on("postgres_changes",{event:"*",schema:"public",table:"tools"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"tool_movements"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"damage_reports"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"maintenance_records"},loadData).subscribe();
+}
+async function loadData(){
+ const [tr,pr,hr,dr,mr]=await Promise.all([db.from("tools").select("*").order("created_at",{ascending:false}),db.from("profiles").select("id,full_name,job_title,is_admin").eq("active",true).order("full_name"),db.from("tool_movements").select("*").order("created_at",{ascending:false}).limit(300),db.from("damage_reports").select("*").order("created_at",{ascending:false}).limit(100),db.from("maintenance_records").select("*").order("created_at",{ascending:false}).limit(100)]);
+ if(tr.error||pr.error||hr.error||dr.error||mr.error){alert("Could not load workshop records. Run the Mr Fix It Damage and Maintenance SQL update in Supabase, then refresh. Details: "+(tr.error||pr.error||hr.error||dr.error||mr.error).message);console.error(tr.error,pr.error,hr.error,dr.error,mr.error);return}
+ tools=tr.data||[];people=pr.data||[];history=hr.data||[];damageReports=dr.data||[];maintenanceRecords=mr.data||[];if(!selectedBin)selectedBin=profile.id;render();
+}
+function go(page){document.querySelectorAll("main>section").forEach(s=>s.classList.add("hidden"));$(page).classList.remove("hidden");document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("pageTitle").textContent=({dashboard:"Workshop dashboard",tools:"Tool register",bins:"Technician bins",activity:"Activity history",repairs:"Damage & Maintenance"})[page]}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>go(b.dataset.page));
+function toolStatus(t){return t.status||(t.borrower_id?"In Use":"Available")}
+function statusPill(t){const st=toolStatus(t);const cls=st==="Available"?"green":st==="Damaged"?"red":st==="Under Maintenance"?"orange":st==="Lost"?"grey":"red";return `<span class="pill ${cls}">${esc(st)}</span>`}
+async function notifyOmm(event,toolId,details={}){
+ try{const {data:{session}}=await db.auth.getSession();if(!session?.access_token)return;const {error}=await db.functions.invoke("mr-fix-it-notify",{body:{event,toolId,details}});if(error)console.warn("Email notification could not be sent:",error.message)}catch(err){console.warn("Email notification error:",err)}
+}
+function showForm(){if(!isAdmin())return; $("toolForm").classList.remove("hidden")}
+function hideForm(){$("toolForm").classList.add("hidden")}
+async function saveTool(e){
+ e.preventDefault();
+ if(!isAdmin())return alert("Administrator access required.");
+ const file=$("fPhoto").files[0];let photo_url=null;
+ if(file){
+  const ext=(file.name.split(".").pop()||"jpg").replace(/[^a-z0-9]/gi,"").toLowerCase();
+  const path=crypto.randomUUID()+"."+ext;
+  const {error}=await db.storage.from("tool-photos").upload(path,file,{upsert:false,contentType:file.type});
+  if(error)return alert("Photo upload failed: "+error.message);
+  photo_url=db.storage.from("tool-photos").getPublicUrl(path).data.publicUrl;
+ }
+ const payload={
+  name:$("fName").value.trim(),
+  make:$("fMake").value.trim(),
+  model:$("fModel").value.trim(),
+  serial_number:$("fSerial").value.trim(),
+  category:$("fCategory").value,
+  location:$("fLocation").value.trim(),
+  condition:$("fCondition").value,
+  photo_url
+ };
+ const {data:saved,error}=await db.from("tools").insert(payload).select("*").single();
+ if(error){
+  if(/category|location|column/i.test(error.message)){
+   return alert("The database needs the Category and Location update first. Run the supplied MR_FIX_IT_Category_Location_Update.sql file in Supabase SQL Editor, then try again. Details: "+error.message);
+  }
+  return alert("Could not save tool: "+error.message);
+ }
+ e.target.reset();hideForm();await loadData();
+ if(saved?.tool_code)alert("Tool registered. Its QR code is now available in the Tool Register.");
+}
+async function processToolAction(){
+ const id=$("scanId").value.trim();const t=tools.find(x=>(x.tool_code||"").toLowerCase()===id.toLowerCase());if(!t)return alert("Tool ID not found.");
+ if($("scanAction").value==="borrow"){
+  if(t.borrower_id)return alert("This tool is already assigned.");if(toolStatus(t)!=="Available")return alert("This tool is not available. Current status: "+toolStatus(t));const job=$("jobRef").value.trim();const due=$("dueDate").value;if(!job)return alert("Enter the job card or site reference.");if(!due)return alert("Enter an expected return date.");
+  const {error}=await db.from("tools").update({borrower_id:profile.id,job_reference:job,borrowed_at:new Date().toISOString(),due_date:due,returned_at:null,status:"In Use",last_reminder_at:null}).eq("id",t.id).is("borrower_id",null);if(error)return alert("Borrow failed: "+error.message);
+  await db.from("tool_movements").insert({tool_id:t.id,actor_id:profile.id,action:"Borrowed",job_reference:job,condition:t.condition});
+  await notifyOmm("borrowed",t.id,{job_reference:job,due_date:due,borrower:profile.full_name});
+ }else{
+  if(!t.borrower_id)return alert("This tool is already available.");if(t.borrower_id!==profile.id&&!isAdmin())return alert("Only the assigned technician or an administrator can return this tool.");
+  const condition=prompt("Return condition (Good / Worn / Damaged / Faulty):",t.condition);if(condition===null)return;
+  const {error}=await db.from("tools").update({borrower_id:null,job_reference:null,borrowed_at:null,due_date:null,returned_at:new Date().toISOString(),condition,status:(toolStatus(t)==="Damaged"||/damag|faulty|broken|needs repair/i.test(condition))?"Damaged":"Available"}).eq("id",t.id);if(error)return alert("Return failed: "+error.message);
+  await db.from("tool_movements").insert({tool_id:t.id,actor_id:profile.id,action:"Returned",condition});
+  if(/damag|faulty|broken|needs repair/i.test(condition)){await notifyOmm("damaged",t.id,{description:"Tool returned with condition: "+condition,location:t.location||"Not specified",incident_date:today()});}
+ }
+ $("scanId").value="";$("jobRef").value="";await loadData()
+}
+function toolQrPayload(t){
+ const url=new URL(location.href);url.search="";url.hash="";url.searchParams.set("tool",t.tool_code);return url.toString();
+}
+async function renderToolQrs(){
+ const qrImages=tools.filter(t=>t.tool_code&&$("qr-"+t.id));
+ if(!qrImages.length)return;
+ try{await ensureQrLibrary();}
+ catch(err){console.error(err);qrImages.forEach(t=>{const img=$("qr-"+t.id);if(img)img.alt="QR generator unavailable — refresh the page to retry";});return;}
+ for(const t of qrImages){
+  const img=$("qr-"+t.id);if(!img)continue;
+  try{img.src=await window.QRCode.toDataURL(toolQrPayload(t),{width:180,margin:1,errorCorrectionLevel:"M"});}
+  catch(err){console.error("QR generation failed",err);}
+ }
+}
+async function printQr(toolId){
+ const t=tools.find(x=>x.id===toolId);if(!t||!t.tool_code)return alert("This tool does not have a generated tool ID yet.");
+ try{
+  await ensureQrLibrary();
+  const qr=await window.QRCode.toDataURL(toolQrPayload(t),{width:360,margin:2,errorCorrectionLevel:"M"});
+  const w=window.open("","_blank","width=480,height=420");
+  if(!w)return alert("Please allow pop-ups to print QR labels.");
+  w.document.write(`<!doctype html><html><head><title>Tool label ${esc(t.tool_code)}</title><style>body{font-family:Arial,sans-serif;text-align:center;padding:24px}.label{border:1px solid #333;border-radius:10px;padding:18px;display:inline-block;min-width:260px}img{width:190px;height:190px}h2{margin:8px 0}p{margin:5px 0}</style></head><body><div class="label"><h2>MR FIX IT</h2><img src="${qr}"><h2>${esc(t.tool_code)}</h2><p>${esc(t.name)}</p><p>${esc(t.category||"")} · ${esc(t.location||"")}</p><p style="font-size:11px">Scan to open MR FIX IT</p></div><script>window.onload=()=>window.print()<\/script></body></html>`);
+  w.document.close();
+ }catch(err){alert(err.message||("Could not prepare QR label: "+err));}
+}
+
+function renderToolRegister(){
+ const query=($("toolSearch")?.value||"").trim().toLowerCase();
+ const category= $("categoryFilter")?.value||"";
+ const filtered=tools.filter(t=>{
+  const haystack=[t.name,t.make,t.model,t.serial_number,t.tool_code,t.category,t.location,t.condition].join(" ").toLowerCase();
+  return (!query||haystack.includes(query))&&(!category||(t.category||"Uncategorised")===category);
+ });
+ if($("toolCount"))$("toolCount").textContent=`Showing ${filtered.length} of ${tools.length} tools`;
+ if(!tools.length){$("toolList").innerHTML='<div class="empty">No tools registered yet.</div>';return;}
+ if(!filtered.length){$("toolList").innerHTML='<div class="empty">No matching tools found. Try another search or tool type.</div>';return;}
+ const groups={};
+ filtered.forEach(t=>{const type=t.category||"Uncategorised";(groups[type] ||= []).push(t);});
+ const sortedTypes=Object.keys(groups).sort((a,b)=>a.localeCompare(b));
+ $("toolList").innerHTML=sortedTypes.map(type=>`<section class="tool-group"><h3 class="category-heading">${esc(type)} <small>(${groups[type].length})</small></h3>${groups[type].map(t=>`<div class="tool">
+  <img src="${esc(t.photo_url||"")}" onerror="this.style.visibility='hidden'">
   <div style="flex:1;min-width:0">
    <strong>${esc(t.name)}</strong>
-   <div class="muted">${esc(t.make || "")} ${esc(t.model || "")} · SN ${esc(t.serial_number || "Not entered")}</div>
-   <small>ID: <strong>${esc(t.tool_code || "Not generated")}</strong> · ${esc(t.location || "Location not set")}</small>
-   <div><small>${t.borrower_id ? "With " + esc(people.find((p) => p.id === t.borrower_id)?.full_name || "Technician") + " · Job " + esc(t.job_reference) : "Not assigned"} · ${esc(t.condition)}</small></div>
-   ${t.tool_code ? `<div class="qrrow"><img class="qrimg" id="qr-${esc(t.id)}" alt="QR code for ${esc(t.tool_code)}"><button type="button" onclick="printQr('${esc(t.id)}')">Print QR label</button></div>` : ""}
+   <div class="muted">${esc(t.make||"")} ${esc(t.model||"")} · SN ${esc(t.serial_number||"Not entered")}</div>
+   <small>ID: <strong>${esc(t.tool_code||"Not generated")}</strong> · ${esc(t.location||"Location not set")}</small>
+   <div><small>${t.borrower_id?"With "+esc(people.find(p=>p.id===t.borrower_id)?.full_name||"Technician")+" · Job "+esc(t.job_reference):"Not assigned"} · ${esc(t.condition)}</small></div>
+   ${t.tool_code?`<div class="qrrow"><img class="qrimg" id="qr-${esc(t.id)}" alt="QR code for ${esc(t.tool_code)}"><button type="button" onclick="printQr('${esc(t.id)}')">Print QR label</button></div>`:""}
   </div>
-  <div class="actions" style="align-items:center">${statusPill(t)}<button type="button" onclick="openDamageReport('${esc(t.id)}')">Report damage</button>${isAdmin() && toolStatus(t) === "Damaged" ? `<button type="button" onclick="sendForMaintenance('${esc(t.id)}')">Send to maintenance</button>` : ""}${isAdmin() && toolStatus(t) === "Under Maintenance" ? `<button type="button" onclick="completeMaintenance('${esc(t.id)}')">Mark repaired</button>` : ""}</div>
- </div>`,
-                )
-                .join("")}</section>`,
-          )
-          .join("");
-        renderToolQrs();
-      }
+  <div class="actions" style="align-items:center">${statusPill(t)}<button type="button" onclick="openDamageReport('${esc(t.id)}')">Report damage</button>${isAdmin()&&toolStatus(t)==="Damaged"?`<button type="button" onclick="sendForMaintenance('${esc(t.id)}')">Send to maintenance</button>`:""}${isAdmin()&&toolStatus(t)==="Under Maintenance"?`<button type="button" onclick="completeMaintenance('${esc(t.id)}')">Mark repaired</button>`:""}</div>
+ </div>`).join("")}</section>`).join("");
+ renderToolQrs();
+}
 
-      function render() {
-        const borrowed = tools.filter((t) => t.borrower_id),
-          inUse = tools.filter((t) => toolStatus(t) === "In Use" || t.borrower_id),
-          maintenance = tools.filter((t) => toolStatus(t) === "Under Maintenance"),
-          damaged = tools.filter((t) => toolStatus(t) === "Damaged"),
-          available = tools.filter((t) => toolStatus(t) === "Available"),
-          review = borrowed.filter(
-            (t) => t.borrowed_at && Date.now() - new Date(t.borrowed_at).getTime() >= 14 * 86400000,
-          );
-        $("total").textContent = tools.length;
-        $("available").textContent = available.length;
-        $("borrowed").textContent = inUse.length;
-        $("maintenanceCount").textContent = maintenance.length;
-        $("damagedCount").textContent = damaged.length;
-        $("overdue").textContent = review.length;
-        $("addBtn").disabled = !isAdmin();
-        renderToolRegister();
-        renderRepairLists();
-        populateDamageTools();
-        const visiblePeople = isAdmin() ? people : people.filter((p) => p.id === profile.id);
-        $("dashPeople").innerHTML = visiblePeople
-          .map(
-            (p) =>
-              `<div class="person"><strong>${esc(p.full_name)}</strong><small>${esc(p.job_title || "Technician")}${p.is_admin ? " · Admin" : ""}</small><div class="count">${borrowed.filter((t) => t.borrower_id === p.id).length}</div><small>tools in bin</small></div>`,
-          )
-          .join("");
-        $("binList").innerHTML = visiblePeople
-          .map(
-            (p) =>
-              `<div class="person" onclick="showBin('${p.id}')" style="cursor:pointer"><strong>${esc(p.full_name)}</strong><small>${esc(p.job_title || "Technician")}</small><div class="count">${borrowed.filter((t) => t.borrower_id === p.id).length}</div><small>tools assigned</small></div>`,
-          )
-          .join("");
-        if (!isAdmin()) selectedBin = profile.id;
-        showBin(selectedBin);
-        $("historyList").innerHTML = history.length
-          ? history
-              .map(
-                (h) =>
-                  `<div class="tool"><div style="flex:1"><strong>${esc(h.action)} · ${esc(tools.find((t) => t.id === h.tool_id)?.name || "Tool")}</strong><div class="muted">${esc(people.find((p) => p.id === h.actor_id)?.full_name || "User")} · ${esc(h.job_reference || "")}</div></div><small>${new Date(h.created_at).toLocaleString()}</small></div>`,
-              )
-              .join("")
-          : '<div class="empty">No activity recorded yet.</div>';
-      }
+function render(){
+ const borrowed=tools.filter(t=>t.borrower_id),inUse=tools.filter(t=>toolStatus(t)==="In Use"||t.borrower_id),maintenance=tools.filter(t=>toolStatus(t)==="Under Maintenance"),damaged=tools.filter(t=>toolStatus(t)==="Damaged"),available=tools.filter(t=>toolStatus(t)==="Available"),review=borrowed.filter(t=>t.borrowed_at&&Date.now()-new Date(t.borrowed_at).getTime()>=14*86400000);
+ $("total").textContent=tools.length;$("available").textContent=available.length;$("borrowed").textContent=inUse.length;$("maintenanceCount").textContent=maintenance.length;$("damagedCount").textContent=damaged.length;$("overdue").textContent=review.length;
+ $("addBtn").disabled=!isAdmin();
+ renderToolRegister();renderRepairLists();populateDamageTools();
+ const visiblePeople=isAdmin()?people:people.filter(p=>p.id===profile.id);
+ $("dashPeople").innerHTML=visiblePeople.map(p=>`<div class="person"><strong>${esc(p.full_name)}</strong><small>${esc(p.job_title||"Technician")}${p.is_admin?" · Admin":""}</small><div class="count">${borrowed.filter(t=>t.borrower_id===p.id).length}</div><small>tools in bin</small></div>`).join("");
+ $("binList").innerHTML=visiblePeople.map(p=>`<div class="person" onclick="showBin('${p.id}')" style="cursor:pointer"><strong>${esc(p.full_name)}</strong><small>${esc(p.job_title||"Technician")}</small><div class="count">${borrowed.filter(t=>t.borrower_id===p.id).length}</div><small>tools assigned</small></div>`).join("");if(!isAdmin())selectedBin=profile.id;showBin(selectedBin);
+ $("historyList").innerHTML=history.length?history.map(h=>`<div class="tool"><div style="flex:1"><strong>${esc(h.action)} · ${esc(tools.find(t=>t.id===h.tool_id)?.name||"Tool")}</strong><div class="muted">${esc(people.find(p=>p.id===h.actor_id)?.full_name||"User")} · ${esc(h.job_reference||"")}</div></div><small>${new Date(h.created_at).toLocaleString()}</small></div>`).join(""):'<div class="empty">No activity recorded yet.</div>'
+}
 
-      function populateDamageTools() {
-        const sel = $("damageTool");
-        if (!sel) return;
-        const old = sel.value;
-        sel.innerHTML =
-          '<option value="">Select a tool</option>' +
-          tools
-            .map(
-              (t) =>
-                `<option value="${esc(t.id)}">${esc(t.tool_code || "")} · ${esc(t.name)}</option>`,
-            )
-            .join("");
-        if (old) sel.value = old;
-      }
-      function openDamageReport(id) {
-        go("repairs");
-        $("damageTool").value = id;
-        $("damageDate").value = today();
-        $("damageLocation").focus();
-      }
-      async function uploadEvidence(file) {
-        if (!file) return null;
-        if (
-          !["image/jpeg", "image/png", "image/webp"].includes(file.type) ||
-          file.size > 3 * 1024 * 1024
-        )
-          throw new Error("Choose a JPG, PNG or WEBP photo no larger than 3 MB.");
-        const ext = file.type.split("/")[1].replace("jpeg", "jpg");
-        const path = "damage/" + crypto.randomUUID() + "." + ext;
-        const { error } = await db.storage
-          .from("tool-photos")
-          .upload(path, file, { upsert: false, contentType: file.type });
-        if (error) throw error;
-        return db.storage.from("tool-photos").getPublicUrl(path).data.publicUrl;
-      }
-      async function submitDamage(e) {
-        e.preventDefault();
-        const toolId = $("damageTool").value,
-          description = $("damageDescription").value.trim(),
-          locationText = $("damageLocation").value.trim(),
-          incidentDate = $("damageDate").value,
-          file = $("damagePhoto").files[0];
-        if (!toolId || !description || !locationText || !incidentDate || !file)
-          return alert(
-            "Complete all required damage report fields and attach a photo as evidence.",
-          );
-        try {
-          const photo_url = await uploadEvidence(file);
-          const { error } = await db
-            .from("damage_reports")
-            .insert({
-              tool_id: toolId,
-              reported_by: profile.id,
-              description,
-              location: locationText,
-              incident_date: incidentDate,
-              photo_url,
-            });
-          if (error) throw error;
-          const { error: upError } = await db.rpc("mrfix_mark_tool_damaged", { p_tool_id: toolId });
-          if (upError) throw upError;
-          await db
-            .from("tool_movements")
-            .insert({
-              tool_id: toolId,
-              actor_id: profile.id,
-              action: "Damage Reported",
-              condition: description,
-              job_reference: locationText,
-            });
-          await notifyOmm("damaged", toolId, {
-            description,
-            location: locationText,
-            incident_date: incidentDate,
-            reporter: profile.full_name,
-            photo_url,
-          });
-          e.target.reset();
-          $("damageDate").value = today();
-          await loadData();
-          alert(
-            "Damage report saved. The email alert will be sent once the notification service is configured.",
-          );
-        } catch (err) {
-          alert("Could not submit damage report: " + err.message);
-        }
-      }
-      async function sendForMaintenance(toolId) {
-        if (!isAdmin()) return alert("Only Omm can approve maintenance.");
-        const t = tools.find((x) => x.id === toolId);
-        if (!t) return;
-        const reason = prompt("Reason for maintenance / repair:");
-        if (!reason?.trim()) return;
-        const provider = prompt(
-          "Service provider or maintenance location:",
-          t.location || "Workshop",
-        );
-        if (provider === null) return;
-        const { data: rec, error } = await db
-          .from("maintenance_records")
-          .insert({
-            tool_id: toolId,
-            sent_by: profile.id,
-            reason: reason.trim(),
-            service_location: provider.trim(),
-            sent_at: new Date().toISOString(),
-            status: "In Progress",
-          })
-          .select("*")
-          .single();
-        if (error) return alert("Could not create maintenance record: " + error.message);
-        const { error: upError } = await db
-          .from("tools")
-          .update({ status: "Under Maintenance" })
-          .eq("id", toolId);
-        if (upError)
-          return alert("Record saved, but tool status could not be updated: " + upError.message);
-        await db
-          .from("tool_movements")
-          .insert({
-            tool_id: toolId,
-            actor_id: profile.id,
-            action: "Sent for Maintenance",
-            condition: reason.trim(),
-            job_reference: provider.trim(),
-          });
-        await notifyOmm("maintenance_started", toolId, {
-          reason: reason.trim(),
-          service_location: provider.trim(),
-        });
-        await loadData();
-      }
-      async function completeMaintenance(toolId) {
-        if (!isAdmin()) return alert("Only Omm can mark a tool repaired.");
-        const rec = maintenanceRecords.find(
-          (r) => r.tool_id === toolId && r.status === "In Progress",
-        );
-        if (!rec) return alert("No active maintenance record was found.");
-        if (!confirm("Confirm that this tool has been repaired and is ready to use?")) return;
-        const { error } = await db
-          .from("maintenance_records")
-          .update({
-            status: "Completed",
-            completed_at: new Date().toISOString(),
-            completed_by: profile.id,
-          })
-          .eq("id", rec.id);
-        if (error) return alert("Could not complete maintenance: " + error.message);
-        const { error: upError } = await db
-          .from("tools")
-          .update({ status: "Available", condition: "Good" })
-          .eq("id", toolId);
-        if (upError)
-          return alert(
-            "Maintenance was completed, but tool status could not be updated: " + upError.message,
-          );
-        await db
-          .from("tool_movements")
-          .insert({
-            tool_id: toolId,
-            actor_id: profile.id,
-            action: "Maintenance Completed",
-            condition: "Repaired and marked available",
-          });
-        await notifyOmm("maintenance_completed", toolId, { completed_at: today() });
-        await loadData();
-      }
-      function renderRepairLists() {
-        const name = (id) => tools.find((t) => t.id === id)?.name || "Tool";
-        $("maintenanceList").innerHTML = maintenanceRecords.length
-          ? maintenanceRecords
-              .map(
-                (r) =>
-                  `<div class="tool"><div style="flex:1"><strong>${esc(name(r.tool_id))}</strong><div class="muted">${esc(r.reason)} · ${esc(r.service_location || "Location not recorded")}</div><small>Sent ${new Date(r.sent_at).toLocaleDateString()} · ${r.completed_at ? "Completed " + new Date(r.completed_at).toLocaleDateString() : "In progress"}</small></div><span class="pill ${r.status === "Completed" ? "green" : "orange"}">${esc(r.status)}</span></div>`,
-              )
-              .join("")
-          : '<div class="empty">No maintenance records yet.</div>';
-        $("damageList").innerHTML = damageReports.length
-          ? damageReports
-              .map(
-                (r) =>
-                  `<div class="tool"><div style="flex:1"><strong>${esc(name(r.tool_id))}</strong><div class="muted">${esc(r.description)}</div><small>${esc(r.location)} · Happened ${esc(r.incident_date)} · Reported ${new Date(r.created_at).toLocaleString()}</small>${r.photo_url ? `<div><a href="${esc(r.photo_url)}" target="_blank" rel="noopener">View evidence photo</a></div>` : ""}</div><span class="pill red">Damaged</span></div>`,
-              )
-              .join("")
-          : '<div class="empty">No damage reports yet.</div>';
-      }
+function populateDamageTools(){const sel=$("damageTool");if(!sel)return;const old=sel.value;sel.innerHTML='<option value="">Select a tool</option>'+tools.map(t=>`<option value="${esc(t.id)}">${esc(t.tool_code||"")} · ${esc(t.name)}</option>`).join("");if(old)sel.value=old;}
+function openDamageReport(id){go("repairs");$("damageTool").value=id;$("damageDate").value=today();$("damageLocation").focus();}
+async function uploadEvidence(file){if(!file)return null;if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>3*1024*1024)throw new Error("Choose a JPG, PNG or WEBP photo no larger than 3 MB.");const ext=file.type.split("/")[1].replace("jpeg","jpg");const path="damage/"+crypto.randomUUID()+"."+ext;const {error}=await db.storage.from("tool-photos").upload(path,file,{upsert:false,contentType:file.type});if(error)throw error;return db.storage.from("tool-photos").getPublicUrl(path).data.publicUrl;}
+async function submitDamage(e){e.preventDefault();const toolId=$("damageTool").value,description=$("damageDescription").value.trim(),locationText=$("damageLocation").value.trim(),incidentDate=$("damageDate").value,file=$("damagePhoto").files[0];if(!toolId||!description||!locationText||!incidentDate||!file)return alert("Complete all required damage report fields and attach a photo as evidence.");try{const photo_url=await uploadEvidence(file);const {error}=await db.from("damage_reports").insert({tool_id:toolId,reported_by:profile.id,description,location:locationText,incident_date:incidentDate,photo_url});if(error)throw error;const {error:upError}=await db.rpc("mrfix_mark_tool_damaged",{p_tool_id:toolId});if(upError)throw upError;await db.from("tool_movements").insert({tool_id:toolId,actor_id:profile.id,action:"Damage Reported",condition:description,job_reference:locationText});await notifyOmm("damaged",toolId,{description,location:locationText,incident_date:incidentDate,reporter:profile.full_name,photo_url});e.target.reset();$("damageDate").value=today();await loadData();alert("Damage report saved. The email alert will be sent once the notification service is configured.");}catch(err){alert("Could not submit damage report: "+err.message);}}
+async function sendForMaintenance(toolId){if(!isAdmin())return alert("Only Omm can approve maintenance.");const t=tools.find(x=>x.id===toolId);if(!t)return;const reason=prompt("Reason for maintenance / repair:");if(!reason?.trim())return;const provider=prompt("Service provider or maintenance location:",t.location||"Workshop");if(provider===null)return;const {data:rec,error}=await db.from("maintenance_records").insert({tool_id:toolId,sent_by:profile.id,reason:reason.trim(),service_location:provider.trim(),sent_at:new Date().toISOString(),status:"In Progress"}).select("*").single();if(error)return alert("Could not create maintenance record: "+error.message);const {error:upError}=await db.from("tools").update({status:"Under Maintenance"}).eq("id",toolId);if(upError)return alert("Record saved, but tool status could not be updated: "+upError.message);await db.from("tool_movements").insert({tool_id:toolId,actor_id:profile.id,action:"Sent for Maintenance",condition:reason.trim(),job_reference:provider.trim()});await notifyOmm("maintenance_started",toolId,{reason:reason.trim(),service_location:provider.trim()});await loadData();}
+async function completeMaintenance(toolId){
+ if(!isAdmin())return alert("Only Omm can approve a repaired tool.");
+ const rec=maintenanceRecords.find(r=>r.tool_id===toolId&&r.status==="In Progress");
+ if(!rec)return alert("No active maintenance record was found.");
+ const condition=prompt("Confirm the tool is safe to use. Enter its condition: Good, Worn or Fair.","Good");
+ if(condition===null)return;
+ const approvedCondition=condition.trim();
+ if(!["Good","Worn","Fair"].includes(approvedCondition))return alert("Choose Good, Worn or Fair. A tool that is still damaged or faulty cannot be made Available.");
+ if(!confirm("Complete maintenance and return this tool to the Available tool list? Its original tool ID and QR code will stay the same."))return;
+ const {error}=await db.rpc("mrfix_complete_maintenance",{p_tool_id:toolId,p_condition:approvedCondition});
+ if(error)return alert("Could not complete maintenance: "+error.message);
+ await notifyOmm("maintenance_completed",toolId,{completed_at:today(),condition:approvedCondition});
+ await loadData();
+ alert("Maintenance completed. The tool is back in the Available list with its original QR code and history.");
+}
+function renderRepairLists(){const name=id=>tools.find(t=>t.id===id)?.name||"Tool";$("maintenanceList").innerHTML=maintenanceRecords.length?maintenanceRecords.map(r=>`<div class="tool"><div style="flex:1"><strong>${esc(name(r.tool_id))}</strong><div class="muted">${esc(r.reason)} · ${esc(r.service_location||"Location not recorded")}</div><small>Sent ${new Date(r.sent_at).toLocaleDateString()} · ${r.completed_at?"Completed "+new Date(r.completed_at).toLocaleDateString():"In progress"}</small></div><span class="pill ${r.status==="Completed"?"green":"orange"}">${esc(r.status)}</span></div>`).join(""):'<div class="empty">No maintenance records yet.</div>';
+ $("damageList").innerHTML=damageReports.length?damageReports.map(r=>`<div class="tool"><div style="flex:1"><strong>${esc(name(r.tool_id))}</strong><div class="muted">${esc(r.description)}</div><small>${esc(r.location)} · Happened ${esc(r.incident_date)} · Reported ${new Date(r.created_at).toLocaleString()}</small>${r.photo_url?`<div><a href="${esc(r.photo_url)}" target="_blank" rel="noopener">View evidence photo</a></div>`:""}</div><span class="pill red">Damaged</span></div>`).join(""):'<div class="empty">No damage reports yet.</div>';}
 
-      function showBin(id) {
-        selectedBin = id;
-        const p = people.find((x) => x.id === id);
-        if (!$("binDetail")) return;
-        const items = tools.filter((t) => t.borrower_id === id);
-        $("binDetail").innerHTML =
-          `<h3>${esc(p?.full_name || "Technician")}'s bin</h3>` +
-          (items.length
-            ? items
-                .map(
-                  (t) =>
-                    `<div class="tool"><div style="flex:1"><strong>${esc(t.name)}</strong><div class="muted">${esc(t.tool_code)} · Job ${esc(t.job_reference)}</div><small>Borrowed ${new Date(t.borrowed_at).toLocaleDateString()} · Due ${esc(t.due_date || "Not set")}</small></div><span class="pill ${Date.now() - new Date(t.borrowed_at).getTime() >= 14 * 86400000 ? "red" : "green"}">${Date.now() - new Date(t.borrowed_at).getTime() >= 14 * 86400000 ? "14-day check" : "Assigned"}</span></div>`,
-                )
-                .join("")
-            : '<div class="empty">No tools currently assigned.</div>');
-      }
-      $("loginForm").addEventListener("submit", signIn);
-      $("addToolForm").addEventListener("submit", saveTool);
-      $("damageForm").addEventListener("submit", submitDamage);
-      $("damageDate").value = today();
-      $("toolSearch").addEventListener("input", renderToolRegister);
-      $("categoryFilter").addEventListener("change", renderToolRegister);
-      $("fPhoto").addEventListener("change", () => {
-        const file = $("fPhoto").files[0];
-        if (!file) {
-          $("photoPreviewWrap").classList.add("hidden");
-          $("photoPreview").removeAttribute("src");
-          return;
-        }
-        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-          alert("Please choose a JPG, PNG or WEBP image.");
-          $("fPhoto").value = "";
-          return;
-        }
-        if (file.size > 3 * 1024 * 1024) {
-          alert("The photo must be 3 MB or smaller.");
-          $("fPhoto").value = "";
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = () => {
-          $("photoPreview").src = reader.result;
-          $("photoPreviewWrap").classList.remove("hidden");
-        };
-        reader.readAsDataURL(file);
-      });
-      db.auth.onAuthStateChange((event) => {
-        if (event === "PASSWORD_RECOVERY") {
-          $("resetPanel").classList.remove("hidden");
-          $("login").classList.remove("hidden");
-          $("app").classList.add("hidden");
-        }
-      });
-      db.auth.getSession().then(({ data }) => {
-        if (data.session) startApp();
-      });
-    </script>
-  </body>
-</html>
+function showBin(id){selectedBin=id;const p=people.find(x=>x.id===id);if(!$("binDetail"))return;const items=tools.filter(t=>t.borrower_id===id);$("binDetail").innerHTML=`<h3>${esc(p?.full_name||"Technician")}'s bin</h3>`+(items.length?items.map(t=>`<div class="tool"><div style="flex:1"><strong>${esc(t.name)}</strong><div class="muted">${esc(t.tool_code)} · Job ${esc(t.job_reference)}</div><small>Borrowed ${new Date(t.borrowed_at).toLocaleDateString()} · Due ${esc(t.due_date||"Not set")}</small></div><span class="pill ${Date.now()-new Date(t.borrowed_at).getTime()>=14*86400000?"red":"green"}">${Date.now()-new Date(t.borrowed_at).getTime()>=14*86400000?"14-day check":"Assigned"}</span></div>`).join(""):'<div class="empty">No tools currently assigned.</div>')}
+$("loginForm").addEventListener("submit",signIn);
+$("addToolForm").addEventListener("submit",saveTool);
+$("damageForm").addEventListener("submit",submitDamage);
+$("damageDate").value=today();
+$("toolSearch").addEventListener("input",renderToolRegister);
+$("categoryFilter").addEventListener("change",renderToolRegister);
+$("fPhoto").addEventListener("change",()=>{
+ const file=$("fPhoto").files[0];
+ if(!file){$("photoPreviewWrap").classList.add("hidden");$("photoPreview").removeAttribute("src");return;}
+ if(!["image/jpeg","image/png","image/webp"].includes(file.type)){alert("Please choose a JPG, PNG or WEBP image.");$("fPhoto").value="";return;}
+ if(file.size>3*1024*1024){alert("The photo must be 3 MB or smaller.");$("fPhoto").value="";return;}
+ const reader=new FileReader();
+ reader.onload=()=>{$("photoPreview").src=reader.result;$("photoPreviewWrap").classList.remove("hidden");};
+ reader.readAsDataURL(file);
+});
+db.auth.onAuthStateChange((event)=>{if(event==="PASSWORD_RECOVERY"){$("resetPanel").classList.remove("hidden");$("login").classList.remove("hidden");$("app").classList.add("hidden");}});
+db.auth.getSession().then(({data})=>{if(data.session)startApp()});
+</script>
+</body></html>
