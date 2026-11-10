@@ -56,29 +56,24 @@ input,select,textarea{border:1px solid #d4deea;border-radius:11px;padding:12px 1
 @media(max-width:700px){header{padding-left:15px;padding-right:15px}main{margin:17px auto;padding:0 12px}.top{align-items:flex-start;padding:15px;flex-direction:column}.top>div:last-child{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.top button{font-size:11px;padding:9px 10px}nav{top:73px;margin:12px 0 16px;padding:6px;gap:5px}nav button{padding:9px 12px;font-size:12px}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.card{padding:14px;min-height:94px}.card .num{font-size:28px}.panel{padding:15px;border-radius:14px}.people{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.person{padding:12px}.tool{align-items:flex-start;flex-wrap:wrap}.tool>div{min-width:0}.tool .actions{width:100%}#login{margin:5vh 12px;padding:22px}}
 @media(max-width:380px){.cards{grid-template-columns:1fr 1fr}.card .num{font-size:25px}.people{grid-template-columns:1fr}}
 
-/* Premium charcoal and champagne-gold finish */
-:root{--navy:#111316;--blue:#b99b5b;--bg:#111316;--ink:#f1eee7;--muted:#aaa69d;--line:#35383d;--green:#36a875;--red:#df6868;--surface:#1b1e22;--shadow:0 12px 34px rgba(0,0,0,.24)}
-body{background:radial-gradient(ellipse at 50% 0,#25282c 0,#141619 42%,#101214 100%);color:var(--ink)}
-header{background:rgba(14,16,18,.97);border-bottom:1px solid #39352b;box-shadow:0 5px 22px rgba(0,0,0,.32)}
-.logo{background:linear-gradient(145deg,#d4bc83,#947541);color:#171717;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
-header small{color:#cbb98e}
-.top{background:rgba(28,31,35,.94);border-color:#383a3d;box-shadow:var(--shadow)}
-.card,.panel{background:linear-gradient(155deg,#22252a,#1a1d21);border-color:#383b40;box-shadow:var(--shadow);color:var(--ink)}
-.card:before{background:linear-gradient(180deg,#e0c98f,#92743d)}
-.card .num,.count{color:#d7bd7d}
-.muted,small{color:#aaa69d}
-nav{background:rgba(25,28,32,.96);border-color:#383b40;box-shadow:0 6px 22px rgba(0,0,0,.22)}
-nav button{color:#c5c0b5}nav button:hover{background:#33302a;color:#f0dba5}nav button.tab.active,button.primary{background:linear-gradient(135deg,#d4bc83,#9e8048);color:#171717;box-shadow:0 4px 14px rgba(185,155,91,.2)}
-button{background:#30343a;color:#eee9df}button.dark{background:#d0b779;color:#171717}button.danger{background:#492b2d;color:#ffb7b7}
-input,select,textarea{background:#15181b;border-color:#44484e;color:#f1eee7}input::placeholder,textarea::placeholder{color:#85827c}input:focus,select:focus,textarea:focus{border-color:#c6a968;box-shadow:0 0 0 3px rgba(198,169,104,.16)}
-label{color:#d5cdbd}.person{background:linear-gradient(155deg,#24272c,#1a1d21);border-color:#3b3e43;color:#f1eee7}.person:hover{box-shadow:0 10px 25px rgba(0,0,0,.3)}
-.category-heading{background:#292820;border-color:#49402d;color:#e2cf9e}.tool{border-bottom-color:#373a3f}.tool img{background:#30343a}
-.pill{background:#303a48;color:#c7dcf5}.pill.green{background:#203c30;color:#91e0b4}.pill.red{background:#48292b;color:#ffb0b0}.pill.orange{background:#493a24;color:#f0ca83}.pill.grey{background:#34383e;color:#d0d0d0}
-.notice{background:#393221;border-color:#695936;color:#f0d99e}.error{background:#43292b;border-color:#704044;color:#ffc1c1}.empty{background:#202328;border-color:#42464c;color:#aaa69d}
-#welcomeBanner{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:16px 0 6px;padding:22px 24px;border:1px solid #5b4c30;border-left:4px solid #c9ad70;border-radius:17px;background:linear-gradient(110deg,#29261f,#1d2024 70%);box-shadow:0 10px 28px rgba(0,0,0,.22)}
-#welcomeEyebrow{color:#cbb47e;font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}#welcomeName{font-size:clamp(23px,3vw,32px);line-height:1.2;margin:5px 0;color:#f6f0e2;letter-spacing:-.035em}#welcomeSub{color:#b8b1a4;font-size:13px}
-@media(max-width:700px){#welcomeBanner{padding:18px;align-items:flex-start;flex-direction:column;gap:4px}}
 
+/* MR FIX IT premium charcoal and champagne-gold finish */
+:root{--navy:#17191d;--blue:#b89452;--bg:#f3f1ec;--ink:#252525;--muted:#77736b;--line:#e6e0d5;--green:#287a55;--red:#b94b43;--surface:#fffdfa;--shadow:0 10px 30px rgba(25,23,20,.08)}
+body{background:linear-gradient(180deg,#e9e5dc 0,#f7f5f0 280px);color:var(--ink)}
+header{background:rgba(23,25,29,.98);box-shadow:0 5px 22px rgba(0,0,0,.2)}
+.logo{background:linear-gradient(145deg,#d4b779,#98733b);color:#17191d}
+header small{color:#d8c9a8}
+button{background:#eee9df;color:#332f28;border:1px solid #e3dccf}
+button.primary,.tab.active{background:linear-gradient(135deg,#c8aa70,#a88345);color:#17191d;border-color:#a88345}
+button.dark{background:#25272b;color:#f8f5ee;border-color:#25272b}
+.top{border-color:#e5ddcf;background:rgba(255,253,248,.9)}
+.card,.panel{background:var(--surface);border-color:var(--line);box-shadow:var(--shadow)}
+.card .num,.count{color:#9b783f}
+.category-heading{background:#eee9df;color:#5b4728}
+.pill{background:#f2eadb;color:#775b2b}
+.welcome-message{margin-top:10px;font-size:clamp(20px,3vw,27px);font-weight:800;letter-spacing:-.035em;color:#96733c}
+#login{background:#fffdfa;border-color:#e7dfd2}
+@media(max-width:700px){.welcome-message{font-size:21px}}
 </style>
 </head>
 <body>
@@ -90,8 +85,7 @@ label{color:#d5cdbd}.person{background:linear-gradient(155deg,#24272c,#1a1d21);b
 <div id="loginError"></div><p class="muted" style="margin-top:14px">Passkey sign-in uses your device's built-in Face ID, fingerprint, PIN or Windows Hello where supported. Your face or fingerprint data stays with your device.</p><div id="resetPanel" class="hidden"><hr><h3>Choose a new password</h3><label>New password</label><input id="newPassword" type="password" autocomplete="new-password" minlength="8"><button class="primary" type="button" onclick="saveNewPassword()" style="margin-top:10px">Update password</button></div>
 </section>
 <main id="app" class="hidden">
-<div class="top"><div><h2 id="pageTitle">Workshop dashboard</h2><div class="muted">Shared workshop inventory</div></div><div><span id="whoami" class="muted"></span> <button onclick="registerPasskey()">Set up Face ID / fingerprint</button> <button onclick="signOut()">Sign out</button></div></div>
-<div id="welcomeBanner" aria-live="polite"><div><div id="welcomeEyebrow">MR FIX IT WORKSHOP</div><h2 id="welcomeName">Welcome back!</h2><div id="welcomeSub">Your workshop overview is ready.</div></div><div style="font-size:30px" aria-hidden="true">✦</div></div>
+<div class="top"><div><h2 id="pageTitle">Workshop dashboard</h2><div class="muted">Shared workshop inventory</div><div id="welcomeMessage" class="welcome-message" aria-live="polite">Welcome to Mr Fix It</div></div><div><span id="whoami" class="muted"></span> <button onclick="registerPasskey()">Set up Face ID / fingerprint</button> <button onclick="signOut()">Sign out</button></div></div>
 <nav><button class="tab active" data-page="dashboard">Dashboard</button><button class="tab" data-page="tools">Tool register</button><button class="tab" data-page="bins">Team bins</button><button class="tab" data-page="activity">History</button><button class="tab" data-page="repairs">Damage & Maintenance</button></nav>
 <section id="dashboard"><div class="cards">
 <div class="card"><div class="muted">Registered tools</div><div class="num" id="total">0</div></div><div class="card"><div class="muted">Available</div><div class="num" id="available">0</div></div><div class="card"><div class="muted">In Use / Borrowed</div><div class="num" id="borrowed">0</div></div><div class="card"><div class="muted">Under Maintenance</div><div class="num" id="maintenanceCount">0</div></div><div class="card"><div class="muted">Damaged</div><div class="num" id="damagedCount">0</div></div><div class="card"><div class="muted">14+ day reminders due</div><div class="num" id="overdue">0</div></div></div>
@@ -1412,7 +1406,7 @@ async function startApp(){
  const {data:{user},error}=await db.auth.getUser();if(error||!user)return;
  const {data:p,error:pe}=await db.from("profiles").select("id,full_name,job_title,is_admin,active").eq("id",user.id).single();
  if(pe||!p||!p.active){await db.auth.signOut();showError("loginError","Your Supabase login is valid, but your MR FIX IT team profile is missing or inactive. Run the updated setup SQL in your Supabase SQL Editor, then sign in again.");return}
- profile=p;$("login").classList.add("hidden");$("app").classList.remove("hidden");$("whoami").textContent=p.full_name+(p.is_admin?" · Administrator":" · Technician");$("welcomeName").textContent="Welcome back, "+(p.full_name||"Team member")+"!";$("welcomeSub").textContent=(p.job_title|| (p.is_admin?"Administrator":"Workshop team member"))+" · Your workshop overview is ready.";
+ profile=p;$("welcomeMessage").textContent="Welcome back, "+(p.full_name||"Team member")+"!";$("login").classList.add("hidden");$("app").classList.remove("hidden");$("whoami").textContent=p.full_name+(p.is_admin?" · Administrator":" · Technician");
  await loadData();
  const incomingTool=new URLSearchParams(location.search).get("tool");
  if(incomingTool){$("scanId").value=incomingTool;go("dashboard");}
