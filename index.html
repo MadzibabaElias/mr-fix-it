@@ -29,6 +29,56 @@ label{display:block;font-size:13px;font-weight:650;margin:10px 0 5px}form .field
 small{color:var(--muted)}.empty{text-align:center;padding:28px;color:var(--muted)}
 #login{max-width:440px;margin:8vh auto}.error{color:#a52e2e;background:#fde9e9;padding:10px;border-radius:8px;margin:10px 0}
 @media(max-width:700px){.cards{grid-template-columns:repeat(2,1fr)}.people{grid-template-columns:repeat(2,1fr)}.grid2,form .fields{grid-template-columns:1fr}main{margin:16px auto}header{padding:14px 16px}}
+
+/* MR FIX IT modern visual refresh — CSS only; app logic and database calls unchanged. */
+:root{--navy:#10243a;--blue:#1769c2;--bg:#f4f7fb;--ink:#17283b;--muted:#64758b;--line:#e3eaf2;--green:#168653;--red:#c44343;--surface:#fff;--shadow:0 8px 28px rgba(16,36,58,.07)}
+body{background:linear-gradient(180deg,#eef4fb 0,#f7f9fc 260px);color:var(--ink);line-height:1.5}
+header{position:sticky;top:0;z-index:20;background:rgba(16,36,58,.97);backdrop-filter:blur(12px);box-shadow:0 4px 18px rgba(8,24,42,.18);padding-top:13px;padding-bottom:13px}
+.logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(145deg,#2b8bf0,#1459a6);box-shadow:inset 0 1px 0 rgba(255,255,255,.25);font-size:25px}
+header h1{font-size:19px;letter-spacing:.08em;font-weight:800}header small{font-size:10px;letter-spacing:.13em;color:#c3d5e9}
+main{max-width:1180px;margin:28px auto;padding:0 20px}
+.top{background:rgba(255,255,255,.78);border:1px solid #e6edf5;border-radius:18px;padding:18px 20px;box-shadow:var(--shadow)}
+h2{font-size:25px;letter-spacing:-.035em;font-weight:800}h3{letter-spacing:-.02em}
+nav{position:sticky;top:74px;z-index:15;padding:8px;margin:16px 0 20px;background:rgba(255,255,255,.92);border:1px solid #e5ebf3;border-radius:15px;box-shadow:0 5px 18px rgba(16,36,58,.06);backdrop-filter:blur(10px)}
+nav button{flex:0 0 auto;border-radius:10px;padding:10px 15px;background:transparent;color:#52657c;font-size:13px;transition:background .15s ease,color .15s ease,transform .15s ease}
+nav button:hover{background:#edf4fc;color:#175da8}nav button.tab.active{background:linear-gradient(135deg,#237bdb,#145cac);color:#fff;box-shadow:0 4px 12px rgba(35,123,219,.22)}
+.card,.panel{background:var(--surface);border:1px solid #e5ebf2;border-radius:17px;padding:19px;box-shadow:var(--shadow)}
+.panel{margin:16px 0}.cards{gap:14px;margin:18px 0}
+.card{position:relative;overflow:hidden;min-height:105px}.card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#3992ef,#1769c2)}
+.card .muted{font-size:12px;font-weight:650;letter-spacing:.015em}.card .num{font-size:32px;line-height:1.15;margin-top:9px;letter-spacing:-.04em;color:#153b64}
+.grid2{gap:14px}.people{gap:12px}.person{border:1px solid #e4ebf3;border-radius:14px;padding:15px;background:linear-gradient(180deg,#fff,#fbfdff);transition:transform .15s ease,box-shadow .15s ease}.person:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(16,36,58,.08)}.count{font-size:26px;color:#1769c2}
+button{border-radius:11px;padding:11px 15px;font-size:13px;transition:transform .12s ease,box-shadow .12s ease,background .12s ease}button:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 5px 12px rgba(16,36,58,.10)}button.primary,.tab.active{background:linear-gradient(135deg,#237bdb,#145cac)}button.dark{background:#142d48}button.danger{background:#fff0f0;color:#a52e2e}
+input,select,textarea{border:1px solid #d4deea;border-radius:11px;padding:12px 13px;background:#fff;transition:border-color .15s ease,box-shadow .15s ease}input:focus,select:focus,textarea:focus{outline:none;border-color:#3988dc;box-shadow:0 0 0 3px rgba(35,123,219,.13)}label{font-size:12px;color:#344b64;letter-spacing:.015em;margin:12px 0 6px}
+.tool{padding:15px 2px;gap:14px}.tool img{width:66px;height:66px;border-radius:13px}.tool-group{margin-top:18px}.category-heading{margin:22px 0 8px;padding:11px 14px;background:#edf4fb;border:1px solid #e0eaf5;border-radius:11px;color:#21496f;font-weight:750}
+.pill{padding:5px 10px;font-size:11px;letter-spacing:.015em}.form-note,.muted{color:var(--muted)}.notice{border:1px solid #f0dfae;background:#fff9e9;border-radius:12px;padding:14px 16px}.error{border:1px solid #f4cece;border-radius:11px}
+#login{max-width:470px;margin:8vh auto;padding:28px;border-radius:20px;box-shadow:0 18px 55px rgba(16,36,58,.12)}#login h2{font-size:27px}#login .actions button{flex:1}#login input{margin-bottom:3px}
+.actions{gap:9px}.actions button{border-radius:10px}.empty{padding:34px 18px;background:#fafcff;border:1px dashed #d9e3ef;border-radius:13px;margin:10px 0}
+@media(max-width:700px){header{padding-left:15px;padding-right:15px}main{margin:17px auto;padding:0 12px}.top{align-items:flex-start;padding:15px;flex-direction:column}.top>div:last-child{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.top button{font-size:11px;padding:9px 10px}nav{top:73px;margin:12px 0 16px;padding:6px;gap:5px}nav button{padding:9px 12px;font-size:12px}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.card{padding:14px;min-height:94px}.card .num{font-size:28px}.panel{padding:15px;border-radius:14px}.people{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.person{padding:12px}.tool{align-items:flex-start;flex-wrap:wrap}.tool>div{min-width:0}.tool .actions{width:100%}#login{margin:5vh 12px;padding:22px}}
+@media(max-width:380px){.cards{grid-template-columns:1fr 1fr}.card .num{font-size:25px}.people{grid-template-columns:1fr}}
+
+/* Premium charcoal and champagne-gold finish */
+:root{--navy:#111316;--blue:#b99b5b;--bg:#111316;--ink:#f1eee7;--muted:#aaa69d;--line:#35383d;--green:#36a875;--red:#df6868;--surface:#1b1e22;--shadow:0 12px 34px rgba(0,0,0,.24)}
+body{background:radial-gradient(ellipse at 50% 0,#25282c 0,#141619 42%,#101214 100%);color:var(--ink)}
+header{background:rgba(14,16,18,.97);border-bottom:1px solid #39352b;box-shadow:0 5px 22px rgba(0,0,0,.32)}
+.logo{background:linear-gradient(145deg,#d4bc83,#947541);color:#171717;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+header small{color:#cbb98e}
+.top{background:rgba(28,31,35,.94);border-color:#383a3d;box-shadow:var(--shadow)}
+.card,.panel{background:linear-gradient(155deg,#22252a,#1a1d21);border-color:#383b40;box-shadow:var(--shadow);color:var(--ink)}
+.card:before{background:linear-gradient(180deg,#e0c98f,#92743d)}
+.card .num,.count{color:#d7bd7d}
+.muted,small{color:#aaa69d}
+nav{background:rgba(25,28,32,.96);border-color:#383b40;box-shadow:0 6px 22px rgba(0,0,0,.22)}
+nav button{color:#c5c0b5}nav button:hover{background:#33302a;color:#f0dba5}nav button.tab.active,button.primary{background:linear-gradient(135deg,#d4bc83,#9e8048);color:#171717;box-shadow:0 4px 14px rgba(185,155,91,.2)}
+button{background:#30343a;color:#eee9df}button.dark{background:#d0b779;color:#171717}button.danger{background:#492b2d;color:#ffb7b7}
+input,select,textarea{background:#15181b;border-color:#44484e;color:#f1eee7}input::placeholder,textarea::placeholder{color:#85827c}input:focus,select:focus,textarea:focus{border-color:#c6a968;box-shadow:0 0 0 3px rgba(198,169,104,.16)}
+label{color:#d5cdbd}.person{background:linear-gradient(155deg,#24272c,#1a1d21);border-color:#3b3e43;color:#f1eee7}.person:hover{box-shadow:0 10px 25px rgba(0,0,0,.3)}
+.category-heading{background:#292820;border-color:#49402d;color:#e2cf9e}.tool{border-bottom-color:#373a3f}.tool img{background:#30343a}
+.pill{background:#303a48;color:#c7dcf5}.pill.green{background:#203c30;color:#91e0b4}.pill.red{background:#48292b;color:#ffb0b0}.pill.orange{background:#493a24;color:#f0ca83}.pill.grey{background:#34383e;color:#d0d0d0}
+.notice{background:#393221;border-color:#695936;color:#f0d99e}.error{background:#43292b;border-color:#704044;color:#ffc1c1}.empty{background:#202328;border-color:#42464c;color:#aaa69d}
+#welcomeBanner{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:16px 0 6px;padding:22px 24px;border:1px solid #5b4c30;border-left:4px solid #c9ad70;border-radius:17px;background:linear-gradient(110deg,#29261f,#1d2024 70%);box-shadow:0 10px 28px rgba(0,0,0,.22)}
+#welcomeEyebrow{color:#cbb47e;font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}#welcomeName{font-size:clamp(23px,3vw,32px);line-height:1.2;margin:5px 0;color:#f6f0e2;letter-spacing:-.035em}#welcomeSub{color:#b8b1a4;font-size:13px}
+@media(max-width:700px){#welcomeBanner{padding:18px;align-items:flex-start;flex-direction:column;gap:4px}}
+
 </style>
 </head>
 <body>
@@ -41,6 +91,7 @@ small{color:var(--muted)}.empty{text-align:center;padding:28px;color:var(--muted
 </section>
 <main id="app" class="hidden">
 <div class="top"><div><h2 id="pageTitle">Workshop dashboard</h2><div class="muted">Shared workshop inventory</div></div><div><span id="whoami" class="muted"></span> <button onclick="registerPasskey()">Set up Face ID / fingerprint</button> <button onclick="signOut()">Sign out</button></div></div>
+<div id="welcomeBanner" aria-live="polite"><div><div id="welcomeEyebrow">MR FIX IT WORKSHOP</div><h2 id="welcomeName">Welcome back!</h2><div id="welcomeSub">Your workshop overview is ready.</div></div><div style="font-size:30px" aria-hidden="true">✦</div></div>
 <nav><button class="tab active" data-page="dashboard">Dashboard</button><button class="tab" data-page="tools">Tool register</button><button class="tab" data-page="bins">Team bins</button><button class="tab" data-page="activity">History</button><button class="tab" data-page="repairs">Damage & Maintenance</button></nav>
 <section id="dashboard"><div class="cards">
 <div class="card"><div class="muted">Registered tools</div><div class="num" id="total">0</div></div><div class="card"><div class="muted">Available</div><div class="num" id="available">0</div></div><div class="card"><div class="muted">In Use / Borrowed</div><div class="num" id="borrowed">0</div></div><div class="card"><div class="muted">Under Maintenance</div><div class="num" id="maintenanceCount">0</div></div><div class="card"><div class="muted">Damaged</div><div class="num" id="damagedCount">0</div></div><div class="card"><div class="muted">14+ day reminders due</div><div class="num" id="overdue">0</div></div></div>
@@ -1361,7 +1412,7 @@ async function startApp(){
  const {data:{user},error}=await db.auth.getUser();if(error||!user)return;
  const {data:p,error:pe}=await db.from("profiles").select("id,full_name,job_title,is_admin,active").eq("id",user.id).single();
  if(pe||!p||!p.active){await db.auth.signOut();showError("loginError","Your Supabase login is valid, but your MR FIX IT team profile is missing or inactive. Run the updated setup SQL in your Supabase SQL Editor, then sign in again.");return}
- profile=p;$("login").classList.add("hidden");$("app").classList.remove("hidden");$("whoami").textContent=p.full_name+(p.is_admin?" · Administrator":" · Technician");
+ profile=p;$("login").classList.add("hidden");$("app").classList.remove("hidden");$("whoami").textContent=p.full_name+(p.is_admin?" · Administrator":" · Technician");$("welcomeName").textContent="Welcome back, "+(p.full_name||"Team member")+"!";$("welcomeSub").textContent=(p.job_title|| (p.is_admin?"Administrator":"Workshop team member"))+" · Your workshop overview is ready.";
  await loadData();
  const incomingTool=new URLSearchParams(location.search).get("tool");
  if(incomingTool){$("scanId").value=incomingTool;go("dashboard");}
@@ -1498,21 +1549,7 @@ function openDamageReport(id){go("repairs");$("damageTool").value=id;$("damageDa
 async function uploadEvidence(file){if(!file)return null;if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>3*1024*1024)throw new Error("Choose a JPG, PNG or WEBP photo no larger than 3 MB.");const ext=file.type.split("/")[1].replace("jpeg","jpg");const path="damage/"+crypto.randomUUID()+"."+ext;const {error}=await db.storage.from("tool-photos").upload(path,file,{upsert:false,contentType:file.type});if(error)throw error;return db.storage.from("tool-photos").getPublicUrl(path).data.publicUrl;}
 async function submitDamage(e){e.preventDefault();const toolId=$("damageTool").value,description=$("damageDescription").value.trim(),locationText=$("damageLocation").value.trim(),incidentDate=$("damageDate").value,file=$("damagePhoto").files[0];if(!toolId||!description||!locationText||!incidentDate||!file)return alert("Complete all required damage report fields and attach a photo as evidence.");try{const photo_url=await uploadEvidence(file);const {error}=await db.from("damage_reports").insert({tool_id:toolId,reported_by:profile.id,description,location:locationText,incident_date:incidentDate,photo_url});if(error)throw error;const {error:upError}=await db.rpc("mrfix_mark_tool_damaged",{p_tool_id:toolId});if(upError)throw upError;await db.from("tool_movements").insert({tool_id:toolId,actor_id:profile.id,action:"Damage Reported",condition:description,job_reference:locationText});await notifyOmm("damaged",toolId,{description,location:locationText,incident_date:incidentDate,reporter:profile.full_name,photo_url});e.target.reset();$("damageDate").value=today();await loadData();alert("Damage report saved. The email alert will be sent once the notification service is configured.");}catch(err){alert("Could not submit damage report: "+err.message);}}
 async function sendForMaintenance(toolId){if(!isAdmin())return alert("Only Omm can approve maintenance.");const t=tools.find(x=>x.id===toolId);if(!t)return;const reason=prompt("Reason for maintenance / repair:");if(!reason?.trim())return;const provider=prompt("Service provider or maintenance location:",t.location||"Workshop");if(provider===null)return;const {data:rec,error}=await db.from("maintenance_records").insert({tool_id:toolId,sent_by:profile.id,reason:reason.trim(),service_location:provider.trim(),sent_at:new Date().toISOString(),status:"In Progress"}).select("*").single();if(error)return alert("Could not create maintenance record: "+error.message);const {error:upError}=await db.from("tools").update({status:"Under Maintenance"}).eq("id",toolId);if(upError)return alert("Record saved, but tool status could not be updated: "+upError.message);await db.from("tool_movements").insert({tool_id:toolId,actor_id:profile.id,action:"Sent for Maintenance",condition:reason.trim(),job_reference:provider.trim()});await notifyOmm("maintenance_started",toolId,{reason:reason.trim(),service_location:provider.trim()});await loadData();}
-async function completeMaintenance(toolId){
- if(!isAdmin())return alert("Only Omm can approve a repaired tool.");
- const rec=maintenanceRecords.find(r=>r.tool_id===toolId&&r.status==="In Progress");
- if(!rec)return alert("No active maintenance record was found.");
- const condition=prompt("Confirm the tool is safe to use. Enter its condition: Good, Worn or Fair.","Good");
- if(condition===null)return;
- const approvedCondition=condition.trim();
- if(!["Good","Worn","Fair"].includes(approvedCondition))return alert("Choose Good, Worn or Fair. A tool that is still damaged or faulty cannot be made Available.");
- if(!confirm("Complete maintenance and return this tool to the Available tool list? Its original tool ID and QR code will stay the same."))return;
- const {error}=await db.rpc("mrfix_complete_maintenance",{p_tool_id:toolId,p_condition:approvedCondition});
- if(error)return alert("Could not complete maintenance: "+error.message);
- await notifyOmm("maintenance_completed",toolId,{completed_at:today(),condition:approvedCondition});
- await loadData();
- alert("Maintenance completed. The tool is back in the Available list with its original QR code and history.");
-}
+async function completeMaintenance(toolId){if(!isAdmin())return alert("Only Omm can mark a tool repaired.");const rec=maintenanceRecords.find(r=>r.tool_id===toolId&&r.status==="In Progress");if(!rec)return alert("No active maintenance record was found.");if(!confirm("Confirm that this tool has been repaired and is ready to use?"))return;const {error}=await db.from("maintenance_records").update({status:"Completed",completed_at:new Date().toISOString(),completed_by:profile.id}).eq("id",rec.id);if(error)return alert("Could not complete maintenance: "+error.message);const {error:upError}=await db.from("tools").update({status:"Available",condition:"Good"}).eq("id",toolId);if(upError)return alert("Maintenance was completed, but tool status could not be updated: "+upError.message);await db.from("tool_movements").insert({tool_id:toolId,actor_id:profile.id,action:"Maintenance Completed",condition:"Repaired and marked available"});await notifyOmm("maintenance_completed",toolId,{completed_at:today()});await loadData();}
 function renderRepairLists(){const name=id=>tools.find(t=>t.id===id)?.name||"Tool";$("maintenanceList").innerHTML=maintenanceRecords.length?maintenanceRecords.map(r=>`<div class="tool"><div style="flex:1"><strong>${esc(name(r.tool_id))}</strong><div class="muted">${esc(r.reason)} · ${esc(r.service_location||"Location not recorded")}</div><small>Sent ${new Date(r.sent_at).toLocaleDateString()} · ${r.completed_at?"Completed "+new Date(r.completed_at).toLocaleDateString():"In progress"}</small></div><span class="pill ${r.status==="Completed"?"green":"orange"}">${esc(r.status)}</span></div>`).join(""):'<div class="empty">No maintenance records yet.</div>';
  $("damageList").innerHTML=damageReports.length?damageReports.map(r=>`<div class="tool"><div style="flex:1"><strong>${esc(name(r.tool_id))}</strong><div class="muted">${esc(r.description)}</div><small>${esc(r.location)} · Happened ${esc(r.incident_date)} · Reported ${new Date(r.created_at).toLocaleString()}</small>${r.photo_url?`<div><a href="${esc(r.photo_url)}" target="_blank" rel="noopener">View evidence photo</a></div>`:""}</div><span class="pill red">Damaged</span></div>`).join(""):'<div class="empty">No damage reports yet.</div>';}
 
