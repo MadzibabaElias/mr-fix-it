@@ -1911,7 +1911,7 @@ async function saveTechnicianColour(id,colour){
 }
 
 function render(){
- const borrowed=tools.filter(t=>t.borrower_id),inUse=tools.filter(t=>toolStatus(t)==="In Use"||t.borrower_id),maintenance=tools.filter(t=>toolStatus(t)==="Under Maintenance"),damaged=tools.filter(t=>toolStatus(t)==="Damaged"),available=tools.filter(t=>toolStatus(t)==="Available"),review=borrowed.filter(t=>t.borrowed_at&&Date.now()-new Date(t.borrowed_at).getTime()>=14*86400000);
+const borrowed=tools.filter(t=>t.borrower_id),inUse=tools.filter(t=>toolStatus(t)==="In Use"||t.borrower_id),maintenance=tools.filter(t=>toolStatus(t)==="Under Maintenance"),damaged=tools.filter(t=>toolStatus(t)==="Damaged"),available=tools.filter(t=>toolStatus(t)==="Available"),review=borrowed.filter(t=>t.borrowed_at&&Date.now()-new Date(t.borrowed_at).getTime()>=7*86400000);
  $("total").textContent=tools.length;$("available").textContent=available.length;$("borrowed").textContent=inUse.length;$("maintenanceCount").textContent=maintenance.length;$("damagedCount").textContent=damaged.length;$("overdue").textContent=review.length;
  $("addBtn").disabled=!isAdmin();
  renderToolRegister();renderRepairLists();populateDamageTools();renderCalendar();
