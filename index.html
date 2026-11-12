@@ -1414,12 +1414,12 @@ const SUPABASE_PUBLISHABLE_KEY="sb_publishable_toP1wnV1eVtsBvCeFcBCaw_UomR3IE9";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{experimental:{passkey:true}}});
 let profile=null, tools=[], people=[], history=[], damageReports=[], maintenanceRecords=[], selectedBin=null;
 let calendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
-let selectedCalendarDate=today();
 const TECHNICIAN_COLOURS=["#2684E8","#20A66A","#D6A12D","#9865D5","#D95D67","#159A9C","#E07A35","#64748b"];
 function personColour(p){return p?.calendar_color||TECHNICIAN_COLOURS[Math.max(0,people.findIndex(x=>x.id===p?.id))%TECHNICIAN_COLOURS.length]||"#64748b";}
 const OMM_EMAIL="elias@rea.za.com";
 function ensureQrLibrary(){return Promise.resolve(window.QRCode);}
 const $=id=>document.getElementById(id), today=()=>new Date().toISOString().slice(0,10);
+let selectedCalendarDate=today();
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function isAdmin(){return profile?.is_admin===true}
 function showError(id,msg){$(id).innerHTML='<div class="error">'+esc(msg)+'</div>'}
