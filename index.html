@@ -3,6 +3,73 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MR FIX IT — Workshop Tool Management</title>
+
+/* MR FIX IT - FIXED BOTTOM NAVIGATION */
+
+#app nav[aria-label="Main navigation"] {
+  position: fixed !important;
+  z-index: 9999 !important;
+  left: 50% !important;
+  bottom: 12px !important;
+  top: auto !important;
+  transform: translateX(-50%) !important;
+  width: min(760px, calc(100% - 24px)) !important;
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  gap: 4px !important;
+  margin: 0 !important;
+  padding: 8px 7px !important;
+  background: #191a1d !important;
+  border: 1px solid #45464a !important;
+  border-radius: 20px !important;
+  box-shadow: 0 12px 38px #000b !important;
+  backdrop-filter: blur(18px);
+}
+
+#app nav[aria-label="Main navigation"] button {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 7px 2px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #c3c0b9;
+  font-size: 10px;
+}
+
+#app nav[aria-label="Main navigation"] button .nav-icon {
+  font-size: 21px;
+  line-height: 1.1;
+}
+
+#app nav[aria-label="Main navigation"] button.active {
+  color: #e4c47c;
+  background: #ffffff10;
+}
+
+@media(max-width:700px) {
+  body {
+    padding-bottom: 100px !important;
+  }
+
+  #app nav[aria-label="Main navigation"] {
+    bottom: 8px !important;
+    width: calc(100% - 16px) !important;
+  }
+
+  #app nav[aria-label="Main navigation"] button {
+    font-size: 9px;
+    padding: 6px 1px;
+  }
+
+  #app nav[aria-label="Main navigation"] button .nav-icon {
+    font-size: 19px;
+  }
+}
 <style>
 :root{--navy:#101c2c;--blue:#237bdb;--bg:#f3f6fa;--ink:#172536;--muted:#65758a;--line:#e1e8f0;--green:#168653;--red:#c44343}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
