@@ -74,6 +74,18 @@ button.dark{background:#25272b;color:#f8f5ee;border-color:#25272b}
 .welcome-message{margin-top:10px;font-size:clamp(20px,3vw,27px);font-weight:800;letter-spacing:-.035em;color:#96733c}
 #login{background:#fffdfa;border-color:#e7dfd2}
 @media(max-width:700px){.welcome-message{font-size:21px}}
+
+/* Colour-coded borrowing calendar */
+.calendar-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.calendar-day{min-height:76px;border:1px solid var(--line);border-radius:10px;padding:6px;background:#fffdfa;text-align:left;display:flex;flex-direction:column;gap:5px}
+.calendar-day.muted-day{opacity:.4}.calendar-day.selected-day{outline:2px solid #b89452;background:#fbf5e8}
+.calendar-day .day-number{font-size:12px;font-weight:750}.calendar-dots{display:flex;gap:3px;flex-wrap:wrap}.calendar-dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.calendar-legend{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.calendar-person{display:flex;align-items:center;gap:6px;font-size:12px}
+.calendar-event{border-left:5px solid var(--person-color);padding:10px 12px;margin:8px 0;background:#faf8f3;border-radius:8px}
+.colour-settings{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+@media(max-width:520px){.calendar-grid{gap:3px}.calendar-day{min-height:58px;padding:4px;border-radius:7px}.calendar-day .day-number{font-size:11px}}
+
 </style>
 </head>
 <body>
@@ -86,7 +98,7 @@ button.dark{background:#25272b;color:#f8f5ee;border-color:#25272b}
 </section>
 <main id="app" class="hidden">
 <div class="top"><div><h2 id="pageTitle">Workshop dashboard</h2><div class="muted">Shared workshop inventory</div><div id="welcomeMessage" class="welcome-message" aria-live="polite">Welcome to Mr Fix It</div></div><div><span id="whoami" class="muted"></span> <button onclick="registerPasskey()">Set up Face ID / fingerprint</button> <button onclick="signOut()">Sign out</button></div></div>
-<nav><button class="tab active" data-page="dashboard">Dashboard</button><button class="tab" data-page="tools">Tool register</button><button class="tab" data-page="bins">Team bins</button><button class="tab" data-page="activity">History</button><button class="tab" data-page="repairs">Damage & Maintenance</button></nav>
+<nav><button class="tab active" data-page="dashboard">Dashboard</button><button class="tab" data-page="tools">Tool register</button><button class="tab" data-page="bins">Team bins</button><button class="tab" data-page="activity">History</button><button class="tab" data-page="calendar">Calendar</button><button class="tab" data-page="repairs">Damage & Maintenance</button></nav>
 <section id="dashboard"><div class="cards">
 <div class="card"><div class="muted">Registered tools</div><div class="num" id="total">0</div></div><div class="card"><div class="muted">Available</div><div class="num" id="available">0</div></div><div class="card"><div class="muted">In Use / Borrowed</div><div class="num" id="borrowed">0</div></div><div class="card"><div class="muted">Under Maintenance</div><div class="num" id="maintenanceCount">0</div></div><div class="card"><div class="muted">Damaged</div><div class="num" id="damagedCount">0</div></div><div class="card"><div class="muted">14+ day reminders due</div><div class="num" id="overdue">0</div></div></div>
 <div class="panel"><strong>Borrow or return</strong><div class="muted">Enter the tool ID printed below the QR label, or scan a QR label with your phone camera to open this workshop page with the tool ID filled in.</div>
@@ -104,6 +116,17 @@ button.dark{background:#25272b;color:#f8f5ee;border-color:#25272b}
 <div><label>Condition</label><select id="fCondition"><option>Good</option><option>New</option><option>Worn</option><option>Damaged</option><option>Faulty</option></select></div><div><label>Tool photo</label><input id="fPhoto" type="file" accept="image/jpeg,image/png,image/webp"><small>JPG, PNG or WEBP. Maximum size: 3 MB.</small><div id="photoPreviewWrap" class="hidden" style="margin-top:8px"><img id="photoPreview" alt="Selected tool photo preview" style="width:120px;height:100px;object-fit:cover;border-radius:10px"></div></div></div><div class="actions" style="margin-top:12px"><button class="primary">Save tool</button><button type="button" onclick="hideForm()">Cancel</button></div></form></div><div class="tool-controls"><input id="toolSearch" type="search" placeholder="Search tools by name, make, model, serial number or tool ID..."><select id="categoryFilter"><option value="">All tool types</option><option>Power Tools</option><option>Hand Tools</option><option>Electrical Tools</option><option>Measuring Tools</option><option>Safety Equipment</option><option>Building Tools</option><option>Painting Tools</option><option>Other</option></select></div><div id="toolCount" class="muted tool-count"></div><div id="toolList"></div></div></section>
 <section id="bins" class="hidden"><div class="panel"><strong>Personal tool bins</strong><p class="muted">Select a technician to view assigned tools.</p><div id="binList" class="people"></div><div id="binDetail" style="margin-top:16px"></div></div></section>
 <section id="activity" class="hidden"><div class="panel"><strong>Transaction history</strong><div id="historyList"></div></div></section>
+<section id="calendar" class="hidden">
+ <div class="panel">
+  <div class="row"><div><strong>Borrowing calendar</strong><div class="muted">Borrowing dates are highlighted using each technician's assigned colour.</div></div></div>
+  <div class="calendar-toolbar"><button type="button" onclick="changeCalendarMonth(-1)">← Previous</button><strong id="calendarMonthTitle"></strong><button type="button" onclick="changeCalendarMonth(1)">Next →</button></div>
+  <div class="calendar-grid" id="calendarWeekdays"></div>
+  <div class="calendar-grid" id="calendarGrid"></div>
+  <div class="calendar-legend" id="calendarLegend"></div>
+ </div>
+ <div class="panel"><strong id="calendarDateTitle">Select a date</strong><div id="calendarDayDetails" class="muted" style="margin-top:10px">Choose a highlighted date to see borrowing activity.</div></div>
+ <div class="panel" id="calendarColourPanel"><strong>Technician colours</strong><p class="muted">Administrators can assign permanent colours. Changes are saved in Supabase and shared across devices.</p><div id="calendarColourSettings" class="colour-settings"></div></div>
+</section>
 <section id="repairs" class="hidden">
  <div class="panel"><strong>Report damaged tool</strong><p class="muted">Technicians must complete all details. The report is saved in the tool history and Omm is notified by email.</p>
  <form id="damageForm"><div class="fields"><div><label>Tool *</label><select id="damageTool" required></select></div><div><label>Date damage happened *</label><input id="damageDate" type="date" required></div><div><label>Where did it happen? *</label><input id="damageLocation" required placeholder="e.g. Customer site / Workshop"></div><div><label>Photo evidence</label><input id="damagePhoto" type="file" accept="image/jpeg,image/png,image/webp" required><small>Required: JPG, PNG or WEBP, maximum 3 MB.</small></div></div><label>Describe the damage *</label><textarea id="damageDescription" rows="3" required placeholder="Explain what happened and what is damaged"></textarea><div class="actions" style="margin-top:12px"><button class="primary">Submit damage report</button></div></form></div>
@@ -1390,6 +1413,10 @@ const SUPABASE_URL="https://dlrfyamgfwkcdzgafghb.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_toP1wnV1eVtsBvCeFcBCaw_UomR3IE9";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{experimental:{passkey:true}}});
 let profile=null, tools=[], people=[], history=[], damageReports=[], maintenanceRecords=[], selectedBin=null;
+let calendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+let selectedCalendarDate=today();
+const TECHNICIAN_COLOURS=["#2684E8","#20A66A","#D6A12D","#9865D5","#D95D67","#159A9C","#E07A35","#64748b"];
+function personColour(p){return p?.calendar_color||TECHNICIAN_COLOURS[Math.max(0,people.findIndex(x=>x.id===p?.id))%TECHNICIAN_COLOURS.length]||"#64748b";}
 const OMM_EMAIL="elias@rea.za.com";
 function ensureQrLibrary(){return Promise.resolve(window.QRCode);}
 const $=id=>document.getElementById(id), today=()=>new Date().toISOString().slice(0,10);
@@ -1404,21 +1431,21 @@ async function registerPasskey(){try{const {data,error}=await db.auth.registerPa
 async function signOut(){await db.auth.signOut();profile=null;$("app").classList.add("hidden");$("login").classList.remove("hidden")}
 async function startApp(){
  const {data:{user},error}=await db.auth.getUser();if(error||!user)return;
- const {data:p,error:pe}=await db.from("profiles").select("id,full_name,job_title,is_admin,active").eq("id",user.id).single();
+ const {data:p,error:pe}=await db.from("profiles").select("id,full_name,job_title,is_admin,active,calendar_color").eq("id",user.id).single();
  if(pe||!p||!p.active){await db.auth.signOut();showError("loginError","Your Supabase login is valid, but your MR FIX IT team profile is missing or inactive. Run the updated setup SQL in your Supabase SQL Editor, then sign in again.");return}
  profile=p;$("welcomeMessage").textContent="Welcome back, "+(p.full_name||"Team member")+"!";$("login").classList.add("hidden");$("app").classList.remove("hidden");$("whoami").textContent=p.full_name+(p.is_admin?" · Administrator":" · Technician");
  await loadData();
  const incomingTool=new URLSearchParams(location.search).get("tool");
  if(incomingTool){$("scanId").value=incomingTool;go("dashboard");}
  db.removeAllChannels();
- db.channel("mr-fix-it-live").on("postgres_changes",{event:"*",schema:"public",table:"tools"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"tool_movements"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"damage_reports"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"maintenance_records"},loadData).subscribe();
+ db.channel("mr-fix-it-live").on("postgres_changes",{event:"*",schema:"public",table:"profiles"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"tools"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"tool_movements"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"damage_reports"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"maintenance_records"},loadData).subscribe();
 }
 async function loadData(){
- const [tr,pr,hr,dr,mr]=await Promise.all([db.from("tools").select("*").order("created_at",{ascending:false}),db.from("profiles").select("id,full_name,job_title,is_admin").eq("active",true).order("full_name"),db.from("tool_movements").select("*").order("created_at",{ascending:false}).limit(300),db.from("damage_reports").select("*").order("created_at",{ascending:false}).limit(100),db.from("maintenance_records").select("*").order("created_at",{ascending:false}).limit(100)]);
+ const [tr,pr,hr,dr,mr]=await Promise.all([db.from("tools").select("*").order("created_at",{ascending:false}),db.from("profiles").select("id,full_name,job_title,is_admin,calendar_color").eq("active",true).order("full_name"),db.from("tool_movements").select("*").order("created_at",{ascending:false}).limit(300),db.from("damage_reports").select("*").order("created_at",{ascending:false}).limit(100),db.from("maintenance_records").select("*").order("created_at",{ascending:false}).limit(100)]);
  if(tr.error||pr.error||hr.error||dr.error||mr.error){alert("Could not load workshop records. Run the Mr Fix It Damage and Maintenance SQL update in Supabase, then refresh. Details: "+(tr.error||pr.error||hr.error||dr.error||mr.error).message);console.error(tr.error,pr.error,hr.error,dr.error,mr.error);return}
  tools=tr.data||[];people=pr.data||[];history=hr.data||[];damageReports=dr.data||[];maintenanceRecords=mr.data||[];if(!selectedBin)selectedBin=profile.id;render();
 }
-function go(page){document.querySelectorAll("main>section").forEach(s=>s.classList.add("hidden"));$(page).classList.remove("hidden");document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("pageTitle").textContent=({dashboard:"Workshop dashboard",tools:"Tool register",bins:"Technician bins",activity:"Activity history",repairs:"Damage & Maintenance"})[page]}
+function go(page){document.querySelectorAll("main>section").forEach(s=>s.classList.add("hidden"));$(page).classList.remove("hidden");document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("pageTitle").textContent=({dashboard:"Workshop dashboard",tools:"Tool register",bins:"Technician bins",activity:"Activity history",calendar:"Borrowing calendar",repairs:"Damage & Maintenance"})[page]}
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>go(b.dataset.page));
 function toolStatus(t){return t.status||(t.borrower_id?"In Use":"Available")}
 function statusPill(t){const st=toolStatus(t);const cls=st==="Available"?"green":st==="Damaged"?"red":st==="Under Maintenance"?"orange":st==="Lost"?"grey":"red";return `<span class="pill ${cls}">${esc(st)}</span>`}
@@ -1527,11 +1554,71 @@ function renderToolRegister(){
  renderToolQrs();
 }
 
+
+function changeCalendarMonth(delta){
+ calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+delta,1);
+ renderCalendar();
+}
+function dateKey(d){
+ const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");
+ return `${y}-${m}-${day}`;
+}
+function renderCalendar(){
+ const title=$("calendarMonthTitle");if(!title)return;
+ title.textContent=calendarCursor.toLocaleDateString(undefined,{month:"long",year:"numeric"});
+ $("calendarWeekdays").innerHTML=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(x=>`<div class="muted" style="text-align:center;font-weight:700;padding:5px">${x}</div>`).join("");
+ const first=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth(),1);
+ const offset=(first.getDay()+6)%7;
+ const start=new Date(first);start.setDate(first.getDate()-offset);
+ const movementDates=history.filter(h=>h.action==="Borrowed"&&h.created_at);
+ const dayPeople={};
+ movementDates.forEach(h=>{
+  const key=dateKey(new Date(h.created_at));
+  (dayPeople[key] ||= new Set()).add(h.actor_id);
+ });
+ $("calendarGrid").innerHTML=Array.from({length:42},(_,i)=>{
+  const d=new Date(start);d.setDate(start.getDate()+i);const key=dateKey(d);
+  const ids=[...(dayPeople[key]||[])];
+  const dots=ids.map(id=>{const p=people.find(x=>x.id===id);return `<span class="calendar-dot" title="${esc(p?.full_name||"Technician")}" style="background:${esc(personColour(p))}"></span>`}).join("");
+  const outside=d.getMonth()!==calendarCursor.getMonth();
+  return `<button type="button" class="calendar-day ${outside?"muted-day":""} ${key===selectedCalendarDate?"selected-day":""}" onclick="selectCalendarDate('${key}')"><span class="day-number">${d.getDate()}</span><span class="calendar-dots">${dots}</span></button>`;
+ }).join("");
+ const legendPeople=isAdmin()?people:people.filter(p=>p.id===profile.id);
+ $("calendarLegend").innerHTML=legendPeople.map(p=>`<span class="calendar-person"><i class="calendar-dot" style="background:${esc(personColour(p))}"></i>${esc(p.full_name)}</span>`).join("");
+ const panel=$("calendarColourPanel");
+ if(!isAdmin()){panel.classList.add("hidden");}
+ else{
+  panel.classList.remove("hidden");
+  $("calendarColourSettings").innerHTML=people.map(p=>`<label style="display:flex;align-items:center;gap:8px;margin:0;padding:10px;border:1px solid var(--line);border-radius:10px"><span style="flex:1">${esc(p.full_name)}</span><input type="color" value="${esc(personColour(p))}" aria-label="Calendar colour for ${esc(p.full_name)}" style="width:48px;height:38px;padding:3px" onchange="saveTechnicianColour('${esc(p.id)}',this.value)"></label>`).join("");
+ }
+ renderCalendarDay();
+}
+function selectCalendarDate(key){selectedCalendarDate=key;const d=new Date(key+"T12:00:00");calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);renderCalendar();}
+function renderCalendarDay(){
+ const d=new Date(selectedCalendarDate+"T12:00:00");
+ $("calendarDateTitle").textContent=d.toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long",year:"numeric"})+" · Borrowing activity";
+ const entries=history.filter(h=>h.action==="Borrowed"&&h.created_at&&dateKey(new Date(h.created_at))===selectedCalendarDate);
+ const visible=entries.filter(h=>isAdmin()||h.actor_id===profile.id);
+ $("calendarDayDetails").innerHTML=visible.length?visible.map(h=>{
+  const p=people.find(x=>x.id===h.actor_id),t=tools.find(x=>x.id===h.tool_id);
+  return `<div class="calendar-event" style="--person-color:${esc(personColour(p))}"><strong>${esc(t?.name||"Tool")}</strong><div>${esc(p?.full_name||"Technician")} · ${esc(t?.tool_code||"")}</div><small>Borrowed ${new Date(h.created_at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})} · Job ${esc(h.job_reference||"Not recorded")}</small></div>`;
+ }).join(""):'<div class="empty">No borrowing records for this date.</div>';
+}
+async function saveTechnicianColour(id,colour){
+ if(!isAdmin())return alert("Only an administrator can change technician colours.");
+ if(!/^#[0-9a-f]{6}$/i.test(colour))return;
+ const {error}=await db.from("profiles").update({calendar_color:colour}).eq("id",id);
+ if(error){alert("Could not save colour. Please run the Mr Fix It calendar database update SQL first. Details: "+error.message);await loadData();return;}
+ const p=people.find(x=>x.id===id);if(p)p.calendar_color=colour;
+ if(profile.id===id)profile.calendar_color=colour;
+ renderCalendar();
+}
+
 function render(){
  const borrowed=tools.filter(t=>t.borrower_id),inUse=tools.filter(t=>toolStatus(t)==="In Use"||t.borrower_id),maintenance=tools.filter(t=>toolStatus(t)==="Under Maintenance"),damaged=tools.filter(t=>toolStatus(t)==="Damaged"),available=tools.filter(t=>toolStatus(t)==="Available"),review=borrowed.filter(t=>t.borrowed_at&&Date.now()-new Date(t.borrowed_at).getTime()>=14*86400000);
  $("total").textContent=tools.length;$("available").textContent=available.length;$("borrowed").textContent=inUse.length;$("maintenanceCount").textContent=maintenance.length;$("damagedCount").textContent=damaged.length;$("overdue").textContent=review.length;
  $("addBtn").disabled=!isAdmin();
- renderToolRegister();renderRepairLists();populateDamageTools();
+ renderToolRegister();renderRepairLists();populateDamageTools();renderCalendar();
  const visiblePeople=isAdmin()?people:people.filter(p=>p.id===profile.id);
  $("dashPeople").innerHTML=visiblePeople.map(p=>`<div class="person"><strong>${esc(p.full_name)}</strong><small>${esc(p.job_title||"Technician")}${p.is_admin?" · Admin":""}</small><div class="count">${borrowed.filter(t=>t.borrower_id===p.id).length}</div><small>tools in bin</small></div>`).join("");
  $("binList").innerHTML=visiblePeople.map(p=>`<div class="person" onclick="showBin('${p.id}')" style="cursor:pointer"><strong>${esc(p.full_name)}</strong><small>${esc(p.job_title||"Technician")}</small><div class="count">${borrowed.filter(t=>t.borrower_id===p.id).length}</div><small>tools assigned</small></div>`).join("");if(!isAdmin())selectedBin=profile.id;showBin(selectedBin);
