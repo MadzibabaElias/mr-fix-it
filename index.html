@@ -215,6 +215,9 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
 .hero-copy{min-width:0}.hero-kicker{font-size:10px;font-weight:850;letter-spacing:.18em;color:#e7c27a}
 .hero-copy h2{font-size:clamp(22px,4vw,34px);line-height:1.08;margin:7px 0;color:#f6f0e5}
 .hero-copy p{color:#d3cec3;margin:8px 0 14px}.hero-scan{background:linear-gradient(135deg,#efc779,#bd9148);color:#171717;border:0;font-weight:850;padding:12px 17px}
+.card[data-dashboard-page]{cursor:pointer;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;}
+.card[data-dashboard-page]:hover,.card[data-dashboard-page]:focus-visible{transform:translateY(-2px);border-color:#c9a45b;box-shadow:0 8px 20px #0004;outline:none;}
+.card[data-dashboard-page] small{display:block;margin-top:7px;color:#d8b76f;font-size:11px;font-weight:700;}
 #dashboard>.cards+.panel{border-color:#55452c}
 @media(max-width:700px){body{padding-bottom:105px}header{padding:12px 15px}main{margin:14px auto;padding:0 12px}.top{padding:4px 3px 12px;gap:10px}.top>div:last-child{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.top button{font-size:10px;padding:8px}nav{bottom:calc(8px + env(safe-area-inset-bottom));width:calc(100% - 16px);border-radius:17px}nav button{font-size:9px;padding:6px 1px}nav button .nav-icon{font-size:19px}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.card{padding:13px;min-height:92px}.card .num{font-size:29px}.dashboard-hero{min-height:155px;padding:13px;gap:12px;border-radius:18px}.hero-mascot-frame{width:36%;max-width:145px}.hero-copy h2{font-size:21px}.hero-copy p{font-size:12px;margin:5px 0 9px}.hero-kicker{font-size:8px}.hero-scan{font-size:10px;padding:9px 10px}.panel{padding:14px;border-radius:15px}#login{margin:4vh 12px;padding:22px}}
 @media(max-width:390px){.dashboard-hero{gap:9px;padding:10px}.hero-copy h2{font-size:18px}.hero-copy p{font-size:11px}.hero-scan{font-size:9px;padding:8px}.card .num{font-size:26px}}
@@ -360,8 +363,14 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
     </div>
   </div>
 </div>
-<div class="cards">
-<div class="card"><div class="muted">Registered tools</div><div class="num" id="total">0</div></div><div class="card"><div class="muted">Available</div><div class="num" id="available">0</div></div><div class="card"><div class="muted">In Use / Borrowed</div><div class="num" id="borrowed">0</div></div><div class="card"><div class="muted">Under Maintenance</div><div class="num" id="maintenanceCount">0</div></div><div class="card"><div class="muted">Damaged</div><div class="num" id="damagedCount">0</div></div><div class="card"><div class="muted">7+ day reminders due</div><div class="num" id="overdue">0</div></div></div>
+<div class="cards" aria-label="Dashboard shortcuts">
+<div class="card" data-dashboard-page="tools" role="button" tabindex="0" aria-label="Open registered tools"><div class="muted">Registered tools</div><div class="num" id="total">0</div><small>View tool register ↗</small></div>
+<div class="card" data-dashboard-page="tools" role="button" tabindex="0" aria-label="Open available tools"><div class="muted">Available</div><div class="num" id="available">0</div><small>View tool register ↗</small></div>
+<div class="card" data-dashboard-page="bins" role="button" tabindex="0" aria-label="Open borrowed tools"><div class="muted">In Use / Borrowed</div><div class="num" id="borrowed">0</div><small>View technician bins ↗</small></div>
+<div class="card" data-dashboard-page="repairs" role="button" tabindex="0" aria-label="Open maintenance records"><div class="muted">Under Maintenance</div><div class="num" id="maintenanceCount">0</div><small>View maintenance ↗</small></div>
+<div class="card" data-dashboard-page="repairs" role="button" tabindex="0" aria-label="Open damaged tools"><div class="muted">Damaged</div><div class="num" id="damagedCount">0</div><small>View damage reports ↗</small></div>
+<div class="card" data-dashboard-page="bins" role="button" tabindex="0" aria-label="Open tools with reminders due"><div class="muted">7+ day reminders due</div><div class="num" id="overdue">0</div><small>View technician bins ↗</small></div>
+</div>
 <div class="panel"><strong>Borrow or return</strong><div class="muted">Enter the tool ID printed below the QR label, or scan a QR label with your phone camera to open this workshop page with the tool ID filled in.</div>
 <div class="grid2"><div><label>Tool ID</label><input id="scanId" placeholder="e.g. MRF-0001"></div><div><label>Action</label><select id="scanAction"><option value="borrow">Borrow tool</option><option value="return">Return tool</option></select></div></div>
 <div id="scannedToolPanel" class="panel hidden" style="margin:12px 0;background:#242629;border-color:#51432d"></div>
@@ -369,13 +378,13 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
 <div class="actions" style="margin-top:10px"><button class="dark" onclick="processToolAction()">Submit</button></div></div>
 <div class="panel"><strong>Six personal borrowing bins</strong><div class="people" id="dashPeople" style="margin-top:12px"></div></div>
 <div class="notice">Email notifications go to Omm at elias@rea.za.com. Borrowed tools receive a reminder after 7 days and every 7 days until returned, once the email service and schedule are configured.</div></section>
-<section id="tools" class="hidden"><div class="panel"><div class="row"><div><strong>Tool register</strong><div class="muted">Only administrators can register tools. A unique QR code is generated from each tool ID.</div></div><button class="primary" id="addBtn" onclick="showForm()">＋ Add tool</button></div>
-<div id="toolForm" class="hidden"><form id="addToolForm"><div class="fields"><div><label>Tool name *</label><input id="fName" required></div><div><label>Make</label><input id="fMake"></div><div><label>Model</label><input id="fModel"></div><div><label>Serial number</label><input id="fSerial"></div>
+<section id="tools" class="hidden"><div class="panel"><div class="row"><div><strong>Tool register</strong><div class="muted">Only Omm can add or edit tool details. Technicians can scan, borrow, return and report damage. A unique QR code is generated from each tool ID.</div></div><button class="primary" id="addBtn" onclick="showForm()">＋ Add tool</button></div>
+<div id="toolForm" class="hidden"><h3 id="toolFormTitle">Register a new tool</h3><form id="addToolForm"><div class="fields"><div><label>Tool name *</label><input id="fName" required></div><div><label>Make</label><input id="fMake"></div><div><label>Model</label><input id="fModel"></div><div><label>Serial number</label><input id="fSerial"></div>
 <div><label>Category *</label><select id="fCategory" required>
 <option value="">Select category</option><option>Power Tools</option><option>Hand Tools</option><option>Electrical Tools</option><option>Measuring Tools</option><option>Safety Equipment</option><option>Building Tools</option><option>Painting Tools</option><option>Other</option>
 </select></div>
 <div><label>Location *</label><select id="fLocation" required><option value="">Select location</option><option>Workshop</option><option>Storeroom</option><option>HQ</option><option>Other</option></select></div>
-<div><label>Condition</label><select id="fCondition"><option>Good</option><option>New</option><option>Worn</option><option>Damaged</option><option>Faulty</option></select></div><div><label>Tool photo</label><input id="fPhoto" type="file" accept="image/jpeg,image/png,image/webp"><small>JPG, PNG or WEBP. Maximum size: 30 MB.</small><div id="photoPreviewWrap" class="hidden" style="margin-top:8px"><img id="photoPreview" alt="Selected tool photo preview" style="width:120px;height:100px;object-fit:cover;border-radius:10px"></div></div></div><div class="actions" style="margin-top:12px"><button class="primary">Save tool</button><button type="button" onclick="hideForm()">Cancel</button></div></form></div><div class="tool-controls"><input id="toolSearch" type="search" placeholder="Search tools by name, make, model, serial number or tool ID..."><select id="categoryFilter"><option value="">All tool types</option><option>Power Tools</option><option>Hand Tools</option><option>Electrical Tools</option><option>Measuring Tools</option><option>Safety Equipment</option><option>Building Tools</option><option>Painting Tools</option><option>Other</option></select></div><div id="toolCount" class="muted tool-count"></div><div id="toolList"></div></div></section>
+<div><label>Condition</label><select id="fCondition"><option>Good</option><option>New</option><option>Worn</option><option>Damaged</option><option>Faulty</option></select></div><div><label>Tool photo</label><input id="fPhoto" type="file" accept="image/jpeg,image/png,image/webp"><small>JPG, PNG or WEBP. Maximum size: 30 MB.</small><div id="photoPreviewWrap" class="hidden" style="margin-top:8px"><img id="photoPreview" alt="Selected tool photo preview" style="width:120px;height:100px;object-fit:cover;border-radius:10px"></div></div></div><div class="actions" style="margin-top:12px"><button class="primary" id="saveToolButton">Save tool</button><button type="button" onclick="hideForm()">Cancel</button></div></form></div><div class="tool-controls"><input id="toolSearch" type="search" placeholder="Search tools by name, make, model, serial number or tool ID..."><select id="categoryFilter"><option value="">All tool types</option><option>Power Tools</option><option>Hand Tools</option><option>Electrical Tools</option><option>Measuring Tools</option><option>Safety Equipment</option><option>Building Tools</option><option>Painting Tools</option><option>Other</option></select></div><div id="toolCount" class="muted tool-count"></div><div id="toolList"></div></div></section>
 <section id="bins" class="hidden"><div class="panel"><strong>Personal tool bins</strong><p class="muted">Select a technician to view assigned tools.</p><div id="binList" class="people"></div><div id="binDetail" style="margin-top:16px"></div></div></section>
 <section id="activity" class="hidden"><div class="panel"><strong>Transaction history</strong><div id="historyList"></div></div></section>
 <section id="calendar" class="hidden">
@@ -1674,7 +1683,7 @@ module.exports = QRCode;
 const SUPABASE_URL="https://dlrfyamgfwkcdzgafghb.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_toP1wnV1eVtsBvCeFcBCaw_UomR3IE9";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{experimental:{passkey:true}}});
-let profile=null, tools=[], people=[], history=[], damageReports=[], maintenanceRecords=[], selectedBin=null;
+let profile=null, tools=[], people=[], history=[], damageReports=[], maintenanceRecords=[], selectedBin=null, editingToolId=null;
 let calendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 const TECHNICIAN_COLOURS=["#2684E8","#20A66A","#D6A12D","#9865D5","#D95D67","#159A9C","#E07A35","#64748b"];
 function personColour(p){return p?.calendar_color||TECHNICIAN_COLOURS[Math.max(0,people.findIndex(x=>x.id===p?.id))%TECHNICIAN_COLOURS.length]||"#64748b";}
@@ -1708,7 +1717,12 @@ async function loadData(){
  tools=tr.data||[];people=pr.data||[];history=hr.data||[];damageReports=dr.data||[];maintenanceRecords=mr.data||[];if(!selectedBin)selectedBin=profile.id;render();renderScannedToolDetails($("scanId")?.value||new URLSearchParams(location.search).get("tool")||"");
 }
 function go(page){document.querySelectorAll("main>section").forEach(s=>s.classList.add("hidden"));$(page).classList.remove("hidden");document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("pageTitle").textContent=({dashboard:"Workshop dashboard",tools:"Tool register",bins:"Technician bins",activity:"Activity history",calendar:"Borrowing calendar",repairs:"Damage & Maintenance"})[page]}
+function openDashboardTopic(page){if(!["tools","bins","repairs"].includes(page))return;go(page);window.scrollTo({top:0,behavior:"smooth"});}
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>go(b.dataset.page));
+document.querySelectorAll(".card[data-dashboard-page]").forEach(card=>{
+ card.addEventListener("click",()=>openDashboardTopic(card.dataset.dashboardPage));
+ card.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();openDashboardTopic(card.dataset.dashboardPage);}});
+});
 const MAX_PHOTO_BYTES=30*1024*1024;
 function validatePhoto(file){
  if(!file)return;
@@ -1751,8 +1765,20 @@ function renderScannedToolDetails(code){
 async function notifyOmm(event,toolId,details={}){
  try{const {data:{session}}=await db.auth.getSession();if(!session?.access_token)return;const {error}=await db.functions.invoke("mr-fix-it-notify",{body:{event,toolId,details}});if(error)console.warn("Email notification could not be sent:",error.message)}catch(err){console.warn("Email notification error:",err)}
 }
-function showForm(){if(!isAdmin())return; $("toolForm").classList.remove("hidden")}
-function hideForm(){$("toolForm").classList.add("hidden")}
+function showForm(){if(!isAdmin())return;editingToolId=null;$("addToolForm").reset();$("toolFormTitle").textContent="Register a new tool";$("saveToolButton").textContent="Save tool";$("photoPreviewWrap").classList.add("hidden");$("toolForm").classList.remove("hidden")}
+function editTool(id){
+ if(!isAdmin())return alert("Only Omm can edit tool details.");
+ const t=tools.find(x=>x.id===id);if(!t)return;
+ editingToolId=id;
+ $("fName").value=t.name||"";$("fMake").value=t.make||"";$("fModel").value=t.model||"";
+ $("fSerial").value=t.serial_number||"";$("fCategory").value=t.category||"";
+ $("fLocation").value=t.location||"";$("fCondition").value=t.condition||"Good";
+ $("fPhoto").value="";if(t.photo_url){$("photoPreview").src=t.photo_url;$("photoPreviewWrap").classList.remove("hidden")}else{$("photoPreviewWrap").classList.add("hidden")}
+ $("toolFormTitle").textContent="Edit tool details · "+(t.tool_code||t.name);
+ $("saveToolButton").textContent="Update tool";$("toolForm").classList.remove("hidden");
+ $("toolForm").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function hideForm(){editingToolId=null;$("toolForm").classList.add("hidden")}
 async function saveTool(e){
  e.preventDefault();
  if(!isAdmin())return alert("Administrator access required.");
@@ -1765,37 +1791,38 @@ async function saveTool(e){
   photo_url=db.storage.from("tool-photos").getPublicUrl(path).data.publicUrl;
  }
  const payload={
-  name:$("fName").value.trim(),
-  make:$("fMake").value.trim(),
-  model:$("fModel").value.trim(),
-  serial_number:$("fSerial").value.trim(),
-  category:$("fCategory").value,
-  location:$("fLocation").value.trim(),
-  condition:$("fCondition").value,
-  photo_url
+  name:$("fName").value.trim(),make:$("fMake").value.trim(),model:$("fModel").value.trim(),
+  serial_number:$("fSerial").value.trim(),category:$("fCategory").value,
+  location:$("fLocation").value.trim(),condition:$("fCondition").value
  };
- const {data:saved,error}=await db.from("tools").insert(payload).select("*").single();
- if(error){
-  if(/category|location|column/i.test(error.message)){
-   return alert("The database needs the Category and Location update first. Run the supplied MR_FIX_IT_Category_Location_Update.sql file in Supabase SQL Editor, then try again. Details: "+error.message);
-  }
-  return alert("Could not save tool: "+error.message);
+ if(photo_url)payload.photo_url=photo_url;
+ let error,saved;
+ if(editingToolId){
+  const result=await db.from("tools").update(payload).eq("id",editingToolId).select("*").single();
+  error=result.error;saved=result.data;
+ }else{
+  payload.photo_url=photo_url;
+  const result=await db.from("tools").insert(payload).select("*").single();
+  error=result.error;saved=result.data;
  }
- e.target.reset();hideForm();await loadData();
- if(saved?.tool_code)alert("Tool registered. Its QR code is now available in the Tool Register.");
+ if(error){
+  if(/category|location|column/i.test(error.message))return alert("The database needs the Category and Location update first. Run the supplied MR_FIX_IT_Category_Location_Update.sql file in Supabase SQL Editor. Details: "+error.message);
+  return alert((editingToolId?"Could not update tool: ":"Could not save tool: ")+error.message);
+ }
+ const wasEditing=!!editingToolId;e.target.reset();hideForm();await loadData();
+ if(saved?.tool_code&&!wasEditing)alert("Tool registered. Its QR code is now available in the Tool Register.");
+ else if(wasEditing)alert("Tool details updated successfully.");
 }
 async function processToolAction(){
  const id=$("scanId").value.trim();const t=tools.find(x=>(x.tool_code||"").toLowerCase()===id.toLowerCase());if(!t)return alert("Tool ID not found.");
  if($("scanAction").value==="borrow"){
   if(t.borrower_id)return alert("This tool is already assigned.");if(toolStatus(t)!=="Available")return alert("This tool is not available. Current status: "+toolStatus(t));const job=$("jobRef").value.trim();const due=$("dueDate").value;if(!job)return alert("Enter the job card or site reference.");if(!due)return alert("Enter an expected return date.");
-  const {error}=await db.from("tools").update({borrower_id:profile.id,job_reference:job,borrowed_at:new Date().toISOString(),due_date:due,returned_at:null,status:"In Use",last_reminder_at:null}).eq("id",t.id).is("borrower_id",null);if(error)return alert("Borrow failed: "+error.message);
-  await db.from("tool_movements").insert({tool_id:t.id,actor_id:profile.id,action:"Borrowed",job_reference:job,condition:t.condition});
+  const {error}=await db.rpc("mrfix_borrow_tool",{p_tool_id:t.id,p_job_reference:job,p_due_date:due});if(error)return alert("Borrow failed: "+error.message);
   await notifyOmm("borrowed",t.id,{job_reference:job,due_date:due,borrower:profile.full_name});
  }else{
   if(!t.borrower_id)return alert("This tool is already available.");if(t.borrower_id!==profile.id&&!isAdmin())return alert("Only the assigned technician or an administrator can return this tool.");
   const condition=prompt("Return condition (Good / Worn / Damaged / Faulty):",t.condition);if(condition===null)return;
-  const {error}=await db.from("tools").update({borrower_id:null,job_reference:null,borrowed_at:null,due_date:null,returned_at:new Date().toISOString(),condition,status:(toolStatus(t)==="Damaged"||/damag|faulty|broken|needs repair/i.test(condition))?"Damaged":"Available"}).eq("id",t.id);if(error)return alert("Return failed: "+error.message);
-  await db.from("tool_movements").insert({tool_id:t.id,actor_id:profile.id,action:"Returned",condition});
+  const {error}=await db.rpc("mrfix_return_tool",{p_tool_id:t.id,p_condition:condition});if(error)return alert("Return failed: "+error.message);
   if(/damag|faulty|broken|needs repair/i.test(condition)){await notifyOmm("damaged",t.id,{description:"Tool returned with condition: "+condition,location:t.location||"Not specified",incident_date:today()});}
  }
  $("jobRef").value="";await loadData();renderScannedToolDetails($("scanId").value)
@@ -1865,7 +1892,7 @@ function renderToolRegister(){
    <div><small>${t.borrower_id?"With "+esc(people.find(p=>p.id===t.borrower_id)?.full_name||"Technician")+" · Job "+esc(t.job_reference):"Not assigned"} · ${esc(t.condition)}</small></div>
    ${t.tool_code?`<div class="qrrow"><img class="qrimg" id="qr-${esc(t.id)}" alt="QR code for ${esc(t.tool_code)}"><button type="button" onclick="printQr('${esc(t.id)}')">Print QR label</button></div>`:""}
   </div>
-  <div class="actions" style="align-items:center">${statusPill(t)}<button type="button" onclick="openDamageReport('${esc(t.id)}')">Report damage</button>${isAdmin()&&toolStatus(t)==="Damaged"?`<button type="button" onclick="sendForMaintenance('${esc(t.id)}')">Send to maintenance</button>`:""}${isAdmin()&&toolStatus(t)==="Under Maintenance"?`<button type="button" onclick="completeMaintenance('${esc(t.id)}')">Mark repaired</button>`:""}</div>
+  <div class="actions" style="align-items:center">${statusPill(t)}${isAdmin()?`<button type="button" onclick="editTool('${esc(t.id)}')">Edit details</button>`:""}<button type="button" onclick="openDamageReport('${esc(t.id)}')">Report damage</button>${isAdmin()&&toolStatus(t)==="Damaged"?`<button type="button" onclick="sendForMaintenance('${esc(t.id)}')">Send to maintenance</button>`:""}${isAdmin()&&toolStatus(t)==="Under Maintenance"?`<button type="button" onclick="completeMaintenance('${esc(t.id)}')">Mark repaired</button>`:""}</div>
  </div>`).join("")}</section>`).join("");
  renderToolQrs();
 }
