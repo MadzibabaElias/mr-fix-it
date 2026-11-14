@@ -1755,7 +1755,7 @@ module.exports = QRCode;
 const SUPABASE_URL="https://dlrfyamgfwkcdzgafghb.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_toP1wnV1eVtsBvCeFcBCaw_UomR3IE9";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{experimental:{passkey:true}}});
-let profile=null, tools=[], people=[], history=[], damageReports=[], maintenanceRecords=[], selectedBin=null, editingToolId=null, usageRules=[], usageRulesReady=false;
+let profile=null, tools=[], people=[], history=[], damageReports=[], maintenanceRecords=[], selectedBin=null, editingToolId=null, usageRules=[], usageRulesReady=false, usageSessionRows=[];
 let calendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 const TECHNICIAN_COLOURS=["#2684E8","#20A66A","#D6A12D","#9865D5","#D95D67","#159A9C","#E07A35","#64748b"];
 function personColour(p){return p?.calendar_color||TECHNICIAN_COLOURS[Math.max(0,people.findIndex(x=>x.id===p?.id))%TECHNICIAN_COLOURS.length]||"#64748b";}
@@ -1815,9 +1815,9 @@ async function startApp(){
  db.channel("mr-fix-it-live").on("postgres_changes",{event:"*",schema:"public",table:"profiles"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"tools"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"tool_movements"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"damage_reports"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"maintenance_records"},loadData).subscribe();
 }
 async function loadData(){
- const [tr,pr,hr,dr,mr,lr,ur]=await Promise.all([db.from("tools").select("*").order("created_at",{ascending:false}),db.from("profiles").select("id,full_name,job_title,is_admin,calendar_color").eq("active",true).order("full_name"),db.from("tool_movements").select("*").order("created_at",{ascending:false}).limit(1000),db.from("damage_reports").select("*").order("created_at",{ascending:false}).limit(100),db.from("maintenance_records").select("*").order("created_at",{ascending:false}).limit(100),db.from("login_activity").select("id,user_id,created_at,device_info").order("created_at",{ascending:false}).limit(500),isAdmin()?db.from("tool_usage_rules").select("*"):Promise.resolve({data:[],error:null})]);
- if(tr.error||pr.error||hr.error||dr.error||mr.error||lr.error){alert("Could not load workshop records. Run the Mr Fix It Damage and Maintenance SQL update in Supabase, then refresh. Details: "+(tr.error||pr.error||hr.error||dr.error||mr.error||lr.error).message);console.error(tr.error,pr.error,hr.error,dr.error,mr.error,lr.error);return}
- tools=tr.data||[];people=pr.data||[];history=hr.data||[];damageReports=dr.data||[];maintenanceRecords=mr.data||[];loginActivity=lr.data||[];usageRulesReady=!ur?.error;usageRules=ur?.error?[]:(ur?.data||[]);if(!selectedBin)selectedBin=profile.id;render();renderScannedToolDetails($("scanId")?.value||new URLSearchParams(location.search).get("tool")||"");
+ const [tr,pr,hr,dr,mr,lr,ur,us]=await Promise.all([db.from("tools").select("*").order("created_at",{ascending:false}),db.from("profiles").select("id,full_name,job_title,is_admin,calendar_color").eq("active",true).order("full_name"),db.from("tool_movements").select("*").order("created_at",{ascending:false}).limit(1000),db.from("damage_reports").select("*").order("created_at",{ascending:false}).limit(100),db.from("maintenance_records").select("*").order("created_at",{ascending:false}).limit(100),db.from("login_activity").select("id,user_id,created_at,device_info").order("created_at",{ascending:false}).limit(500),isAdmin()?db.from("tool_usage_rules").select("*"):Promise.resolve({data:[],error:null}),isAdmin()?db.rpc("mrfix_get_tool_usage_sessions"):Promise.resolve({data:[],error:null})]);
+ if(tr.error||pr.error||hr.error||dr.error||mr.error||lr.error||(isAdmin()&&us.error)){const err=tr.error||pr.error||hr.error||dr.error||mr.error||lr.error||us.error;alert("Could not load workshop records. Check that the consolidated MR FIX IT SQL upgrade has been run. Details: "+err.message);console.error(tr.error,pr.error,hr.error,dr.error,mr.error,lr.error,us.error);return}
+ tools=tr.data||[];people=pr.data||[];history=hr.data||[];damageReports=dr.data||[];maintenanceRecords=mr.data||[];loginActivity=lr.data||[];usageRulesReady=!ur?.error;usageRules=ur?.error?[]:(ur?.data||[]);usageSessionRows=us?.data||[];if(!selectedBin)selectedBin=profile.id;render();renderScannedToolDetails($("scanId")?.value||new URLSearchParams(location.search).get("tool")||"");
 }
 function go(page){if(page==="usage"&&!isAdmin())return alert("Administrator access required.");document.querySelectorAll("main>section").forEach(s=>s.classList.add("hidden"));$(page).classList.remove("hidden");document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("pageTitle").textContent=({dashboard:"Workshop dashboard",tools:"Tool register",bins:"Technician bins",activity:"Activity history",calendar:"Borrowing calendar",repairs:"Damage & Maintenance",settings:"Settings / Profile",usage:"Tool Usage Register"})[page];if(page==="settings")renderSettings();if(page==="usage")renderUsageRegister()}
 function renderSettings(){
@@ -2067,14 +2067,10 @@ const borrowed=tools.filter(t=>t.borrower_id),inUse=tools.filter(t=>toolStatus(t
 function usageSessions(){
  const byTool=new Map();
  for(const t of tools)byTool.set(t.id,[]);
- const ordered=[...history].sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
- const open=new Map();
- for(const h of ordered){
-  if(!byTool.has(h.tool_id))byTool.set(h.tool_id,[]);
-  if(/borrow/i.test(h.action||"")){const session={tool_id:h.tool_id,borrowed_at:h.created_at,returned_at:null,actor_id:h.actor_id,job_reference:h.job_reference||"",work_description:h.work_description||"",borrow_event:h};open.set(h.tool_id,session);byTool.get(h.tool_id).push(session)}
-  else if(/return/i.test(h.action||"")){const session=open.get(h.tool_id);if(session){session.returned_at=h.created_at;session.return_event=h;open.delete(h.tool_id)}}
+ for(const row of usageSessionRows||[]){
+  if(!byTool.has(row.tool_id))byTool.set(row.tool_id,[]);
+  byTool.get(row.tool_id).push({tool_id:row.tool_id,borrowed_at:row.borrowed_at,returned_at:row.returned_at||null,actor_id:row.actor_id,job_reference:row.job_reference||"",work_description:row.work_description||"",live:!row.returned_at});
  }
- for(const t of tools){if(t.borrower_id&&!open.has(t.id)&&t.borrowed_at){const session={tool_id:t.id,borrowed_at:t.borrowed_at,returned_at:null,actor_id:t.borrower_id,job_reference:t.job_reference||"",work_description:"",live:true};byTool.get(t.id).push(session)}}
  return byTool;
 }
 function durationHours(session){const end=session.returned_at?new Date(session.returned_at).getTime():Date.now();return Math.max(0,(end-new Date(session.borrowed_at).getTime())/3600000)}
