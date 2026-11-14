@@ -408,25 +408,32 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
  <div class="panel">
   <strong>My Profile</strong>
   <p class="muted">Your MR FIX IT account details.</p>
-  <div class="tool"><div style="flex:1"><small>Full name</small><div id="settingsFullName" style="font-weight:800;margin:4px 0 10px">—</div><small>Email address</small><div id="settingsEmail" style="font-weight:700;margin:4px 0 10px">Loading…</div><small>Job title</small><div id="settingsJobTitle" style="font-weight:700;margin:4px 0 10px">—</div><small>Account access</small><div id="settingsAccess" style="font-weight:700;margin-top:4px">—</div><p class="muted" style="margin-top:12px">This page shows your own MR FIX IT profile. Technicians can view their own details and change their own sign-in password here.</p></div></div>
+  <div class="tool"><div style="flex:1"><small>Full name</small><div id="settingsFullName" style="font-weight:800;margin:4px 0 10px">—</div><small>Role</small><div id="settingsJobTitle" style="font-weight:700;margin:4px 0 10px">—</div><small>Account access</small><div id="settingsAccess" style="font-weight:700;margin-top:4px">—</div></div></div>
+ </div>
+ <div class="panel">
+  <strong>Change My Password</strong>
+  <p class="muted">Technicians and administrators can change their own password here.</p>
+  <form id="profilePasswordForm" onsubmit="changeMyPassword(event)">
+   <div class="fields"><div><label>New password</label><input id="profileNewPassword" type="password" minlength="8" autocomplete="new-password" required></div><div><label>Confirm new password</label><input id="profileConfirmPassword" type="password" minlength="8" autocomplete="new-password" required></div></div>
+   <button class="primary" type="submit">Update My Password</button><div id="passwordChangeMessage" class="muted" style="margin-top:8px"></div>
+  </form>
+ </div>
+ <div class="panel">
+  <strong>My Login Register</strong>
+  <p class="muted">A record is added whenever you sign in. This helps track app usage.</p>
+  <div id="myLoginStats" class="notice">Loading login history…</div>
+  <div id="myLoginHistory"></div>
+ </div>
+ <div class="panel" id="teamLoginPanel">
+  <strong>Team Login Register</strong>
+  <p class="muted">Administrator view: see how often each team member signs in.</p>
+  <div id="teamLoginStats"></div>
  </div>
  <div class="panel">
   <strong>Security &amp; Sign-in</strong>
   <p class="muted">Set up a passkey on this device. Your device may use Face ID, Touch ID, fingerprint, Windows Hello, a PIN, or its password manager. Your biometric information stays on your device.</p>
   <button class="primary" type="button" onclick="registerPasskey()">Set Up Face ID / Fingerprint</button>
   <p class="muted" style="margin-top:12px">After registration, return to the sign-in screen and choose “Sign in with Face ID / fingerprint / passkey”. You may need to register separately on each device.</p>
- </div>
- <div class="panel">
-  <strong>Change My Password</strong>
-  <p class="muted">This changes the password for your own signed-in account. Use at least 8 characters.</p>
-  <form id="profilePasswordForm" onsubmit="changeMyPassword(event)">
-   <div class="fields">
-    <div><label for="profileNewPassword">New password</label><input id="profileNewPassword" type="password" minlength="8" autocomplete="new-password" required placeholder="Enter new password"></div>
-    <div><label for="profileConfirmPassword">Confirm new password</label><input id="profileConfirmPassword" type="password" minlength="8" autocomplete="new-password" required placeholder="Enter it again"></div>
-   </div>
-   <div id="profilePasswordMessage" aria-live="polite" style="margin:10px 0"></div>
-   <div class="actions"><button class="primary" type="submit">Update My Password</button></div>
-  </form>
  </div>
  <div class="panel"><strong>App information</strong><p class="muted">MR FIX IT · Workshop Tool Management</p></div>
 </section>
@@ -1717,20 +1724,50 @@ const OMM_EMAIL="elias@rea.za.com";
 function ensureQrLibrary(){return Promise.resolve(window.QRCode);}
 const $=id=>document.getElementById(id), today=()=>new Date().toISOString().slice(0,10);
 let selectedCalendarDate=today();
+let loginActivity=[];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function isAdmin(){return profile?.is_admin===true}
 function showError(id,msg){$(id).innerHTML='<div class="error">'+esc(msg)+'</div>'}
 async function signIn(e){e.preventDefault();$("loginError").innerHTML="";const {error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error){showError("loginError",error.message);return}await startApp()}
+async function changeMyPassword(e){
+ e.preventDefault();
+ const password=$("profileNewPassword").value, confirm=$("profileConfirmPassword").value;
+ const message=$("passwordChangeMessage");
+ if(password.length<8){message.textContent="Use at least 8 characters.";return;}
+ if(password!==confirm){message.textContent="The passwords do not match.";return;}
+ const {error}=await db.auth.updateUser({password});
+ if(error){message.textContent="Could not update password: "+error.message;return;}
+ $("profilePasswordForm").reset();message.textContent="Your password has been updated successfully.";
+}
+async function recordLogin(userId){
+ const key="mrfix_login_logged_"+userId;
+ if(sessionStorage.getItem(key))return;
+ const {error}=await db.from("login_activity").insert({user_id:userId,device_info:(navigator.userAgent||"").slice(0,250)});
+ if(error){console.warn("Login register could not be saved:",error.message);return;}
+ sessionStorage.setItem(key,"1");
+}
+function renderLoginRegister(){
+ if(!profile)return;
+ const mine=loginActivity.filter(x=>x.user_id===profile.id);
+ $("myLoginStats").textContent="Total sign-ins recorded: "+mine.length+" · Last sign-in: "+(mine[0]?.created_at?new Date(mine[0].created_at).toLocaleString():"No sign-ins recorded yet");
+ $("myLoginHistory").innerHTML=mine.slice(0,15).map(x=>`<div class="tool"><div><strong>${new Date(x.created_at).toLocaleString()}</strong><div class="muted">Sign-in recorded</div></div></div>`).join("")||'<p class="muted">No login history yet.</p>';
+ const panel=$("teamLoginPanel");panel.classList.toggle("hidden",!isAdmin());
+ if(isAdmin()){
+  const counts={};loginActivity.forEach(x=>{counts[x.user_id]=(counts[x.user_id]||0)+1;});
+  $("teamLoginStats").innerHTML=people.map(p=>`<div class="tool"><div style="flex:1"><strong>${esc(p.full_name)}</strong><div class="muted">${esc(p.job_title||"Technician")}</div></div><strong>${counts[p.id]||0} sign-ins</strong></div>`).join("")||'<p class="muted">No team members found.</p>';
+ }
+}
+
 async function forgotPassword(){const email=$("email").value.trim();if(!email){showError("loginError","Enter your email address first, then choose Forgot password.");return}const redirectTo=location.origin+location.pathname;const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo});if(error){showError("loginError",error.message);return}$("loginError").innerHTML='<div class="notice">If this email belongs to an MR FIX IT account, a password reset link has been sent. Check your inbox and spam folder.</div>'}
 async function saveNewPassword(){const password=$("newPassword").value;if(password.length<8)return showError("loginError","Use at least 8 characters for your new password.");const {error}=await db.auth.updateUser({password});if(error)return showError("loginError",error.message);$("resetPanel").classList.add("hidden");$("loginError").innerHTML='<div class="notice">Password updated. You can now sign in with your new password.</div>';$("password").value=""}
 async function signInPasskey(){ $("loginError").innerHTML="";try{const {error}=await db.auth.signInWithPasskey();if(error){showError("loginError",error.message);return}await startApp()}catch(e){showError("loginError",e.message||"Passkey sign-in is not available on this device or domain yet.")}}
 async function registerPasskey(){try{const {data,error}=await db.auth.registerPasskey();if(error){alert("Could not set up passkey: "+error.message);return}alert("Passkey registered on this device. Next time, use the Face ID / fingerprint button to sign in.")}catch(e){alert("Passkey setup is not available yet: "+(e.message||e))}}
-async function signOut(){await db.auth.signOut();profile=null;$("app").classList.add("hidden");$("login").classList.remove("hidden")}
+async function signOut(){if(profile)sessionStorage.removeItem("mrfix_login_logged_"+profile.id);await db.auth.signOut();profile=null;$("app").classList.add("hidden");$("login").classList.remove("hidden")}
 async function startApp(){
  const {data:{user},error}=await db.auth.getUser();if(error||!user)return;
  const {data:p,error:pe}=await db.from("profiles").select("id,full_name,job_title,is_admin,active,calendar_color").eq("id",user.id).single();
  if(pe||!p||!p.active){await db.auth.signOut();showError("loginError","Your Supabase login is valid, but your MR FIX IT team profile is missing or inactive. Run the updated setup SQL in your Supabase SQL Editor, then sign in again.");return}
- profile=p;$("welcomeMessage").textContent="Welcome back, "+(p.full_name||"Team member")+"!";$("heroWelcomeName").textContent=(p.full_name||"Team member");$("login").classList.add("hidden");$("app").classList.remove("hidden");$("whoami").textContent=p.full_name+(p.is_admin?" · Administrator":" · Technician");
+ profile=p;await recordLogin(user.id);$("welcomeMessage").textContent="Welcome back, "+(p.full_name||"Team member")+"!";$("heroWelcomeName").textContent=(p.full_name||"Team member");$("login").classList.add("hidden");$("app").classList.remove("hidden");$("whoami").textContent=p.full_name+(p.is_admin?" · Administrator":" · Technician");
  await loadData();
  const incomingTool=new URLSearchParams(location.search).get("tool");
  if(incomingTool){$("scanId").value=incomingTool;go("dashboard");renderScannedToolDetails(incomingTool);}
@@ -1738,42 +1775,17 @@ async function startApp(){
  db.channel("mr-fix-it-live").on("postgres_changes",{event:"*",schema:"public",table:"profiles"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"tools"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"tool_movements"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"damage_reports"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"maintenance_records"},loadData).subscribe();
 }
 async function loadData(){
- const [tr,pr,hr,dr,mr]=await Promise.all([db.from("tools").select("*").order("created_at",{ascending:false}),db.from("profiles").select("id,full_name,job_title,is_admin,calendar_color").eq("active",true).order("full_name"),db.from("tool_movements").select("*").order("created_at",{ascending:false}).limit(300),db.from("damage_reports").select("*").order("created_at",{ascending:false}).limit(100),db.from("maintenance_records").select("*").order("created_at",{ascending:false}).limit(100)]);
- if(tr.error||pr.error||hr.error||dr.error||mr.error){alert("Could not load workshop records. Run the Mr Fix It Damage and Maintenance SQL update in Supabase, then refresh. Details: "+(tr.error||pr.error||hr.error||dr.error||mr.error).message);console.error(tr.error,pr.error,hr.error,dr.error,mr.error);return}
- tools=tr.data||[];people=pr.data||[];history=hr.data||[];damageReports=dr.data||[];maintenanceRecords=mr.data||[];if(!selectedBin)selectedBin=profile.id;render();renderScannedToolDetails($("scanId")?.value||new URLSearchParams(location.search).get("tool")||"");
+ const [tr,pr,hr,dr,mr,lr]=await Promise.all([db.from("tools").select("*").order("created_at",{ascending:false}),db.from("profiles").select("id,full_name,job_title,is_admin,calendar_color").eq("active",true).order("full_name"),db.from("tool_movements").select("*").order("created_at",{ascending:false}).limit(300),db.from("damage_reports").select("*").order("created_at",{ascending:false}).limit(100),db.from("maintenance_records").select("*").order("created_at",{ascending:false}).limit(100),db.from("login_activity").select("id,user_id,created_at,device_info").order("created_at",{ascending:false}).limit(500)]);
+ if(tr.error||pr.error||hr.error||dr.error||mr.error||lr.error){alert("Could not load workshop records. Run the Mr Fix It Damage and Maintenance SQL update in Supabase, then refresh. Details: "+(tr.error||pr.error||hr.error||dr.error||mr.error||lr.error).message);console.error(tr.error,pr.error,hr.error,dr.error,mr.error,lr.error);return}
+ tools=tr.data||[];people=pr.data||[];history=hr.data||[];damageReports=dr.data||[];maintenanceRecords=mr.data||[];loginActivity=lr.data||[];if(!selectedBin)selectedBin=profile.id;render();renderScannedToolDetails($("scanId")?.value||new URLSearchParams(location.search).get("tool")||"");
 }
 function go(page){document.querySelectorAll("main>section").forEach(s=>s.classList.add("hidden"));$(page).classList.remove("hidden");document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("pageTitle").textContent=({dashboard:"Workshop dashboard",tools:"Tool register",bins:"Technician bins",activity:"Activity history",calendar:"Borrowing calendar",repairs:"Damage & Maintenance",settings:"Settings / Profile"})[page];if(page==="settings")renderSettings()}
-async function renderSettings(){
+function renderSettings(){
  if(!profile)return;
  $("settingsFullName").textContent=profile.full_name||"Team member";
  $("settingsJobTitle").textContent=profile.job_title||"Technician";
  $("settingsAccess").textContent=profile.is_admin?"Administrator":"Technician";
- const {data:{user}}=await db.auth.getUser();
- $("settingsEmail").textContent=user?.email||"Email not available";
-}
-async function changeMyPassword(event){
- event.preventDefault();
- const password=$("profileNewPassword").value;
- const confirm=$("profileConfirmPassword").value;
- const message=$("profilePasswordMessage");
- message.textContent="";
- message.className="";
- if(password.length<8){message.textContent="Please use at least 8 characters.";message.className="error";return;}
- if(password!==confirm){message.textContent="The passwords do not match. Please check and try again.";message.className="error";return;}
- const button=document.querySelector('#profilePasswordForm button[type="submit"]');
- button.disabled=true;button.textContent="Updating…";
- try{
-  const {error}=await db.auth.updateUser({password});
-  if(error)throw error;
-  $("profilePasswordForm").reset();
-  message.textContent="Your password has been updated successfully.";
-  message.className="notice";
- }catch(error){
-  message.textContent="Could not update password: "+(error.message||"Please try again.");
-  message.className="error";
- }finally{
-  button.disabled=false;button.textContent="Update My Password";
- }
+ renderLoginRegister();
 }
 function openDashboardTopic(page){if(!["tools","bins","repairs"].includes(page))return;go(page);window.scrollTo({top:0,behavior:"smooth"});}
 document.querySelectorAll(".tab").forEach(b=>{b.type="button";b.onclick=()=>go(b.dataset.page);});
@@ -1955,7 +1967,7 @@ function renderToolRegister(){
   <div style="flex:1;min-width:0">
    <strong>${esc(t.name)}</strong>
    <div class="muted">${esc(t.make||"")} ${esc(t.model||"")} · SN ${esc(t.serial_number||"Not entered")}</div>
-   <small>ID: <strong>${esc(t.tool_code||"Not generated")}</strong> · ${esc(t.location||"Location not set")}</small>
+   <small>ID: <strong>${esc(t.tool_code||"Not generated")}</strong> · ${esc(t.location||"Location not set")} · Borrowed ${history.filter(h=>h.tool_id===t.id&&/borrow/i.test(h.action||"")).length} times</small>
    <div><small>${t.borrower_id?"With "+esc(people.find(p=>p.id===t.borrower_id)?.full_name||"Technician")+" · Job "+esc(t.job_reference):"Not assigned"} · ${esc(t.condition)}</small></div>
    ${t.tool_code?`<div class="qrrow"><img class="qrimg" id="qr-${esc(t.id)}" alt="QR code for ${esc(t.tool_code)}"><button type="button" onclick="printQr('${esc(t.id)}')">Print QR label</button></div>`:""}
   </div>
