@@ -373,31 +373,10 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
 @keyframes transferPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.25;transform:scale(1.18)}}
 .transfer-status{display:inline-flex;padding:5px 9px;border-radius:8px;background:#512323;color:#ffdada;font-size:12px;font-weight:800}
 @media(prefers-reduced-motion:reduce){.transfer-alert .triangle{animation:none}}
-
-/* Click-through technician bin analytics */
-.bin-analytics{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:16px 0}
-.bin-chart-card{background:var(--surface,#fff);border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}
-.bin-chart-card h4{margin:0 0 4px;font-size:14px}.bin-donut-wrap{display:flex;align-items:center;gap:12px;min-height:150px}
-.bin-donut{width:142px;height:142px;flex:0 0 142px;overflow:visible}.bin-donut circle{fill:none;stroke-width:24;cursor:pointer;pointer-events:stroke;transition:opacity .15s}.bin-donut circle:hover{opacity:.7;stroke-width:29}
-.bin-chart-legend{display:grid;gap:6px;min-width:0;max-height:150px;overflow:auto}.bin-legend-item{display:flex;align-items:center;gap:7px;border:0;background:transparent;text-align:left;padding:4px;font-size:11px;min-width:0}.bin-legend-item span:nth-child(2){overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.bin-legend-dot{width:9px;height:9px;border-radius:50%;flex:none}
-.bin-chart-detail{margin:14px 0;padding:14px;border:1px solid var(--line);border-radius:13px;background:var(--surface,#fff)}
-.login-bars{display:flex;align-items:flex-end;gap:12px;min-height:175px;padding:16px 8px 4px;overflow-x:auto;border-bottom:1px solid var(--line)}
-.login-bar-item{flex:1;min-width:62px;max-width:110px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:160px;cursor:pointer;border:0;background:transparent;padding:0 4px}
-.login-bar-track{height:120px;width:100%;display:flex;align-items:flex-end;background:#edf3fa;border-radius:8px 8px 3px 3px;overflow:hidden}
-.login-bar-fill{width:100%;min-height:3px;background:linear-gradient(180deg,#54a5f5,#1769c2);border-radius:8px 8px 0 0}
-.login-bar-item:hover .login-bar-fill{filter:brightness(1.12)}.login-bar-name{font-size:11px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.login-bar-count{font-size:12px;font-weight:800}
-@media(max-width:520px){.bin-donut-wrap{gap:5px}.bin-donut{width:112px;height:112px;flex-basis:112px}.bin-chart-legend{max-height:130px}}
-
-/* Grouped navigation: Workshop, Maintenance, Calendar and Settings */
-nav.main-nav-groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;overflow:visible;align-items:start}
-.nav-group{min-width:0;padding:10px;background:#f8fbff;border:1px solid #e3ebf4;border-radius:12px}
-.nav-group-title{font-size:10px;font-weight:850;letter-spacing:.12em;color:#54708e;padding:2px 8px 8px}
-.nav-group-items{display:flex;flex-direction:column;gap:4px}
-nav.main-nav-groups button{width:100%;justify-content:flex-start;text-align:left;white-space:normal;padding:8px 9px;font-size:12px;min-height:36px}
-nav.main-nav-groups button .nav-icon{width:18px;display:inline-block;text-align:center;flex:0 0 18px}
-@media(max-width:850px){nav.main-nav-groups{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:480px){nav.main-nav-groups{grid-template-columns:1fr;position:static}.nav-group-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}nav.main-nav-groups button{font-size:11px;padding:8px 7px}}
 </style>
+
+#app:has(#dashboard:not(.hidden)) .top{display:none}#app:has(#dashboard:not(.hidden)) nav{display:none}
+.home-overview{display:grid;gap:18px;margin:8px 0 24px}.home-chart-panel{border:1px solid var(--line,#343a40);border-radius:22px;padding:clamp(16px,3vw,26px);background:linear-gradient(145deg,#20252a,#171b20);box-shadow:0 14px 34px #0003}.home-chart-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.home-chart-heading h3{font-size:clamp(20px,3vw,27px);margin:7px 0 3px}.live-indicator{font-size:10px;letter-spacing:1px;color:#72d6a0;background:#163d2c;padding:7px 10px;border-radius:30px}.home-chart-wrap{width:min(100%,390px);height:300px;margin:6px auto 0;position:relative}.home-chart-wrap canvas{width:100%!important;height:100%!important}.home-chart-legend{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:8px auto 0;max-width:760px}.home-chart-legend button{border:1px solid #414a53;background:#252c33;color:#edf1f5;border-radius:30px;padding:8px 12px;font-size:12px;cursor:pointer}.home-chart-legend button:hover{border-color:#d6b46a}.home-bin-shortcuts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:15px}.home-bin-shortcuts button{border:1px solid #46515a;background:#1c242a;color:#fff;border-radius:12px;padding:9px 12px;cursor:pointer}.home-main-links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.home-link{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:7px;padding:17px;border-radius:17px;border:1px solid #39424a;background:var(--panel,#20252a);color:inherit;cursor:pointer;min-height:140px}.home-link>span{font-size:23px;color:#d7b46b}.home-link strong{font-size:16px}.home-link small{color:var(--muted,#aab2bb);line-height:1.4}.home-link b{font-size:11px;color:#d7b46b;margin-top:auto}.home-link:hover{transform:translateY(-2px);border-color:#d7b46b}@media(max-width:700px){.home-main-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.home-link{padding:13px;min-height:128px}.home-chart-wrap{height:260px}}
 </head>
 <body>
 <header><div class="logo">🔧</div><div><h1>MR FIX IT</h1><small>EVERY TOOL. EVERY JOB. ACCOUNTED FOR.</small></div></header>
@@ -410,29 +389,7 @@ nav.main-nav-groups button .nav-icon{width:18px;display:inline-block;text-align:
 </section>
 <main id="app" class="hidden">
 <div class="top"><div><h2 id="pageTitle">Workshop dashboard</h2><div class="muted">Shared workshop inventory</div><div id="welcomeMessage" class="welcome-message" aria-live="polite">Welcome to Mr Fix It</div></div><div class="top-actions"><span id="whoami" class="muted"></span> <button type="button" class="settings-shortcut" onclick="go('settings')">⚙ Settings / Profile</button> <button type="button" onclick="registerPasskey()">Set up Face ID / fingerprint</button> <button type="button" onclick="signOut()">Sign out</button></div></div>
-<nav aria-label="Main navigation" class="main-nav-groups">
- <div class="nav-group"><div class="nav-group-title">WORKSHOP</div><div class="nav-group-items">
-  <button class="tab active" data-page="dashboard"><span class="nav-icon">↔</span><span>In / Borrowed</span></button>
-  <button class="tab" data-page="tools"><span class="nav-icon">▦</span><span>Tool List</span></button>
-  <button class="tab admin-only hidden" data-page="usage" id="usageNav"><span class="nav-icon">▤</span><span>Tool Register</span></button>
-  <button class="tab" data-page="transfers" id="transfersNav"><span class="nav-icon">⇄</span><span>Requests</span><span id="transferNavCount" class="hidden"></span></button>
-  <button class="tab" data-page="tools"><span class="nav-icon">✓</span><span>Available</span></button>
-  <button class="tab" data-page="dashboard"><span class="nav-icon">♧</span><span>Reminders</span></button>
- </div></div>
- <div class="nav-group"><div class="nav-group-title">MAINTENANCE</div><div class="nav-group-items">
-  <button class="tab" data-page="repairs"><span class="nav-icon">⚠</span><span>Damaged</span></button>
-  <button class="tab admin-only hidden" data-page="usage"><span class="nav-icon">◷</span><span>Usage</span></button>
-  <button class="tab" data-page="repairs"><span class="nav-icon">🔧</span><span>Repairs</span></button>
- </div></div>
- <div class="nav-group"><div class="nav-group-title">CALENDAR</div><div class="nav-group-items">
-  <button class="tab" data-page="calendar"><span class="nav-icon">▣</span><span>Calendar</span></button>
-  <button class="tab" data-page="settings"><span class="nav-icon">▤</span><span>Login Register</span></button>
- </div></div>
- <div class="nav-group"><div class="nav-group-title">SETTINGS</div><div class="nav-group-items">
-  <button class="tab" data-page="settings"><span class="nav-icon">♙</span><span>Profile</span></button>
-  <button class="tab" data-page="settings"><span class="nav-icon">🔐</span><span>Security &amp; Sign-in</span></button>
- </div></div>
-</nav>
+<nav aria-label="Main navigation"><button class="tab active" data-page="dashboard"><span class="nav-icon">⌂</span><span>Home</span></button><button class="tab" data-page="tools"><span class="nav-icon">▦</span><span>Tools</span></button><button class="tab" data-page="bins"><span class="nav-icon">♙</span><span>My Tools</span></button><button class="tab" data-page="activity"><span class="nav-icon">↺</span><span>History</span></button><button class="tab" data-page="calendar"><span class="nav-icon">▣</span><span>Calendar</span></button><button class="tab" data-page="repairs"><span class="nav-icon">♧</span><span>Repairs</span></button><button class="tab" data-page="transfers" id="transfersNav"><span class="nav-icon">⇄</span><span>Requests</span><span id="transferNavCount" class="hidden"></span></button><button class="tab" data-page="settings"><span class="nav-icon">⚙</span><span>Settings</span></button><button class="tab admin-only hidden" data-page="usage" id="usageNav"><span class="nav-icon">▤</span><span>Usage</span></button></nav>
 <div id="transferAlert" class="transfer-alert" role="status" aria-live="polite"><span class="triangle">⚠</span><span id="transferAlertText">Tool transfer requests need attention.</span><button type="button" onclick="go('transfers')">View requests</button></div>
 <section id="dashboard">
 <div class="dashboard-hero">
@@ -448,21 +405,21 @@ nav.main-nav-groups button .nav-icon{width:18px;display:inline-block;text-align:
     </div>
   </div>
 </div>
-<div class="cards" aria-label="Dashboard shortcuts">
-<div class="card" data-dashboard-page="tools" role="button" tabindex="0" aria-label="Open registered tools"><div class="muted">Registered tools</div><div class="num" id="total">0</div><small>View tool register ↗</small></div>
-<div class="card" data-dashboard-page="tools" role="button" tabindex="0" aria-label="Open available tools"><div class="muted">Available</div><div class="num" id="available">0</div><small>View tool register ↗</small></div>
-<div class="card" data-dashboard-page="bins" role="button" tabindex="0" aria-label="Open borrowed tools"><div class="muted">In Use / Borrowed</div><div class="num" id="borrowed">0</div><small>View technician bins ↗</small></div>
-<div class="card" data-dashboard-page="repairs" role="button" tabindex="0" aria-label="Open maintenance records"><div class="muted">Under Maintenance</div><div class="num" id="maintenanceCount">0</div><small>View maintenance ↗</small></div>
-<div class="card" data-dashboard-page="repairs" role="button" tabindex="0" aria-label="Open damaged tools"><div class="muted">Damaged</div><div class="num" id="damagedCount">0</div><small>View damage reports ↗</small></div>
-<div class="card" data-dashboard-page="bins" role="button" tabindex="0" aria-label="Open tools with reminders due"><div class="muted">7+ day reminders due</div><div class="num" id="overdue">0</div><small>View technician bins ↗</small></div>
+<div class="home-overview">
+ <div class="home-chart-panel">
+  <div class="home-chart-heading"><div><span class="hero-kicker">LIVE WORKSHOP OVERVIEW</span><h3>Workshop at a glance</h3><p class="muted">Select any chart section to open its records.</p></div><span class="live-indicator">● LIVE</span></div>
+  <div class="home-chart-wrap"><canvas id="homePieChart" aria-label="Interactive live workshop pie chart"></canvas></div>
+  <div id="homeChartLegend" class="home-chart-legend"></div>
+  <div id="homeBinShortcuts" class="home-bin-shortcuts"></div>
+ </div>
+ <div class="home-main-links" aria-label="Main sections">
+  <button class="home-link" type="button" onclick="go('tools')"><span>▦</span><strong>Workshop</strong><small>Tools, borrowing, requests & reminders</small><b>Open section →</b></button>
+  <button class="home-link" type="button" onclick="go('repairs')"><span>⚒</span><strong>Maintenance</strong><small>Damaged tools, usage & repairs</small><b>Open section →</b></button>
+  <button class="home-link" type="button" onclick="go('calendar')"><span>▣</span><strong>Calendar</strong><small>Tool activity & login register</small><b>Open section →</b></button>
+  <button class="home-link" type="button" onclick="go('settings')"><span>⚙</span><strong>Settings</strong><small>Profile & Security / Sign-in</small><b>Open section →</b></button>
+ </div>
 </div>
-<div class="panel"><strong>Borrow or return</strong><div class="muted">Enter the tool ID printed below the QR label, or scan a QR label with your phone camera to open this workshop page with the tool ID filled in.</div>
-<div class="grid2"><div><label>Tool ID</label><input id="scanId" placeholder="e.g. MRF-0001"></div><div><label>Action</label><select id="scanAction"><option value="borrow">Borrow tool</option><option value="return">Return tool</option></select></div></div>
-<div id="scannedToolPanel" class="panel hidden" style="margin:12px 0;background:#242629;border-color:#51432d"></div>
-<div class="grid2"><div><label>Job card / site reference (for borrowing)</label><input id="jobRef" placeholder="e.g. Job card 007988"></div><div><label>Work to be performed</label><input id="workDescription" placeholder="e.g. drilling concrete / grinding steel"></div></div>
-<div class="actions" style="margin-top:10px"><button class="dark" onclick="processToolAction()">Submit</button></div></div>
-<div class="panel"><strong>Six personal borrowing bins</strong><div class="people" id="dashPeople" style="margin-top:12px"></div></div>
-<div class="notice">Email notifications go to Omm at elias@rea.za.com. Borrowed tools receive a reminder after 7 days and every 7 days until returned, once the email service and schedule are configured.</div></section>
+</section>
 <section id="tools" class="hidden"><div class="panel"><div class="row"><div><strong>Tool register</strong><div class="muted">Only Omm can add or edit tool details. Technicians can scan, borrow, return and report damage. A unique QR code is generated from each tool ID.</div></div><button class="primary" id="addBtn" onclick="showForm()">＋ Add tool</button></div>
 <div id="toolForm" class="hidden"><h3 id="toolFormTitle">Register a new tool</h3><form id="addToolForm"><div class="fields"><div><label>Tool name *</label><input id="fName" required></div><div><label>Make</label><input id="fMake"></div><div><label>Model</label><input id="fModel"></div><div><label>Serial number</label><input id="fSerial"></div>
 <div><label>Category *</label><select id="fCategory" required>
@@ -521,9 +478,7 @@ nav.main-nav-groups button .nav-icon{width:18px;display:inline-block;text-align:
  <div class="panel" id="teamLoginPanel">
   <strong>Team Login Register — by name</strong>
   <p class="muted">Administrator view: see how often each team member signs in.</p>
-  <div id="teamLoginGraph" aria-label="Team sign-ins bar graph"></div>
   <div id="teamLoginStats"></div>
-  <div id="teamLoginDrilldown" class="bin-chart-detail hidden"></div>
  </div>
  <div class="panel">
   <strong>Security &amp; Sign-in</strong>
@@ -534,6 +489,7 @@ nav.main-nav-groups button .nav-icon{width:18px;display:inline-block;text-align:
  <div class="panel"><strong>App information</strong><p class="muted">MR FIX IT · Workshop Tool Management</p></div>
 </section>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0"></script>
 <script>
 /* Embedded QR encoder: no CDN or external QR service required. */
@@ -1850,16 +1806,13 @@ function renderLoginRegister(){
  $("myLoginRegisterTitle").textContent=(profile.full_name||"My")+" — Login Register";
  $("myLoginStats").textContent="Name: "+(profile.full_name||"Team member")+" · Total sign-ins: "+mine.length+" · Last sign-in: "+(mine[0]?.created_at?new Date(mine[0].created_at).toLocaleString():"No sign-ins recorded yet");
  $("myLoginHistory").innerHTML=mine.slice(0,15).map(x=>`<div class="tool"><div><strong>${new Date(x.created_at).toLocaleString()}</strong><div class="muted">Sign-in recorded</div></div></div>`).join("")||'<p class="muted">No login history yet.</p>';
- const panel=$("teamLoginPanel");panel.classList.toggle("hidden",!isAdmin());panel.setAttribute("aria-hidden",isAdmin()?"false":"true");
+ const panel=$("teamLoginPanel");panel.classList.toggle("hidden",!isAdmin());
+ panel.setAttribute("aria-hidden",isAdmin()?"false":"true");
  if(isAdmin()){
   const counts={};loginActivity.forEach(x=>{counts[x.user_id]=(counts[x.user_id]||0)+1;});
-  const max=Math.max(1,...people.map(p=>counts[p.id]||0));
-  $("teamLoginGraph").innerHTML=people.length?`<div class="muted">Sign-ins by team member · select a bar to view that person's login register</div><div class="login-bars">${people.map(p=>{const n=counts[p.id]||0,h=Math.max(3,Math.round(n/max*120));return `<button type="button" class="login-bar-item" title="Open ${esc(p.full_name)} login register" onclick="openLoginDrilldown('${esc(p.id)}')"><span class="login-bar-count">${n}</span><span class="login-bar-track"><i class="login-bar-fill" style="height:${h}px"></i></span><span class="login-bar-name">${esc(p.full_name||"Team member")}</span></button>`}).join("")}</div>`:'<p class="muted">No team members found.</p>';
-  $("teamLoginStats").innerHTML=people.map(p=>{const last=loginActivity.find(x=>x.user_id===p.id);return `<div class="tool"><div style="flex:1"><strong>${esc(p.full_name||"Unnamed team member")}</strong><div class="muted">${esc(p.job_title||(p.is_admin?"Administrator":"Technician"))}</div><small>Last sign-in: ${last?.created_at?esc(new Date(last.created_at).toLocaleString()):"No sign-in recorded"}</small></div><button type="button" class="dark" onclick="openLoginDrilldown('${esc(p.id)}')">${counts[p.id]||0} sign-ins · View</button></div>`}).join("")||'<p class="muted">No team members found.</p>';
+  $("teamLoginStats").innerHTML=people.map(p=>{const last=loginActivity.find(x=>x.user_id===p.id);return `<div class="tool"><div style="flex:1"><strong>${esc(p.full_name||"Unnamed team member")}</strong><div class="muted">${esc(p.job_title||(p.is_admin?"Administrator":"Technician"))}</div><small>Last sign-in: ${last?.created_at?esc(new Date(last.created_at).toLocaleString()):"No sign-in recorded"}</small></div><strong>${counts[p.id]||0} sign-ins</strong></div>`}).join("")||'<p class="muted">No team members found.</p>';
  }
 }
-function openLoginDrilldown(id){if(!isAdmin())return;const p=people.find(x=>x.id===id);const rows=loginActivity.filter(x=>x.user_id===id);const host=$("teamLoginDrilldown");host.classList.remove("hidden");host.innerHTML=`<div class="row"><div><strong>${esc(p?.full_name||"Team member")} — Login Register</strong><div class="muted">${rows.length} recorded sign-ins</div></div><button type="button" onclick="this.closest('#teamLoginDrilldown').classList.add('hidden')">Close</button></div>`+(rows.length?rows.map(x=>`<div class="tool"><div style="flex:1"><strong>${esc(new Date(x.created_at).toLocaleString())}</strong><div class="muted">Sign-in recorded</div><small>${esc(x.device_info||"Device not recorded")}</small></div></div>`).join(""):'<div class="empty">No sign-ins recorded for this person.</div>')+`<button type="button" class="primary" onclick="openTechnicianBin('${esc(id)}')">Open ${esc(p?.full_name||"technician")}'s bin dashboard</button>`;host.scrollIntoView({behavior:"smooth",block:"nearest"});}
-
 
 async function forgotPassword(){const email=$("email").value.trim();if(!email){showError("loginError","Enter your email address first, then choose Forgot password.");return}const redirectTo=location.origin+location.pathname;const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo});if(error){showError("loginError",error.message);return}$("loginError").innerHTML='<div class="notice">If this email belongs to an MR FIX IT account, a password reset link has been sent. Check your inbox and spam folder.</div>'}
 async function saveNewPassword(){const password=$("newPassword").value;if(password.length<8)return showError("loginError","Use at least 8 characters for your new password.");const {error}=await db.auth.updateUser({password});if(error)return showError("loginError",error.message);$("resetPanel").classList.add("hidden");recovering=false;$("loginError").innerHTML='<div class="notice">Password updated. You can now sign in with your new password.</div>';$("password").value=""}
@@ -2149,13 +2102,32 @@ async function saveTechnicianColour(id,colour){
  renderCalendar();
 }
 
+let homePie=null;
+function renderHomeOverview(){
+ const canvas=$("homePieChart");if(!canvas||!profile)return;
+ const statuses=[
+  {label:"Available",count:tools.filter(t=>toolStatus(t)==="Available").length,page:"tools",color:"#36b98a"},
+  {label:"In Use / Borrowed",count:tools.filter(t=>toolStatus(t)==="In Use"||!!t.borrower_id).length,page:"bins",color:"#e5ad4f"},
+  {label:"Under Maintenance",count:tools.filter(t=>toolStatus(t)==="Under Maintenance").length,page:"repairs",color:"#659be8"},
+  {label:"Damaged",count:tools.filter(t=>toolStatus(t)==="Damaged").length,page:"repairs",color:"#e16b72"},
+  {label:"Lost",count:tools.filter(t=>toolStatus(t)==="Lost").length,page:"tools",color:"#9b83d8"}
+ ];
+ const labels=statuses;const nonzero=labels.filter(x=>x.count>0);const chartLabels=nonzero.length?nonzero:statuses;
+ if(homePie)homePie.destroy();
+ if(typeof Chart!=="undefined")homePie=new Chart(canvas,{type:"doughnut",data:{labels:chartLabels.map(x=>x.label),datasets:[{data:chartLabels.map(x=>x.count),backgroundColor:chartLabels.map(x=>x.color),borderColor:"#20252a",borderWidth:4,hoverOffset:13}]},options:{responsive:true,maintainAspectRatio:false,cutout:"64%",plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw} tool${c.raw===1?"":"s"}`}}},onClick:(evt,elements)=>{if(!elements.length)return;const item=chartLabels[elements[0].index];if(item.personId){selectedBin=item.personId;go("bins");showBin(item.personId)}else go(item.page)}}});
+ const legend=$("homeChartLegend");if(legend)legend.innerHTML=chartLabels.map((x,i)=>`<button type="button" onclick="openHomeChartItem(${i})"><span style="color:${x.color}">●</span> ${esc(x.label)} · ${x.count}</button>`).join("");
+ const shortcuts=$("homeBinShortcuts");if(shortcuts)shortcuts.innerHTML=(isAdmin()?people:people.filter(p=>p.id===profile.id)).map(p=>`<button type="button" onclick="openTechnicianBin('${p.id}')">♙ ${esc(p.full_name)} · ${tools.filter(t=>t.borrower_id===p.id).length} tools</button>`).join("");
+ window.homeChartItems=chartLabels;
+}
+function openHomeChartItem(i){const x=window.homeChartItems?.[i];if(!x)return;if(x.personId)openTechnicianBin(x.personId);else go(x.page)}
+function openTechnicianBin(id){if(!isAdmin()&&id!==profile.id)return;selectedBin=id;go("bins");showBin(id)}
 function render(){
 const borrowed=tools.filter(t=>t.borrower_id),inUse=tools.filter(t=>toolStatus(t)==="In Use"||t.borrower_id),maintenance=tools.filter(t=>toolStatus(t)==="Under Maintenance"),damaged=tools.filter(t=>toolStatus(t)==="Damaged"),available=tools.filter(t=>toolStatus(t)==="Available"),review=borrowed.filter(t=>t.borrowed_at&&Date.now()-new Date(t.borrowed_at).getTime()>=7*86400000);
- $("total").textContent=tools.length;$("available").textContent=available.length;$("borrowed").textContent=inUse.length;$("maintenanceCount").textContent=maintenance.length;$("damagedCount").textContent=damaged.length;$("overdue").textContent=review.length;
+ $("total").textContent=tools.length;$("available").textContent=available.length;$("borrowed").textContent=inUse.length;$("maintenanceCount").textContent=maintenance.length;$("damagedCount").textContent=damaged.length;$("overdue").textContent=review.length;renderHomeOverview();
  $("addBtn").disabled=!isAdmin();$("usageNav").classList.toggle("hidden",!isAdmin());
  renderToolRegister();renderRepairLists();populateDamageTools();renderCalendar();renderTransferAlerts();if(isAdmin())renderUsageRegister();
  const visiblePeople=isAdmin()?people:people.filter(p=>p.id===profile.id);
- $("dashPeople").innerHTML=visiblePeople.map(p=>`<div class="person" role="button" tabindex="0" onclick="openTechnicianBin('${esc(p.id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openTechnicianBin('${esc(p.id)}') }" style="cursor:pointer"><strong>${esc(p.full_name)}</strong><small>${esc(p.job_title||"Technician")}${p.is_admin?" · Admin":""}</small><div class="count">${borrowed.filter(t=>t.borrower_id===p.id).length}</div><small>tools in bin · Open bin dashboard ↗</small></div>`).join("");
+ $("dashPeople").innerHTML=visiblePeople.map(p=>`<div class="person"><strong>${esc(p.full_name)}</strong><small>${esc(p.job_title||"Technician")}${p.is_admin?" · Admin":""}</small><div class="count">${borrowed.filter(t=>t.borrower_id===p.id).length}</div><small>tools in bin</small></div>`).join("");
  $("binList").innerHTML=visiblePeople.map(p=>`<div class="person" onclick="showBin('${p.id}')" style="cursor:pointer"><strong>${esc(p.full_name)}</strong><small>${esc(p.job_title||"Technician")}</small><div class="count">${borrowed.filter(t=>t.borrower_id===p.id).length}</div><small>tools assigned</small></div>`).join("");if(!isAdmin())selectedBin=profile.id;showBin(selectedBin);
  $("historyList").innerHTML=history.length?history.map(h=>`<div class="tool"><div style="flex:1"><strong>${esc(h.action)} · ${esc(tools.find(t=>t.id===h.tool_id)?.name||"Tool")}</strong><div class="muted">${esc(people.find(p=>p.id===h.actor_id)?.full_name||"User")} · ${esc(h.job_reference||"")}</div></div><small>${new Date(h.created_at).toLocaleString()}</small></div>`).join(""):'<div class="empty">No activity recorded yet.</div>'
 }
@@ -2196,34 +2168,7 @@ async function completeMaintenance(toolId){if(!isAdmin())return alert("Only Omm 
 function renderRepairLists(){const name=id=>tools.find(t=>t.id===id)?.name||"Tool";$("maintenanceList").innerHTML=maintenanceRecords.length?maintenanceRecords.map(r=>`<div class="tool"><div style="flex:1"><strong>${esc(name(r.tool_id))}</strong><div class="muted">${esc(r.reason)} · ${esc(r.service_location||"Location not recorded")}</div><small>Sent ${new Date(r.sent_at).toLocaleDateString()} · ${r.completed_at?"Completed "+new Date(r.completed_at).toLocaleDateString():"In progress"}</small></div><span class="pill ${r.status==="Completed"?"green":"orange"}">${esc(r.status)}</span></div>`).join(""):'<div class="empty">No maintenance records yet.</div>';
  $("damageList").innerHTML=damageReports.length?damageReports.map(r=>`<div class="tool"><div style="flex:1"><strong>${esc(name(r.tool_id))}</strong><div class="muted">${esc(r.description)}</div><small>${esc(r.location)} · Happened ${esc(r.incident_date)} · Reported ${new Date(r.created_at).toLocaleString()}</small>${r.photo_url?`<div><a href="${esc(r.photo_url)}" target="_blank" rel="noopener">View evidence photo</a></div>`:""}</div><span class="pill red">Damaged</span></div>`).join(""):'<div class="empty">No damage reports yet.</div>';}
 
-function openTechnicianBin(id){if(!isAdmin()&&id!==profile?.id)return alert("You can only view your own tool bin.");go("bins");showBin(id);window.scrollTo({top:0,behavior:"smooth"});}
-function binChartData(items,kind){
- const map=new Map();
- items.forEach(t=>{let value="Not recorded";
-  if(kind==="date"){const borrowedAt=t.__sessionBorrowedAt||t.borrowed_at;value=borrowedAt?new Date(borrowedAt).toLocaleDateString():"Date not recorded";}
-  if(kind==="job")value=[t.__sessionJob||t.job_reference,t.__sessionWork||t.work_description].filter(Boolean).join(" · ")||"No job / work recorded";
-  if(kind==="tool")value=(t.tool_code||t.id||"Tool ID missing")+" · "+(t.name||"Tool");
-  if(kind==="condition")value=t.condition||"Not recorded";
-  if(kind==="make")value=t.make||"Make not recorded";
-  map.set(value,(map.get(value)||0)+1);
- });
- return [...map.entries()].sort((a,b)=>b[1]-a[1]);
-}
-function renderBinDonut(title,kind,rows){
- const colors=["#1769c2","#25a36f","#e39b31","#9565c7","#d45b67","#299eaa","#65758a","#b07b4b"];
- if(!rows.length)return `<div class="bin-chart-card"><h4>${title}</h4><p class="muted">No records to chart.</p></div>`;
- const total=rows.reduce((n,x)=>n+x[1],0),circ=2*Math.PI*43;let offset=0;
- const circles=rows.map(([label,count],i)=>{const len=circ*count/total,colour=colors[i%colors.length],encoded=encodeURIComponent(label);const html=`<circle cx="60" cy="60" r="43" stroke="${colour}" stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-offset}" transform="rotate(-90 60 60)" onclick="openBinChartDetail('${kind}',decodeURIComponent('${encoded}'))" tabindex="0" role="button" aria-label="Show ${esc(label)} records (${count})"><title>${esc(label)}: ${count}</title></circle>`;offset+=len;return html;}).join("");
- const legend=rows.map(([label,count],i)=>`<button type="button" class="bin-legend-item" onclick="openBinChartDetail('${kind}',decodeURIComponent('${encodeURIComponent(label)}'))"><i class="bin-legend-dot" style="background:${colors[i%colors.length]}"></i><span>${esc(label)}</span><strong>${count}</strong></button>`).join("");
- return `<div class="bin-chart-card"><h4>${title}</h4><div class="muted">Select a slice or label to open matching tools</div><div class="bin-donut-wrap"><svg class="bin-donut" viewBox="0 0 120 120" role="img" aria-label="${title}">${circles}<circle cx="60" cy="60" r="29" fill="var(--surface,#fff)" stroke="none" style="pointer-events:none"/><text x="60" y="57" text-anchor="middle" font-size="18" font-weight="800" fill="currentColor">${total}</text><text x="60" y="71" text-anchor="middle" font-size="8" fill="currentColor">TOOLS</text></svg><div class="bin-chart-legend">${legend}</div></div></div>`;
-}
-function openBinChartDetail(kind,value){const id=selectedBin,p=people.find(x=>x.id===id),items=tools.filter(t=>t.borrower_id===id);const matches=items.filter(t=>{let v="";if(kind==="date"){const borrowedAt=t.__sessionBorrowedAt||t.borrowed_at;v=borrowedAt?new Date(borrowedAt).toLocaleDateString():"Date not recorded";}if(kind==="job")v=[t.__sessionJob||t.job_reference,t.__sessionWork||t.work_description].filter(Boolean).join(" · ")||"No job / work recorded";if(kind==="tool")v=(t.tool_code||t.id||"Tool ID missing")+" · "+(t.name||"Tool");if(kind==="condition")v=t.condition||"Not recorded";if(kind==="make")v=t.make||"Make not recorded";return v===value;});const host=$("binChartDetail");if(!host)return;host.classList.remove("hidden");host.innerHTML=`<div class="row"><div><strong>${esc(value)}</strong><div class="muted">${matches.length} matching tool${matches.length===1?"":"s"} in ${esc(p?.full_name||"technician")}'s bin</div></div><button type="button" onclick="$('binChartDetail').classList.add('hidden')">Close</button></div>`+(matches.length?matches.map(t=>`<div class="tool"><div style="flex:1"><strong>${esc(t.name||"Tool")}</strong><div class="muted">Tool ID: ${esc(t.tool_code||"Not recorded")} · ${esc(t.make||"Make not recorded")} ${esc(t.model||"")}</div><div class="muted">Condition: ${esc(t.condition||"Not recorded")}</div><small>Date borrowed: ${t.borrowed_at?esc(new Date(t.borrowed_at).toLocaleString()):"Not recorded"} · Job: ${esc(t.job_reference||"Not recorded")} · Work: ${esc(t.work_description||"Not recorded")}</small></div></div>`).join(""):'<div class="empty">No matching tools found.</div>');host.scrollIntoView({behavior:"smooth",block:"nearest"});}
-function showBin(id){selectedBin=id;const p=people.find(x=>x.id===id);if(!$ ("binDetail"))return;const items=tools.filter(t=>t.borrower_id===id);if(!isAdmin()&&id!==profile?.id)return;const sessions=usageSessions();const sessionByTool=new Map();for(const t of items){const active=(sessions.get(t.id)||[]).filter(x=>!x.returned_at).sort((a,b)=>new Date(b.borrowed_at)-new Date(a.borrowed_at))[0];if(active){t.__sessionBorrowedAt=active.borrowed_at;t.__sessionJob=active.job_reference;t.__sessionWork=active.work_description;} }
- const charts=[renderBinDonut("Date borrowed","date",binChartData(items,"date")),renderBinDonut("Job / work being performed","job",binChartData(items,"job")),renderBinDonut("Tool ID","tool",binChartData(items,"tool")),renderBinDonut("Tool condition","condition",binChartData(items,"condition")),renderBinDonut("Make","make",binChartData(items,"make"))].join("");
- $("binDetail").innerHTML=`<div class="row"><div><h3 style="margin:0">${esc(p?.full_name||"Technician")}'s Bin Dashboard</h3><div class="muted">${items.length} tool${items.length===1?"":"s"} currently in possession</div></div>${isAdmin()?`<span class="pill">Administrator view</span>`:""}</div><div class="cards"><div class="card"><div class="muted">Tools in possession</div><div class="num">${items.length}</div></div><div class="card"><div class="muted">Borrowed 7+ days</div><div class="num">${items.filter(t=>t.borrowed_at&&Date.now()-new Date(t.borrowed_at).getTime()>=7*86400000).length}</div></div><div class="card"><div class="muted">Different makes</div><div class="num">${new Set(items.map(t=>t.make).filter(Boolean)).size}</div></div></div><h4>Bin analytics · click any chart segment to view the matching tools</h4><div class="bin-analytics">${charts}</div><div id="binChartDetail" class="bin-chart-detail hidden"></div><h4>Tools currently in ${esc(p?.full_name||"technician")}'s possession</h4>`+(items.length?items.map(t=>{const borrowedAt=t.__sessionBorrowedAt||t.borrowed_at,job=t.__sessionJob||t.job_reference,work=t.__sessionWork||t.work_description;return `<div class="tool"><div style="flex:1"><strong>${esc(t.name||"Tool")}</strong><div class="muted">Tool ID: ${esc(t.tool_code||"Not recorded")} · Serial: ${esc(t.serial_number||"Not recorded")}</div><div class="muted">Make / Model: ${esc(t.make||"Not recorded")} / ${esc(t.model||"Not recorded")} · Condition: ${esc(t.condition||"Not recorded")}</div><small>Date borrowed: ${borrowedAt?esc(new Date(borrowedAt).toLocaleString()):"Not recorded"}</small><div class="muted">Job: ${esc(job||"Not recorded")}</div><div class="muted">Work: ${esc(work||"Not recorded")}</div></div><span class="pill ${borrowedAt&&Date.now()-new Date(borrowedAt).getTime()>=7*86400000?"red":"green"}">${borrowedAt&&Date.now()-new Date(borrowedAt).getTime()>=7*86400000?"7-day check":"In possession"}</span></div>`}).join(""):'<div class="empty">No tools currently assigned to this bin.</div>');
- const title=$("pageTitle");if(title&&$("bins")&&!$("bins").classList.contains("hidden"))title.textContent=(p?.full_name||"Technician")+" — Bin Dashboard";
-}
-
+function showBin(id){selectedBin=id;const p=people.find(x=>x.id===id);if(!$("binDetail"))return;const items=tools.filter(t=>t.borrower_id===id);$("binDetail").innerHTML=`<h3>${esc(p?.full_name||"Technician")}'s bin</h3>`+(items.length?items.map(t=>`<div class="tool"><div style="flex:1"><strong>${esc(t.name)}</strong><div class="muted">${esc(t.tool_code)} · Job ${esc(t.job_reference)}</div><small>Borrowed ${new Date(t.borrowed_at).toLocaleDateString()} · Currently out</small></div><span class="pill ${Date.now()-new Date(t.borrowed_at).getTime()>=7*86400000?"red":"green"}">${Date.now()-new Date(t.borrowed_at).getTime()>=7*86400000?"7-day check":"Assigned"}</span></div>`).join(""):'<div class="empty">No tools currently assigned.</div>')}
 $("loginForm").addEventListener("submit",signIn);
 $("addToolForm").addEventListener("submit",saveTool);
 $("damageForm").addEventListener("submit",submitDamage);
