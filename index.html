@@ -387,6 +387,16 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
 .login-bar-fill{width:100%;min-height:3px;background:linear-gradient(180deg,#54a5f5,#1769c2);border-radius:8px 8px 0 0}
 .login-bar-item:hover .login-bar-fill{filter:brightness(1.12)}.login-bar-name{font-size:11px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.login-bar-count{font-size:12px;font-weight:800}
 @media(max-width:520px){.bin-donut-wrap{gap:5px}.bin-donut{width:112px;height:112px;flex-basis:112px}.bin-chart-legend{max-height:130px}}
+
+/* Grouped navigation: Workshop, Maintenance, Calendar and Settings */
+nav.main-nav-groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;overflow:visible;align-items:start}
+.nav-group{min-width:0;padding:10px;background:#f8fbff;border:1px solid #e3ebf4;border-radius:12px}
+.nav-group-title{font-size:10px;font-weight:850;letter-spacing:.12em;color:#54708e;padding:2px 8px 8px}
+.nav-group-items{display:flex;flex-direction:column;gap:4px}
+nav.main-nav-groups button{width:100%;justify-content:flex-start;text-align:left;white-space:normal;padding:8px 9px;font-size:12px;min-height:36px}
+nav.main-nav-groups button .nav-icon{width:18px;display:inline-block;text-align:center;flex:0 0 18px}
+@media(max-width:850px){nav.main-nav-groups{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){nav.main-nav-groups{grid-template-columns:1fr;position:static}.nav-group-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}nav.main-nav-groups button{font-size:11px;padding:8px 7px}}
 </style>
 </head>
 <body>
@@ -400,7 +410,29 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
 </section>
 <main id="app" class="hidden">
 <div class="top"><div><h2 id="pageTitle">Workshop dashboard</h2><div class="muted">Shared workshop inventory</div><div id="welcomeMessage" class="welcome-message" aria-live="polite">Welcome to Mr Fix It</div></div><div class="top-actions"><span id="whoami" class="muted"></span> <button type="button" class="settings-shortcut" onclick="go('settings')">⚙ Settings / Profile</button> <button type="button" onclick="registerPasskey()">Set up Face ID / fingerprint</button> <button type="button" onclick="signOut()">Sign out</button></div></div>
-<nav aria-label="Main navigation"><button class="tab active" data-page="dashboard"><span class="nav-icon">⌂</span><span>Home</span></button><button class="tab" data-page="tools"><span class="nav-icon">▦</span><span>Tools</span></button><button class="tab" data-page="bins"><span class="nav-icon">♙</span><span>My Tools</span></button><button class="tab" data-page="activity"><span class="nav-icon">↺</span><span>History</span></button><button class="tab" data-page="calendar"><span class="nav-icon">▣</span><span>Calendar</span></button><button class="tab" data-page="repairs"><span class="nav-icon">♧</span><span>Repairs</span></button><button class="tab" data-page="transfers" id="transfersNav"><span class="nav-icon">⇄</span><span>Requests</span><span id="transferNavCount" class="hidden"></span></button><button class="tab" data-page="settings"><span class="nav-icon">⚙</span><span>Settings</span></button><button class="tab admin-only hidden" data-page="usage" id="usageNav"><span class="nav-icon">▤</span><span>Usage</span></button></nav>
+<nav aria-label="Main navigation" class="main-nav-groups">
+ <div class="nav-group"><div class="nav-group-title">WORKSHOP</div><div class="nav-group-items">
+  <button class="tab active" data-page="dashboard"><span class="nav-icon">↔</span><span>In / Borrowed</span></button>
+  <button class="tab" data-page="tools"><span class="nav-icon">▦</span><span>Tool List</span></button>
+  <button class="tab admin-only hidden" data-page="usage" id="usageNav"><span class="nav-icon">▤</span><span>Tool Register</span></button>
+  <button class="tab" data-page="transfers" id="transfersNav"><span class="nav-icon">⇄</span><span>Requests</span><span id="transferNavCount" class="hidden"></span></button>
+  <button class="tab" data-page="tools"><span class="nav-icon">✓</span><span>Available</span></button>
+  <button class="tab" data-page="dashboard"><span class="nav-icon">♧</span><span>Reminders</span></button>
+ </div></div>
+ <div class="nav-group"><div class="nav-group-title">MAINTENANCE</div><div class="nav-group-items">
+  <button class="tab" data-page="repairs"><span class="nav-icon">⚠</span><span>Damaged</span></button>
+  <button class="tab admin-only hidden" data-page="usage"><span class="nav-icon">◷</span><span>Usage</span></button>
+  <button class="tab" data-page="repairs"><span class="nav-icon">🔧</span><span>Repairs</span></button>
+ </div></div>
+ <div class="nav-group"><div class="nav-group-title">CALENDAR</div><div class="nav-group-items">
+  <button class="tab" data-page="calendar"><span class="nav-icon">▣</span><span>Calendar</span></button>
+  <button class="tab" data-page="settings"><span class="nav-icon">▤</span><span>Login Register</span></button>
+ </div></div>
+ <div class="nav-group"><div class="nav-group-title">SETTINGS</div><div class="nav-group-items">
+  <button class="tab" data-page="settings"><span class="nav-icon">♙</span><span>Profile</span></button>
+  <button class="tab" data-page="settings"><span class="nav-icon">🔐</span><span>Security &amp; Sign-in</span></button>
+ </div></div>
+</nav>
 <div id="transferAlert" class="transfer-alert" role="status" aria-live="polite"><span class="triangle">⚠</span><span id="transferAlertText">Tool transfer requests need attention.</span><button type="button" onclick="go('transfers')">View requests</button></div>
 <section id="dashboard">
 <div class="dashboard-hero">
