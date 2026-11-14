@@ -347,7 +347,7 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
 <div id="loginError"></div><p class="muted" style="margin-top:14px">Passkey sign-in uses your device's built-in Face ID, fingerprint, PIN or Windows Hello where supported. Your face or fingerprint data stays with your device.</p><div id="resetPanel" class="hidden"><hr><h3>Choose a new password</h3><label>New password</label><input id="newPassword" type="password" autocomplete="new-password" minlength="8"><button class="primary" type="button" onclick="saveNewPassword()" style="margin-top:10px">Update password</button></div>
 </section>
 <main id="app" class="hidden">
-<div class="top"><div><h2 id="pageTitle">Workshop dashboard</h2><div class="muted">Shared workshop inventory</div><div id="welcomeMessage" class="welcome-message" aria-live="polite">Welcome to Mr Fix It</div></div><div><span id="whoami" class="muted"></span> <button onclick="registerPasskey()">Set up Face ID / fingerprint</button> <button onclick="signOut()">Sign out</button></div></div>
+<div class="top"><div><h2 id="pageTitle">Workshop dashboard</h2><div class="muted">Shared workshop inventory</div><div id="welcomeMessage" class="welcome-message" aria-live="polite">Welcome to Mr Fix It</div></div><div class="top-actions"><span id="whoami" class="muted"></span> <button type="button" class="settings-shortcut" onclick="go('settings')">⚙ Settings / Profile</button> <button type="button" onclick="registerPasskey()">Set up Face ID / fingerprint</button> <button type="button" onclick="signOut()">Sign out</button></div></div>
 <nav aria-label="Main navigation"><button class="tab active" data-page="dashboard"><span class="nav-icon">⌂</span><span>Home</span></button><button class="tab" data-page="tools"><span class="nav-icon">▦</span><span>Tools</span></button><button class="tab" data-page="bins"><span class="nav-icon">♙</span><span>My Tools</span></button><button class="tab" data-page="activity"><span class="nav-icon">↺</span><span>History</span></button><button class="tab" data-page="calendar"><span class="nav-icon">▦</span><span>Calendar</span></button><button class="tab" data-page="repairs"><span class="nav-icon">♧</span><span>Repairs</span></button><button class="tab" data-page="settings"><span class="nav-icon">⚙</span><span>Settings</span></button></nav>
 <section id="dashboard">
 <div class="dashboard-hero">
@@ -1738,7 +1738,7 @@ function renderSettings(){
  $("settingsAccess").textContent=profile.is_admin?"Administrator":"Technician";
 }
 function openDashboardTopic(page){if(!["tools","bins","repairs"].includes(page))return;go(page);window.scrollTo({top:0,behavior:"smooth"});}
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>go(b.dataset.page));
+document.querySelectorAll(".tab").forEach(b=>{b.type="button";b.onclick=()=>go(b.dataset.page);});
 document.querySelectorAll(".card[data-dashboard-page]").forEach(card=>{
  card.addEventListener("click",()=>openDashboardTopic(card.dataset.dashboardPage));
  card.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();openDashboardTopic(card.dataset.dashboardPage);}});
@@ -1885,6 +1885,15 @@ async function printQr(toolId){
 @media(max-width:700px){
   #app > nav[aria-label="Main navigation"]{bottom:calc(8px + env(safe-area-inset-bottom))!important;width:calc(100% - 16px)!important;height:66px!important;min-height:66px!important;max-height:66px!important;padding:5px 4px!important}
 }
+
+/* CLEAR SETTINGS ACCESS */
+#app .top-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+#app .settings-shortcut{background:linear-gradient(135deg,#f0d18d,#c39a53)!important;color:#171717!important;border:1px solid #e4c47c!important;font-weight:850!important}
+#settings{scroll-margin-top:20px}
+#settings .panel{border:1px solid #80683e;box-shadow:0 8px 24px #0003}
+#settings .panel>strong{display:block;color:#e8c77f;font-size:17px;margin-bottom:8px}
+#settings button.primary{min-height:44px}
+@media(max-width:700px){#app .top-actions{justify-content:flex-start}#app .settings-shortcut{font-size:12px!important;padding:9px 12px!important}}
 </style></head><body><div class="label"><h2>MR FIX IT</h2><img src="${qr}"><h2>${esc(t.tool_code)}</h2><p>${esc(t.name)}</p><p>${esc(t.category||"")} · ${esc(t.location||"")}</p><p style="font-size:11px">Scan to open MR FIX IT</p></div><script>window.onload=()=>window.print()<\/script></body></html>`);
   w.document.close();
  }catch(err){alert(err.message||("Could not prepare QR label: "+err));}
