@@ -1772,6 +1772,7 @@ const OMM_EMAIL="elias@rea.za.com";
 function ensureQrLibrary(){return Promise.resolve(window.QRCode);}
 const $=id=>document.getElementById(id), today=()=>dateKey(new Date());
 let selectedCalendarDate=today();
+let calendarSnapshotRequest=0;
 let recovering=false;
 let loginActivity=[];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -1802,6 +1803,7 @@ function renderLoginRegister(){
  $("myLoginStats").textContent="Name: "+(profile.full_name||"Team member")+" · Total sign-ins: "+mine.length+" · Last sign-in: "+(mine[0]?.created_at?new Date(mine[0].created_at).toLocaleString():"No sign-ins recorded yet");
  $("myLoginHistory").innerHTML=mine.slice(0,15).map(x=>`<div class="tool"><div><strong>${new Date(x.created_at).toLocaleString()}</strong><div class="muted">Sign-in recorded</div></div></div>`).join("")||'<p class="muted">No login history yet.</p>';
  const panel=$("teamLoginPanel");panel.classList.toggle("hidden",!isAdmin());
+ panel.setAttribute("aria-hidden",isAdmin()?"false":"true");
  if(isAdmin()){
   const counts={};loginActivity.forEach(x=>{counts[x.user_id]=(counts[x.user_id]||0)+1;});
   $("teamLoginStats").innerHTML=people.map(p=>{const last=loginActivity.find(x=>x.user_id===p.id);return `<div class="tool"><div style="flex:1"><strong>${esc(p.full_name||"Unnamed team member")}</strong><div class="muted">${esc(p.job_title||(p.is_admin?"Administrator":"Technician"))}</div><small>Last sign-in: ${last?.created_at?esc(new Date(last.created_at).toLocaleString()):"No sign-in recorded"}</small></div><strong>${counts[p.id]||0} sign-ins</strong></div>`}).join("")||'<p class="muted">No team members found.</p>';
@@ -2065,16 +2067,27 @@ function renderCalendarTraffic(){
 }
 
 function selectCalendarDate(key){selectedCalendarDate=key;const d=new Date(key+"T12:00:00");calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);renderCalendar();}
-function renderCalendarDay(){
+async function renderCalendarDay(){
+ const request=++calendarSnapshotRequest;
  const d=new Date(selectedCalendarDate+"T12:00:00");
- $("calendarDateTitle").textContent=d.toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long",year:"numeric"})+" · Borrowing activity";
- const entries=history.filter(h=>h.action==="Borrowed"&&h.created_at&&dateKey(new Date(h.created_at))===selectedCalendarDate);
- const visible=entries.filter(h=>isAdmin()||h.actor_id===profile.id);
- $("calendarDayDetails").innerHTML=visible.length?visible.map(h=>{
-  const p=people.find(x=>x.id===h.actor_id),t=tools.find(x=>x.id===h.tool_id);
-  return `<div class="calendar-event" style="--person-color:${esc(personColour(p))}"><strong>${esc(t?.name||"Tool")}</strong><div>${esc(p?.full_name||"Technician")} · ${esc(t?.tool_code||"")}</div><small>Borrowed ${new Date(h.created_at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})} · Job ${esc(h.job_reference||"Not recorded")}</small></div>`;
- }).join(""):'<div class="empty">No borrowing records for this date.</div>';
+ $("calendarDateTitle").textContent=d.toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long",year:"numeric"})+" · Tools in technician bins";
+ $("calendarDayDetails").innerHTML='<p class="muted">Loading bin history for this date…</p>';
+ const {data,error}=await db.rpc("mrfix_get_bin_snapshot",{p_date:selectedCalendarDate});
+ if(request!==calendarSnapshotRequest)return;
+ if(error){
+  $("calendarDayDetails").innerHTML='<div class="empty">Could not load the historical bin snapshot. Please run the MR FIX IT calendar snapshot SQL update first. '+esc(error.message)+'</div>';
+  return;
+ }
+ const visiblePeople=isAdmin()?people:people.filter(p=>p.id===profile.id);
+ const rows=data||[];
+ const html=visiblePeople.map(person=>{
+  const items=rows.filter(x=>x.borrower_id===person.id);
+  return `<div class="panel" style="margin:10px 0;border-color:${esc(personColour(person))}"><div class="row" style="align-items:center"><div><strong>${esc(person.full_name||"Technician")}'s bin</strong><div class="muted">${items.length} tool${items.length===1?"":"s"} assigned on this date</div></div><button type="button" class="dark" onclick="openBinFromCalendar('${esc(person.id)}')">Open bin</button></div>`+
+   (items.length?items.map(t=>`<div class="calendar-event" style="--person-color:${esc(personColour(person))}"><strong>${esc(t.tool_name||"Tool")}</strong><div>${esc(t.tool_code||"")} · ${esc(t.job_reference||"No job reference")}</div><small>Last movement: ${esc(t.last_action||"Borrowed")}${t.last_movement_at?" · "+esc(new Date(t.last_movement_at).toLocaleString()):""}</small></div>`).join(""):'<div class="empty">No tools were assigned to this bin on this date.</div>')+'</div>';
+ }).join("");
+ $("calendarDayDetails").innerHTML=html||'<div class="empty">No technician profiles are available.</div>';
 }
+function openBinFromCalendar(id){go("bins");showBin(id);window.scrollTo({top:0,behavior:"smooth"});}
 async function saveTechnicianColour(id,colour){
  if(!isAdmin())return alert("Only an administrator can change technician colours.");
  if(!/^#[0-9a-f]{6}$/i.test(colour))return;
