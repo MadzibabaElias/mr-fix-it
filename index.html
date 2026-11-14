@@ -427,6 +427,7 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
   <div class="calendar-grid" id="calendarGrid"></div>
   <div class="calendar-legend" id="calendarLegend"></div>
  </div>
+ <div class="panel"><strong>Tool traffic by technician</strong><p class="muted">Monthly graph showing how many tools each technician borrowed. Select another month above to compare activity.</p><div id="calendarTrafficGraph"></div></div>
  <div class="panel"><strong id="calendarDateTitle">Select a date</strong><div id="calendarDayDetails" class="muted" style="margin-top:10px">Choose a highlighted date to see borrowing activity.</div></div>
  <div class="panel" id="calendarColourPanel"><strong>Technician colours</strong><p class="muted">Administrators can assign permanent colours. Changes are saved in Supabase and shared across devices.</p><div id="calendarColourSettings" class="colour-settings"></div></div>
 </section>
@@ -458,13 +459,13 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
   </form>
  </div>
  <div class="panel">
-  <strong>My Login Register</strong>
+  <strong id="myLoginRegisterTitle">My Login Register</strong>
   <p class="muted">A record is added whenever you sign in. This helps track app usage.</p>
   <div id="myLoginStats" class="notice">Loading login history…</div>
   <div id="myLoginHistory"></div>
  </div>
  <div class="panel" id="teamLoginPanel">
-  <strong>Team Login Register</strong>
+  <strong>Team Login Register — by name</strong>
   <p class="muted">Administrator view: see how often each team member signs in.</p>
   <div id="teamLoginStats"></div>
  </div>
@@ -1789,12 +1790,13 @@ async function recordLogin(userId){
 function renderLoginRegister(){
  if(!profile)return;
  const mine=loginActivity.filter(x=>x.user_id===profile.id);
- $("myLoginStats").textContent="Total sign-ins recorded: "+mine.length+" · Last sign-in: "+(mine[0]?.created_at?new Date(mine[0].created_at).toLocaleString():"No sign-ins recorded yet");
+ $("myLoginRegisterTitle").textContent=(profile.full_name||"My")+" — Login Register";
+ $("myLoginStats").textContent="Name: "+(profile.full_name||"Team member")+" · Total sign-ins: "+mine.length+" · Last sign-in: "+(mine[0]?.created_at?new Date(mine[0].created_at).toLocaleString():"No sign-ins recorded yet");
  $("myLoginHistory").innerHTML=mine.slice(0,15).map(x=>`<div class="tool"><div><strong>${new Date(x.created_at).toLocaleString()}</strong><div class="muted">Sign-in recorded</div></div></div>`).join("")||'<p class="muted">No login history yet.</p>';
  const panel=$("teamLoginPanel");panel.classList.toggle("hidden",!isAdmin());
  if(isAdmin()){
   const counts={};loginActivity.forEach(x=>{counts[x.user_id]=(counts[x.user_id]||0)+1;});
-  $("teamLoginStats").innerHTML=people.map(p=>`<div class="tool"><div style="flex:1"><strong>${esc(p.full_name)}</strong><div class="muted">${esc(p.job_title||"Technician")}</div></div><strong>${counts[p.id]||0} sign-ins</strong></div>`).join("")||'<p class="muted">No team members found.</p>';
+  $("teamLoginStats").innerHTML=people.map(p=>{const last=loginActivity.find(x=>x.user_id===p.id);return `<div class="tool"><div style="flex:1"><strong>${esc(p.full_name||"Unnamed team member")}</strong><div class="muted">${esc(p.job_title||(p.is_admin?"Administrator":"Technician"))}</div><small>Last sign-in: ${last?.created_at?esc(new Date(last.created_at).toLocaleString()):"No sign-in recorded"}</small></div><strong>${counts[p.id]||0} sign-ins</strong></div>`}).join("")||'<p class="muted">No team members found.</p>';
  }
 }
 
@@ -2031,7 +2033,26 @@ function renderCalendar(){
   $("calendarColourSettings").innerHTML=people.map(p=>`<label style="display:flex;align-items:center;gap:8px;margin:0;padding:10px;border:1px solid var(--line);border-radius:10px"><span style="flex:1">${esc(p.full_name)}</span><input type="color" value="${esc(personColour(p))}" aria-label="Calendar colour for ${esc(p.full_name)}" style="width:48px;height:38px;padding:3px" onchange="saveTechnicianColour('${esc(p.id)}',this.value)"></label>`).join("");
  }
  renderCalendarDay();
+ renderCalendarTraffic();
 }
+function renderCalendarTraffic(){
+ const host=$("calendarTrafficGraph");if(!host)return;
+ const year=calendarCursor.getFullYear(),month=calendarCursor.getMonth();
+ const visiblePeople=isAdmin()?people:people.filter(p=>p.id===profile?.id);
+ const rows=visiblePeople.map(p=>{
+  let count=0;
+  if(isAdmin()&&Array.isArray(usageSessionRows)&&usageSessionRows.length){
+   count=usageSessionRows.filter(x=>x.actor_id===p.id&&x.borrowed_at&&new Date(x.borrowed_at).getFullYear()===year&&new Date(x.borrowed_at).getMonth()===month).length;
+  }else{
+   count=history.filter(h=>h.actor_id===p.id&&/borrow/i.test(h.action||"")&&h.created_at&&new Date(h.created_at).getFullYear()===year&&new Date(h.created_at).getMonth()===month).length;
+  }
+  return {person:p,count};
+ }).sort((a,b)=>b.count-a.count);
+ const max=Math.max(1,...rows.map(x=>x.count));
+ const total=rows.reduce((sum,x)=>sum+x.count,0);
+ host.innerHTML=`<div class="notice" style="margin-bottom:12px">${total} tool borrowings recorded in ${esc(calendarCursor.toLocaleDateString(undefined,{month:"long",year:"numeric"}))}</div>`+(rows.length?rows.map(({person,count})=>`<div style="display:grid;grid-template-columns:minmax(95px,150px) 1fr 35px;gap:10px;align-items:center;margin:12px 0"><strong style="font-size:13px">${esc(person.full_name||"Technician")}</strong><div style="height:16px;background:var(--line);border-radius:20px;overflow:hidden"><div title="${count} borrowings" style="height:100%;width:${count/max*100}%;min-width:${count?4:0}px;background:${esc(personColour(person))};border-radius:20px"></div></div><strong style="text-align:right">${count}</strong></div>`).join(""):'<p class="muted">No technicians to display.</p>');
+}
+
 function selectCalendarDate(key){selectedCalendarDate=key;const d=new Date(key+"T12:00:00");calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);renderCalendar();}
 function renderCalendarDay(){
  const d=new Date(selectedCalendarDate+"T12:00:00");
