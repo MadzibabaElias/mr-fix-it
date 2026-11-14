@@ -408,13 +408,25 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
  <div class="panel">
   <strong>My Profile</strong>
   <p class="muted">Your MR FIX IT account details.</p>
-  <div class="tool"><div style="flex:1"><small>Full name</small><div id="settingsFullName" style="font-weight:800;margin:4px 0 10px">—</div><small>Role</small><div id="settingsJobTitle" style="font-weight:700;margin:4px 0 10px">—</div><small>Account access</small><div id="settingsAccess" style="font-weight:700;margin-top:4px">—</div></div></div>
+  <div class="tool"><div style="flex:1"><small>Full name</small><div id="settingsFullName" style="font-weight:800;margin:4px 0 10px">—</div><small>Email address</small><div id="settingsEmail" style="font-weight:700;margin:4px 0 10px">Loading…</div><small>Job title</small><div id="settingsJobTitle" style="font-weight:700;margin:4px 0 10px">—</div><small>Account access</small><div id="settingsAccess" style="font-weight:700;margin-top:4px">—</div><p class="muted" style="margin-top:12px">This page shows your own MR FIX IT profile. Technicians can view their own details and change their own sign-in password here.</p></div></div>
  </div>
  <div class="panel">
   <strong>Security &amp; Sign-in</strong>
   <p class="muted">Set up a passkey on this device. Your device may use Face ID, Touch ID, fingerprint, Windows Hello, a PIN, or its password manager. Your biometric information stays on your device.</p>
   <button class="primary" type="button" onclick="registerPasskey()">Set Up Face ID / Fingerprint</button>
   <p class="muted" style="margin-top:12px">After registration, return to the sign-in screen and choose “Sign in with Face ID / fingerprint / passkey”. You may need to register separately on each device.</p>
+ </div>
+ <div class="panel">
+  <strong>Change My Password</strong>
+  <p class="muted">This changes the password for your own signed-in account. Use at least 8 characters.</p>
+  <form id="profilePasswordForm" onsubmit="changeMyPassword(event)">
+   <div class="fields">
+    <div><label for="profileNewPassword">New password</label><input id="profileNewPassword" type="password" minlength="8" autocomplete="new-password" required placeholder="Enter new password"></div>
+    <div><label for="profileConfirmPassword">Confirm new password</label><input id="profileConfirmPassword" type="password" minlength="8" autocomplete="new-password" required placeholder="Enter it again"></div>
+   </div>
+   <div id="profilePasswordMessage" aria-live="polite" style="margin:10px 0"></div>
+   <div class="actions"><button class="primary" type="submit">Update My Password</button></div>
+  </form>
  </div>
  <div class="panel"><strong>App information</strong><p class="muted">MR FIX IT · Workshop Tool Management</p></div>
 </section>
@@ -1731,11 +1743,37 @@ async function loadData(){
  tools=tr.data||[];people=pr.data||[];history=hr.data||[];damageReports=dr.data||[];maintenanceRecords=mr.data||[];if(!selectedBin)selectedBin=profile.id;render();renderScannedToolDetails($("scanId")?.value||new URLSearchParams(location.search).get("tool")||"");
 }
 function go(page){document.querySelectorAll("main>section").forEach(s=>s.classList.add("hidden"));$(page).classList.remove("hidden");document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("pageTitle").textContent=({dashboard:"Workshop dashboard",tools:"Tool register",bins:"Technician bins",activity:"Activity history",calendar:"Borrowing calendar",repairs:"Damage & Maintenance",settings:"Settings / Profile"})[page];if(page==="settings")renderSettings()}
-function renderSettings(){
+async function renderSettings(){
  if(!profile)return;
  $("settingsFullName").textContent=profile.full_name||"Team member";
  $("settingsJobTitle").textContent=profile.job_title||"Technician";
  $("settingsAccess").textContent=profile.is_admin?"Administrator":"Technician";
+ const {data:{user}}=await db.auth.getUser();
+ $("settingsEmail").textContent=user?.email||"Email not available";
+}
+async function changeMyPassword(event){
+ event.preventDefault();
+ const password=$("profileNewPassword").value;
+ const confirm=$("profileConfirmPassword").value;
+ const message=$("profilePasswordMessage");
+ message.textContent="";
+ message.className="";
+ if(password.length<8){message.textContent="Please use at least 8 characters.";message.className="error";return;}
+ if(password!==confirm){message.textContent="The passwords do not match. Please check and try again.";message.className="error";return;}
+ const button=document.querySelector('#profilePasswordForm button[type="submit"]');
+ button.disabled=true;button.textContent="Updating…";
+ try{
+  const {error}=await db.auth.updateUser({password});
+  if(error)throw error;
+  $("profilePasswordForm").reset();
+  message.textContent="Your password has been updated successfully.";
+  message.className="notice";
+ }catch(error){
+  message.textContent="Could not update password: "+(error.message||"Please try again.");
+  message.className="error";
+ }finally{
+  button.disabled=false;button.textContent="Update My Password";
+ }
 }
 function openDashboardTopic(page){if(!["tools","bins","repairs"].includes(page))return;go(page);window.scrollTo({top:0,behavior:"smooth"});}
 document.querySelectorAll(".tab").forEach(b=>{b.type="button";b.onclick=()=>go(b.dataset.page);});
