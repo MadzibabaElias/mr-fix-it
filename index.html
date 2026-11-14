@@ -335,9 +335,38 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
   .hero-speech p{font-size:11px}
 }
 
-#app > nav[aria-label="Main navigation"]{grid-template-columns:repeat(8,minmax(0,1fr))!important;width:min(900px,calc(100% - 24px))!important}
+#app > nav[aria-label="Main navigation"]{grid-template-columns:repeat(7,minmax(0,1fr))!important;width:min(900px,calc(100% - 24px))!important}
+#app > nav[aria-label="Main navigation"]:has(#usageNav:not(.hidden)){grid-template-columns:repeat(8,minmax(0,1fr))!important;}
+@media(max-width:700px){#app > nav[aria-label="Main navigation"]:has(#usageNav:not(.hidden)){grid-template-columns:repeat(8,minmax(0,1fr))!important;}}
 #app > nav[aria-label="Main navigation"] button{min-width:0}
-@media(max-width:700px){#app > nav[aria-label="Main navigation"]{grid-template-columns:repeat(8,minmax(0,1fr))!important;overflow-x:auto!important}}
+@media(max-width:700px){#app > nav[aria-label="Main navigation"]{grid-template-columns:repeat(7,minmax(0,1fr))!important;overflow-x:auto!important}}
+
+/* FIX: keep the bottom navigation compact instead of stretching into a full-screen panel */
+#app > nav[aria-label="Main navigation"]{
+  position:fixed!important;left:50%!important;right:auto!important;top:auto!important;bottom:12px!important;
+  width:min(760px,calc(100% - 24px))!important;height:72px!important;min-height:72px!important;max-height:72px!important;
+  display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;grid-template-rows:1fr!important;
+  align-content:center!important;align-items:center!important;justify-content:stretch!important;
+  margin:0!important;padding:6px 7px!important;overflow:hidden!important;
+  transform:translateX(-50%)!important;box-sizing:border-box!important;
+}
+#app > nav[aria-label="Main navigation"] button{
+  min-width:0!important;min-height:0!important;height:100%!important;margin:0!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+}
+@media(max-width:700px){
+  #app > nav[aria-label="Main navigation"]{bottom:calc(8px + env(safe-area-inset-bottom))!important;width:calc(100% - 16px)!important;height:66px!important;min-height:66px!important;max-height:66px!important;padding:5px 4px!important}
+}
+
+/* CLEAR SETTINGS ACCESS */
+#app .top-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+#app .settings-shortcut{background:linear-gradient(135deg,#f0d18d,#c39a53)!important;color:#171717!important;border:1px solid #e4c47c!important;font-weight:850!important}
+#settings{scroll-margin-top:20px}
+#settings .panel{border:1px solid #80683e;box-shadow:0 8px 24px #0003}
+#settings .panel>strong{display:block;color:#e8c77f;font-size:17px;margin-bottom:8px}
+#settings button.primary{min-height:44px}
+@media(max-width:700px){#app .top-actions{justify-content:flex-start}#app .settings-shortcut{font-size:12px!important;padding:9px 12px!important}}
+
 </style>
 </head>
 <body>
@@ -351,7 +380,7 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
 </section>
 <main id="app" class="hidden">
 <div class="top"><div><h2 id="pageTitle">Workshop dashboard</h2><div class="muted">Shared workshop inventory</div><div id="welcomeMessage" class="welcome-message" aria-live="polite">Welcome to Mr Fix It</div></div><div class="top-actions"><span id="whoami" class="muted"></span> <button type="button" class="settings-shortcut" onclick="go('settings')">⚙ Settings / Profile</button> <button type="button" onclick="registerPasskey()">Set up Face ID / fingerprint</button> <button type="button" onclick="signOut()">Sign out</button></div></div>
-<nav aria-label="Main navigation"><button class="tab active" data-page="dashboard"><span class="nav-icon">⌂</span><span>Home</span></button><button class="tab" data-page="tools"><span class="nav-icon">▦</span><span>Tools</span></button><button class="tab" data-page="bins"><span class="nav-icon">♙</span><span>My Tools</span></button><button class="tab" data-page="activity"><span class="nav-icon">↺</span><span>History</span></button><button class="tab" data-page="calendar"><span class="nav-icon">▦</span><span>Calendar</span></button><button class="tab" data-page="repairs"><span class="nav-icon">♧</span><span>Repairs</span></button><button class="tab" data-page="settings"><span class="nav-icon">⚙</span><span>Settings</span></button><button class="tab admin-only hidden" data-page="usage" id="usageNav"><span class="nav-icon">▤</span><span>Usage</span></button></nav>
+<nav aria-label="Main navigation"><button class="tab active" data-page="dashboard"><span class="nav-icon">⌂</span><span>Home</span></button><button class="tab" data-page="tools"><span class="nav-icon">▦</span><span>Tools</span></button><button class="tab" data-page="bins"><span class="nav-icon">♙</span><span>My Tools</span></button><button class="tab" data-page="activity"><span class="nav-icon">↺</span><span>History</span></button><button class="tab" data-page="calendar"><span class="nav-icon">▣</span><span>Calendar</span></button><button class="tab" data-page="repairs"><span class="nav-icon">♧</span><span>Repairs</span></button><button class="tab" data-page="settings"><span class="nav-icon">⚙</span><span>Settings</span></button><button class="tab admin-only hidden" data-page="usage" id="usageNav"><span class="nav-icon">▤</span><span>Usage</span></button></nav>
 <section id="dashboard">
 <div class="dashboard-hero">
   <div class="hero-mascot-frame">
@@ -1732,8 +1761,9 @@ const TECHNICIAN_COLOURS=["#2684E8","#20A66A","#D6A12D","#9865D5","#D95D67","#15
 function personColour(p){return p?.calendar_color||TECHNICIAN_COLOURS[Math.max(0,people.findIndex(x=>x.id===p?.id))%TECHNICIAN_COLOURS.length]||"#64748b";}
 const OMM_EMAIL="elias@rea.za.com";
 function ensureQrLibrary(){return Promise.resolve(window.QRCode);}
-const $=id=>document.getElementById(id), today=()=>new Date().toISOString().slice(0,10);
+const $=id=>document.getElementById(id), today=()=>dateKey(new Date());
 let selectedCalendarDate=today();
+let recovering=false;
 let loginActivity=[];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function isAdmin(){return profile?.is_admin===true}
@@ -1769,7 +1799,7 @@ function renderLoginRegister(){
 }
 
 async function forgotPassword(){const email=$("email").value.trim();if(!email){showError("loginError","Enter your email address first, then choose Forgot password.");return}const redirectTo=location.origin+location.pathname;const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo});if(error){showError("loginError",error.message);return}$("loginError").innerHTML='<div class="notice">If this email belongs to an MR FIX IT account, a password reset link has been sent. Check your inbox and spam folder.</div>'}
-async function saveNewPassword(){const password=$("newPassword").value;if(password.length<8)return showError("loginError","Use at least 8 characters for your new password.");const {error}=await db.auth.updateUser({password});if(error)return showError("loginError",error.message);$("resetPanel").classList.add("hidden");$("loginError").innerHTML='<div class="notice">Password updated. You can now sign in with your new password.</div>';$("password").value=""}
+async function saveNewPassword(){const password=$("newPassword").value;if(password.length<8)return showError("loginError","Use at least 8 characters for your new password.");const {error}=await db.auth.updateUser({password});if(error)return showError("loginError",error.message);$("resetPanel").classList.add("hidden");recovering=false;$("loginError").innerHTML='<div class="notice">Password updated. You can now sign in with your new password.</div>';$("password").value=""}
 async function signInPasskey(){ $("loginError").innerHTML="";try{const {error}=await db.auth.signInWithPasskey();if(error){showError("loginError",error.message);return}await startApp()}catch(e){showError("loginError",e.message||"Passkey sign-in is not available on this device or domain yet.")}}
 async function registerPasskey(){try{const {data,error}=await db.auth.registerPasskey();if(error){alert("Could not set up passkey: "+error.message);return}alert("Passkey registered on this device. Next time, use the Face ID / fingerprint button to sign in.")}catch(e){alert("Passkey setup is not available yet: "+(e.message||e))}}
 async function signOut(){if(profile)sessionStorage.removeItem("mrfix_login_logged_"+profile.id);await db.auth.signOut();profile=null;$("app").classList.add("hidden");$("login").classList.remove("hidden")}
@@ -1817,7 +1847,8 @@ function renderScannedToolDetails(code){
  const t=tools.find(x=>(x.tool_code||"").toLowerCase()===value.toLowerCase()||(x.id||"").toLowerCase()===value.toLowerCase());
  if(!value||!t){panel.classList.add("hidden");panel.innerHTML="";return;}
  const borrower=people.find(p=>p.id===t.borrower_id);
- const photo=t.photo_url?`<img src="${esc(t.photo_url)}" alt="${esc(t.name)}" style="width:112px;height:112px;object-fit:cover;border-radius:12px;border:1px solid #51432d">`:"";
+ const safePhotoUrl=(()=>{try{const u=new URL(t.photo_url||"");return u.protocol==="https:"?u.href:""}catch{return ""}})();
+ const photo=safePhotoUrl?`<img loading="lazy" src="${esc(safePhotoUrl)}" alt="${esc(t.name)}" style="width:112px;height:112px;object-fit:cover;border-radius:12px;border:1px solid #51432d">`:"";
  const date=v=>v?new Date(v).toLocaleDateString():"Not recorded";
  panel.classList.remove("hidden");
  panel.innerHTML=`
@@ -1910,6 +1941,7 @@ async function processToolAction(){
 function toolQrPayload(t){
  const url=new URL(location.href);url.search="";url.hash="";url.searchParams.set("tool",t.tool_code);return url.toString();
 }
+const qrDataUrlCache=new Map();
 async function renderToolQrs(){
  const qrImages=tools.filter(t=>t.tool_code&&$("qr-"+t.id));
  if(!qrImages.length)return;
@@ -1917,7 +1949,7 @@ async function renderToolQrs(){
  catch(err){console.error(err);qrImages.forEach(t=>{const img=$("qr-"+t.id);if(img)img.alt="QR generator unavailable — refresh the page to retry";});return;}
  for(const t of qrImages){
   const img=$("qr-"+t.id);if(!img)continue;
-  try{img.src=await window.QRCode.toDataURL(toolQrPayload(t),{width:180,margin:1,errorCorrectionLevel:"M"});}
+  try{let dataUrl=qrDataUrlCache.get(t.tool_code);if(!dataUrl){dataUrl=await window.QRCode.toDataURL(toolQrPayload(t),{width:180,margin:1,errorCorrectionLevel:"M"});qrDataUrlCache.set(t.tool_code,dataUrl);}img.src=dataUrl;}
   catch(err){console.error("QR generation failed",err);}
  }
 }
@@ -1929,31 +1961,6 @@ async function printQr(toolId){
   const w=window.open("","_blank","width=480,height=420");
   if(!w)return alert("Please allow pop-ups to print QR labels.");
   w.document.write(`<!doctype html><html><head><title>Tool label ${esc(t.tool_code)}</title><style>body{font-family:Arial,sans-serif;text-align:center;padding:24px}.label{border:1px solid #333;border-radius:10px;padding:18px;display:inline-block;min-width:260px}img{width:190px;height:190px}h2{margin:8px 0}p{margin:5px 0}
-/* FIX: keep the bottom navigation compact instead of stretching into a full-screen panel */
-#app > nav[aria-label="Main navigation"]{
-  position:fixed!important;left:50%!important;right:auto!important;top:auto!important;bottom:12px!important;
-  width:min(760px,calc(100% - 24px))!important;height:72px!important;min-height:72px!important;max-height:72px!important;
-  display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;grid-template-rows:1fr!important;
-  align-content:center!important;align-items:center!important;justify-content:stretch!important;
-  margin:0!important;padding:6px 7px!important;overflow:hidden!important;
-  transform:translateX(-50%)!important;box-sizing:border-box!important;
-}
-#app > nav[aria-label="Main navigation"] button{
-  min-width:0!important;min-height:0!important;height:100%!important;margin:0!important;
-  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
-}
-@media(max-width:700px){
-  #app > nav[aria-label="Main navigation"]{bottom:calc(8px + env(safe-area-inset-bottom))!important;width:calc(100% - 16px)!important;height:66px!important;min-height:66px!important;max-height:66px!important;padding:5px 4px!important}
-}
-
-/* CLEAR SETTINGS ACCESS */
-#app .top-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
-#app .settings-shortcut{background:linear-gradient(135deg,#f0d18d,#c39a53)!important;color:#171717!important;border:1px solid #e4c47c!important;font-weight:850!important}
-#settings{scroll-margin-top:20px}
-#settings .panel{border:1px solid #80683e;box-shadow:0 8px 24px #0003}
-#settings .panel>strong{display:block;color:#e8c77f;font-size:17px;margin-bottom:8px}
-#settings button.primary{min-height:44px}
-@media(max-width:700px){#app .top-actions{justify-content:flex-start}#app .settings-shortcut{font-size:12px!important;padding:9px 12px!important}}
 </style></head><body><div class="label"><h2>MR FIX IT</h2><img src="${qr}"><h2>${esc(t.tool_code)}</h2><p>${esc(t.name)}</p><p>${esc(t.category||"")} · ${esc(t.location||"")}</p><p style="font-size:11px">Scan to open MR FIX IT</p></div><script>window.onload=()=>window.print()<\/script></body></html>`);
   w.document.close();
  }catch(err){alert(err.message||("Could not prepare QR label: "+err));}
@@ -1973,7 +1980,7 @@ function renderToolRegister(){
  filtered.forEach(t=>{const type=t.category||"Uncategorised";(groups[type] ||= []).push(t);});
  const sortedTypes=Object.keys(groups).sort((a,b)=>a.localeCompare(b));
  $("toolList").innerHTML=sortedTypes.map(type=>`<section class="tool-group"><h3 class="category-heading">${esc(type)} <small>(${groups[type].length})</small></h3>${groups[type].map(t=>`<div class="tool">
-  <img src="${esc(t.photo_url||"")}" onerror="this.style.visibility='hidden'">
+  <img loading="lazy" src="${esc((()=>{try{const u=new URL(t.photo_url||"");return u.protocol==="https:"?u.href:""}catch{return ""}})())}" onerror="this.style.visibility='hidden'">
   <div style="flex:1;min-width:0">
    <strong>${esc(t.name)}</strong>
    <div class="muted">${esc(t.make||"")} ${esc(t.model||"")} · SN ${esc(t.serial_number||"Not entered")}</div>
@@ -2002,7 +2009,7 @@ function renderCalendar(){
  const first=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth(),1);
  const offset=(first.getDay()+6)%7;
  const start=new Date(first);start.setDate(first.getDate()-offset);
- const movementDates=history.filter(h=>h.action==="Borrowed"&&h.created_at);
+ const movementDates=history.filter(h=>/borrow/i.test(h.action||"")&&h.created_at);
  const dayPeople={};
  movementDates.forEach(h=>{
   const key=dateKey(new Date(h.created_at));
@@ -2079,7 +2086,7 @@ function renderUsageRegister(){if(!isAdmin())return;const sessions=usageSessions
 }
 async function saveUsageRule(){if(!isAdmin())return;const toolId=$("usageRuleTool").value;if(!toolId)return alert("Select a tool first.");const borrows=parseInt($("usageRuleBorrows").value||"0",10),hours=parseFloat($("usageRuleHours").value||"0"),notes=$("usageRuleNotes").value.trim();if(borrows<=0&&hours<=0)return alert("Set a borrowing count or usage-hours milestone.");const old=usageRules.find(x=>x.tool_id===toolId);const sessions=usageSessions().get(toolId)||[];const used=sessions.reduce((n,x)=>n+durationHours(x),0);const payload={tool_id:toolId,inspection_every_borrows:borrows||null,inspection_every_hours:hours||null,baseline_borrow_count:sessions.length,baseline_used_hours:Number(used.toFixed(2)),notes};const {data,error}=await db.from("tool_usage_rules").upsert(payload,{onConflict:"tool_id"}).select("*").single();if(error)return alert("Could not save milestone. Run the accompanying SQL update first. Details: "+error.message);usageRules=usageRules.filter(x=>x.tool_id!==toolId);usageRules.push(data);$("usageRuleStatus").textContent="Inspection milestone saved.";renderUsageRegister();}
 async function markToolInspected(){if(!isAdmin())return;const toolId=$("usageRuleTool").value;if(!toolId)return alert("Select a tool first.");const old=usageRules.find(x=>x.tool_id===toolId);if(!old)return alert("Set a maintenance milestone first.");const sessions=usageSessions().get(toolId)||[];const used=sessions.reduce((n,x)=>n+durationHours(x),0);const payload={...old,baseline_borrow_count:sessions.length,baseline_used_hours:Number(used.toFixed(2)),last_inspection_at:new Date().toISOString()};const {data,error}=await db.from("tool_usage_rules").upsert(payload,{onConflict:"tool_id"}).select("*").single();if(error)return alert(error.message);usageRules=usageRules.filter(x=>x.tool_id!==toolId);usageRules.push(data);$("usageRuleStatus").textContent="Inspection marked completed. The next milestone starts from now.";renderUsageRegister();}
-function exportUsageCsv(){if(!isAdmin())return;const sessions=usageSessions();const lines=[["Tool","Tool ID","Borrow count","Total hours","Average hours","Technician","Job reference","Work performed","Borrowed at","Returned at","Current status"]];for(const t of tools){for(const x of sessions.get(t.id)||[]){lines.push([t.name,t.tool_code,(sessions.get(t.id)||[]).length,durationHours(x).toFixed(2),usageStats(t,sessions.get(t.id)||[]).average.toFixed(2),people.find(p=>p.id===x.actor_id)?.full_name||"",x.job_reference,x.work_description,x.borrowed_at,x.returned_at||"Still out",x.returned_at?"Returned":"In Use"])}}const csv=lines.map(row=>row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="MR_FIX_IT_Tool_Usage_Register.csv";a.click();URL.revokeObjectURL(url);}
+function exportUsageCsv(){if(!isAdmin())return;const sessions=usageSessions();const lines=[["Tool","Tool ID","Borrow count","Total time out (hours)","Average time out (hours)","Technician","Job reference","Work performed","Borrowed at","Returned at","Current status"]];for(const t of tools){for(const x of sessions.get(t.id)||[]){lines.push([t.name,t.tool_code,(sessions.get(t.id)||[]).length,durationHours(x).toFixed(2),usageStats(t,sessions.get(t.id)||[]).average.toFixed(2),people.find(p=>p.id===x.actor_id)?.full_name||"",x.job_reference,x.work_description,x.borrowed_at,x.returned_at||"Still out",x.returned_at?"Returned":"In Use"])}}const csv=lines.map(row=>row.map(v=>{let value=String(v??"");if(/^[\s]*[=+\-@]/.test(value))value="\'"+value;return '"'+value.replace(/"/g,'""')+'"';}).join(",")).join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="MR_FIX_IT_Tool_Usage_Register.csv";a.click();URL.revokeObjectURL(url);}
 function populateDamageTools(){const sel=$("damageTool");if(!sel)return;const old=sel.value;sel.innerHTML='<option value="">Select a tool</option>'+tools.map(t=>`<option value="${esc(t.id)}">${esc(t.tool_code||"")} · ${esc(t.name)}</option>`).join("");if(old)sel.value=old;}
 function openDamageReport(id){go("repairs");$("damageTool").value=id;$("damageDate").value=today();$("damageLocation").focus();}
 async function uploadEvidence(file){if(!file)return null;validatePhoto(file);const ext=file.type.split("/")[1].replace("jpeg","jpg");const path="damage/"+crypto.randomUUID()+"."+ext;const {error}=await db.storage.from("tool-photos").upload(path,file,{upsert:false,contentType:file.type});if(error)throw error;return db.storage.from("tool-photos").getPublicUrl(path).data.publicUrl;}
@@ -2105,7 +2112,7 @@ $("fPhoto").addEventListener("change",()=>{
  reader.onload=()=>{$("photoPreview").src=reader.result;$("photoPreviewWrap").classList.remove("hidden");};
  reader.readAsDataURL(file);
 });
-db.auth.onAuthStateChange((event)=>{if(event==="PASSWORD_RECOVERY"){$("resetPanel").classList.remove("hidden");$("login").classList.remove("hidden");$("app").classList.add("hidden");}});
-db.auth.getSession().then(({data})=>{if(data.session)startApp()});
+db.auth.onAuthStateChange((event)=>{if(event==="PASSWORD_RECOVERY"){recovering=true;$("resetPanel").classList.remove("hidden");$("login").classList.remove("hidden");$("app").classList.add("hidden");}});
+db.auth.getSession().then(({data})=>{if(data.session&&!recovering)startApp()});
 </script>
 </body></html>
