@@ -375,15 +375,6 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
 @media(prefers-reduced-motion:reduce){.transfer-alert .triangle{animation:none}}
 #app:has(#dashboard:not(.hidden)) .top{display:none}#app:has(#dashboard:not(.hidden)) nav{display:none}
 .home-overview{display:grid;gap:18px;margin:8px 0 24px}.home-chart-panel{border:1px solid var(--line,#343a40);border-radius:22px;padding:clamp(16px,3vw,26px);background:linear-gradient(145deg,#20252a,#171b20);box-shadow:0 14px 34px #0003}.home-chart-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.home-chart-heading h3{font-size:clamp(20px,3vw,27px);margin:7px 0 3px}.live-indicator{font-size:10px;letter-spacing:1px;color:#72d6a0;background:#163d2c;padding:7px 10px;border-radius:30px}.home-chart-wrap{width:min(100%,390px);height:300px;margin:6px auto 0;position:relative}.home-chart-wrap canvas{width:100%!important;height:100%!important}.home-chart-legend{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:8px auto 0;max-width:760px}.home-chart-legend button{border:1px solid #414a53;background:#252c33;color:#edf1f5;border-radius:30px;padding:8px 12px;font-size:12px;cursor:pointer}.home-chart-legend button:hover{border-color:#d6b46a}.home-bin-shortcuts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:15px}.home-bin-shortcuts button{border:1px solid #46515a;background:#1c242a;color:#fff;border-radius:12px;padding:9px 12px;cursor:pointer}.home-main-links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.home-link{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:7px;padding:17px;border-radius:17px;border:1px solid #39424a;background:var(--panel,#20252a);color:inherit;cursor:pointer;min-height:140px}.home-link>span{font-size:23px;color:#d7b46b}.home-link strong{font-size:16px}.home-link small{color:var(--muted,#aab2bb);line-height:1.4}.home-link b{font-size:11px;color:#d7b46b;margin-top:auto}.home-link:hover{transform:translateY(-2px);border-color:#d7b46b}@media(max-width:700px){.home-main-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.home-link{padding:13px;min-height:128px}.home-chart-wrap{height:260px}}
-
-
-/* Compact, app-like home dashboard inspired by the requested mobile layout. */
-.dashboard-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:12px 0 17px}
-.stat-tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:112px;padding:14px;border:1px solid #3d4146;border-radius:16px;background:linear-gradient(150deg,#25282c,#1b1d20);color:#f4efe5;text-align:left;cursor:pointer;box-shadow:0 7px 20px #0003}
-.stat-tile:hover{border-color:#c9a45b;transform:translateY(-2px)}.stat-icon{color:#e5c17a;font-size:19px}.stat-label{font-size:11px;color:#bdb8ae}.stat-tile strong{font-size:29px;line-height:1.1;color:#fff}.stat-tile small{font-size:10px;color:#d9b875;margin-top:auto}
-.home-scan-panel,.home-info-panel{border:1px solid #3d4146;border-radius:19px;padding:17px;background:linear-gradient(145deg,#222529,#191b1e);box-shadow:0 10px 26px #0003;margin:0 0 17px}.home-scan-panel h3,.home-info-panel h3{font-size:19px;margin:5px 0}.home-scan-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0}.home-scan-controls input,.home-scan-controls select{background:#141619;color:#f4efe5;border-color:#454950}.home-scan-panel .actions{margin-top:10px}.home-lower-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:15px}.home-info-panel{margin:0}.home-section-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:12px}.home-section-heading button{white-space:nowrap}.home-bin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.home-bin-person{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:11px;border:1px solid #42464b;border-radius:13px;background:#1a1d20;color:#f4efe5;text-align:left;cursor:pointer}.home-bin-person:hover{border-color:#d1ad69}.home-bin-person strong{font-size:13px}.home-bin-person small{font-size:10px;color:#b9b4aa}.home-bin-person b{font-size:23px;color:#e5c17a}.home-activity-item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #393d42}.home-activity-item:last-child{border-bottom:0}.home-activity-dot{width:9px;height:9px;flex:none;margin-top:5px;border-radius:50%;background:#d8b46e}.home-activity-item strong{display:block;font-size:12px;color:#f3eee4}.home-activity-item small{display:block;color:#aaa69d;font-size:10px;margin-top:3px}
-@media(max-width:700px){.dashboard-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.stat-tile{min-height:98px;padding:12px}.stat-tile strong{font-size:27px}.home-scan-panel,.home-info-panel{padding:14px}.home-scan-controls{grid-template-columns:1fr}.home-lower-grid{grid-template-columns:1fr;gap:10px}.home-bin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-chart-wrap{height:255px}}
-
 </style>
 </head>
 <body>
@@ -413,27 +404,6 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
     </div>
   </div>
 </div>
-<div class="dashboard-stats" aria-label="Workshop summary">
- <button class="stat-tile" type="button" data-dashboard-page="tools"><span class="stat-icon">▦</span><span class="stat-label">Total tools</span><strong id="total">0</strong><small>Open tool register →</small></button>
- <button class="stat-tile" type="button" data-dashboard-page="tools"><span class="stat-icon">✓</span><span class="stat-label">Available</span><strong id="available">0</strong><small>Ready to use →</small></button>
- <button class="stat-tile" type="button" data-dashboard-page="bins"><span class="stat-icon">↗</span><span class="stat-label">In use / borrowed</span><strong id="borrowed">0</strong><small>View technician bins →</small></button>
- <button class="stat-tile" type="button" data-dashboard-page="repairs"><span class="stat-icon">⚒</span><span class="stat-label">Maintenance</span><strong id="maintenanceCount">0</strong><small>Open maintenance →</small></button>
- <button class="stat-tile" type="button" data-dashboard-page="repairs"><span class="stat-icon">!</span><span class="stat-label">Damaged</span><strong id="damagedCount">0</strong><small>View damage reports →</small></button>
- <button class="stat-tile" type="button" data-dashboard-page="bins"><span class="stat-icon">◷</span><span class="stat-label">7-day checks</span><strong id="overdue">0</strong><small>Review tools out →</small></button>
-</div>
-<div class="home-scan-panel">
- <div><span class="hero-kicker">QUICK TOOL ACTION</span><h3>Scan or enter a tool ID</h3><p class="muted">Use the QR code on a tool, or type its Tool ID below.</p></div>
- <div class="home-scan-controls">
-  <input id="scanId" type="text" autocomplete="off" placeholder="Scan QR code / enter Tool ID" aria-label="Tool ID">
-  <select id="scanAction" aria-label="Choose tool action"><option value="borrow">Borrow tool</option><option value="return">Return tool</option></select>
- </div>
- <div class="home-scan-controls">
-  <input id="jobRef" type="text" placeholder="Job card / site reference" aria-label="Job card or site reference">
-  <input id="workDescription" type="text" placeholder="Work this tool will be used for" aria-label="Work description">
- </div>
- <div class="actions"><button class="primary" type="button" onclick="processToolAction()">Continue with tool</button><button type="button" onclick="renderScannedToolDetails(document.getElementById('scanId').value)">View tool details</button></div>
- <div id="scannedToolPanel" class="hidden" style="margin-top:14px"></div>
-</div>
 <div class="home-overview">
  <div class="home-chart-panel">
   <div class="home-chart-heading"><div><span class="hero-kicker">LIVE WORKSHOP OVERVIEW</span><h3>Workshop at a glance</h3><p class="muted">Select any chart section to open its records.</p></div><span class="live-indicator">● LIVE</span></div>
@@ -447,10 +417,7 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
   <button class="home-link" type="button" onclick="go('calendar')"><span>▣</span><strong>Calendar</strong><small>Tool activity & login register</small><b>Open section →</b></button>
   <button class="home-link" type="button" onclick="go('settings')"><span>⚙</span><strong>Settings</strong><small>Profile & Security / Sign-in</small><b>Open section →</b></button>
  </div>
- <div class="home-lower-grid">
-  <div class="home-info-panel"><div class="home-section-heading"><div><span class="hero-kicker">TEAM OVERVIEW</span><h3>Technician bins</h3><p class="muted">Select a person to open their current tool bin.</p></div></div><div id="dashPeople" class="home-bin-grid"></div></div>
-  <div class="home-info-panel"><div class="home-section-heading"><div><span class="hero-kicker">LATEST MOVEMENTS</span><h3>Recent activity</h3><p class="muted">Live borrowing and return history.</p></div><button type="button" onclick="go('activity')">View all →</button></div><div id="homeRecentActivity"></div></div>
- </div>
+</div>
 </section>
 <section id="tools" class="hidden"><div class="panel"><div class="row"><div><strong>Tool register</strong><div class="muted">Only Omm can add or edit tool details. Technicians can scan, borrow, return and report damage. A unique QR code is generated from each tool ID.</div></div><button class="primary" id="addBtn" onclick="showForm()">＋ Add tool</button></div>
 <div id="toolForm" class="hidden"><h3 id="toolFormTitle">Register a new tool</h3><form id="addToolForm"><div class="fields"><div><label>Tool name *</label><input id="fName" required></div><div><label>Make</label><input id="fMake"></div><div><label>Model</label><input id="fModel"></div><div><label>Serial number</label><input id="fSerial"></div>
@@ -1980,7 +1947,7 @@ async function processToolAction(){
   const {error}=await db.rpc("mrfix_borrow_tool",{p_tool_id:t.id,p_job_reference:job,p_due_date:null,p_work_description:work});if(error)return alert("Borrow failed: "+error.message);
   await notifyOmm("borrowed",t.id,{job_reference:job,work_description:work,borrower:profile.full_name});
  }else{
-  if(!t.borrower_id)return alert("This tool is already available.");if(t.borrower_id!==profile.id)return alert("Only the technician currently holding this tool can return it.");
+  if(!t.borrower_id)return alert("This tool is already available.");if(t.borrower_id!==profile.id&&!isAdmin())return alert("Only the assigned technician or an administrator can return this tool.");
   const condition=prompt("Return condition (Good / Worn / Damaged / Faulty):",t.condition);if(condition===null)return;
   const {error}=await db.rpc("mrfix_return_tool",{p_tool_id:t.id,p_condition:condition});if(error)return alert("Return failed: "+error.message);
   if(/damag|faulty|broken|needs repair/i.test(condition)){await notifyOmm("damaged",t.id,{description:"Tool returned with condition: "+condition,location:t.location||"Not specified",incident_date:today()});}
@@ -2146,7 +2113,7 @@ function renderHomeOverview(){
  ];
  const labels=statuses;const nonzero=labels.filter(x=>x.count>0);const chartLabels=nonzero.length?nonzero:statuses;
  if(homePie)homePie.destroy();
- if(typeof Chart!=="undefined")homePie=new Chart(canvas,{type:"doughnut",data:{labels:chartLabels.map(x=>x.label),datasets:[{data:chartLabels.map(x=>x.count),backgroundColor:chartLabels.map(x=>x.color),borderColor:"#20252a",borderWidth:4,hoverOffset:13}]},options:{responsive:true,maintainAspectRatio:false,cutout:"67%",animation:{duration:650,easing:"easeOutQuart"},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw} tool${c.raw===1?"":"s"}`}}},onClick:(evt,elements)=>{if(!elements.length)return;const item=chartLabels[elements[0].index];if(item.personId){selectedBin=item.personId;go("bins");showBin(item.personId)}else go(item.page)}},plugins:[{id:"mrfixCenterTotal",afterDraw(chart){const {ctx,chartArea}=chart;if(!chartArea)return;const x=(chartArea.left+chartArea.right)/2,y=(chartArea.top+chartArea.bottom)/2,total=tools.length;ctx.save();ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#f4efe5";ctx.font="800 30px system-ui";ctx.fillText(String(total),x,y-7);ctx.fillStyle="#b9b4aa";ctx.font="600 11px system-ui";ctx.fillText("TOTAL TOOLS",x,y+17);ctx.restore();}}]});
+ if(typeof Chart!=="undefined")homePie=new Chart(canvas,{type:"doughnut",data:{labels:chartLabels.map(x=>x.label),datasets:[{data:chartLabels.map(x=>x.count),backgroundColor:chartLabels.map(x=>x.color),borderColor:"#20252a",borderWidth:4,hoverOffset:13}]},options:{responsive:true,maintainAspectRatio:false,cutout:"64%",plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw} tool${c.raw===1?"":"s"}`}}},onClick:(evt,elements)=>{if(!elements.length)return;const item=chartLabels[elements[0].index];if(item.personId){selectedBin=item.personId;go("bins");showBin(item.personId)}else go(item.page)}}});
  const legend=$("homeChartLegend");if(legend)legend.innerHTML=chartLabels.map((x,i)=>`<button type="button" onclick="openHomeChartItem(${i})"><span style="color:${x.color}">●</span> ${esc(x.label)} · ${x.count}</button>`).join("");
  const shortcuts=$("homeBinShortcuts");if(shortcuts)shortcuts.innerHTML=(isAdmin()?people:people.filter(p=>p.id===profile.id)).map(p=>`<button type="button" onclick="openTechnicianBin('${p.id}')">♙ ${esc(p.full_name)} · ${tools.filter(t=>t.borrower_id===p.id).length} tools</button>`).join("");
  window.homeChartItems=chartLabels;
@@ -2159,10 +2126,9 @@ const borrowed=tools.filter(t=>t.borrower_id),inUse=tools.filter(t=>toolStatus(t
  $("addBtn").disabled=!isAdmin();$("usageNav").classList.toggle("hidden",!isAdmin());
  renderToolRegister();renderRepairLists();populateDamageTools();renderCalendar();renderTransferAlerts();if(isAdmin())renderUsageRegister();
  const visiblePeople=isAdmin()?people:people.filter(p=>p.id===profile.id);
- $("dashPeople").innerHTML=visiblePeople.map(p=>`<button type="button" class="home-bin-person" onclick="openTechnicianBin('${esc(p.id)}')"><strong>${esc(p.full_name||"Technician")}</strong><small>${esc(p.job_title||"Technician")}${p.is_admin?" · Admin":""}</small><b>${borrowed.filter(t=>t.borrower_id===p.id).length}</b><small>tools in bin · Open bin →</small></button>`).join("")||'<div class="empty">No active team profiles found.</div>';
+ $("dashPeople").innerHTML=visiblePeople.map(p=>`<div class="person"><strong>${esc(p.full_name)}</strong><small>${esc(p.job_title||"Technician")}${p.is_admin?" · Admin":""}</small><div class="count">${borrowed.filter(t=>t.borrower_id===p.id).length}</div><small>tools in bin</small></div>`).join("");
  $("binList").innerHTML=visiblePeople.map(p=>`<div class="person" onclick="showBin('${p.id}')" style="cursor:pointer"><strong>${esc(p.full_name)}</strong><small>${esc(p.job_title||"Technician")}</small><div class="count">${borrowed.filter(t=>t.borrower_id===p.id).length}</div><small>tools assigned</small></div>`).join("");if(!isAdmin())selectedBin=profile.id;showBin(selectedBin);
- $("historyList").innerHTML=history.length?history.map(h=>`<div class="tool"><div style="flex:1"><strong>${esc(h.action)} · ${esc(tools.find(t=>t.id===h.tool_id)?.name||"Tool")}</strong><div class="muted">${esc(people.find(p=>p.id===h.actor_id)?.full_name||"User")} · ${esc(h.job_reference||"")}</div></div><small>${new Date(h.created_at).toLocaleString()}</small></div>`).join(""):'<div class="empty">No activity recorded yet.</div>';
- $("homeRecentActivity").innerHTML=history.length?history.slice(0,5).map(h=>`<div class="home-activity-item"><span class="home-activity-dot"></span><div><strong>${esc(h.action||"Tool movement")} · ${esc(tools.find(t=>t.id===h.tool_id)?.name||"Tool")}</strong><small>${esc(people.find(p=>p.id===h.actor_id)?.full_name||"Team member")} · ${esc(h.job_reference||"No job reference")}<br>${new Date(h.created_at).toLocaleString()}</small></div></div>`).join(""):'<div class="empty">No activity recorded yet.</div>';
+ $("historyList").innerHTML=history.length?history.map(h=>`<div class="tool"><div style="flex:1"><strong>${esc(h.action)} · ${esc(tools.find(t=>t.id===h.tool_id)?.name||"Tool")}</strong><div class="muted">${esc(people.find(p=>p.id===h.actor_id)?.full_name||"User")} · ${esc(h.job_reference||"")}</div></div><small>${new Date(h.created_at).toLocaleString()}</small></div>`).join(""):'<div class="empty">No activity recorded yet.</div>'
 }
 
 function transferPerson(id){return people.find(p=>p.id===id)?.full_name||"Team member"}
@@ -2207,7 +2173,7 @@ $("addToolForm").addEventListener("submit",saveTool);
 $("damageForm").addEventListener("submit",submitDamage);
 $("damageDate").value=today();
 $("toolSearch").addEventListener("input",renderToolRegister);
-if($("scanId"))$("scanId").addEventListener("input",()=>renderScannedToolDetails($("scanId").value));
+$("scanId").addEventListener("input",()=>renderScannedToolDetails($("scanId").value));
 $("categoryFilter").addEventListener("change",renderToolRegister);
 $("fPhoto").addEventListener("change",()=>{
  const file=$("fPhoto").files[0];
