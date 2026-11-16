@@ -375,6 +375,26 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
 @media(prefers-reduced-motion:reduce){.transfer-alert .triangle{animation:none}}
 #app:has(#dashboard:not(.hidden)) .top{display:none}#app:has(#dashboard:not(.hidden)) nav{display:none}
 .home-overview{display:grid;gap:18px;margin:8px 0 24px}.home-chart-panel{border:1px solid var(--line,#343a40);border-radius:22px;padding:clamp(16px,3vw,26px);background:linear-gradient(145deg,#20252a,#171b20);box-shadow:0 14px 34px #0003}.home-chart-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.home-chart-heading h3{font-size:clamp(20px,3vw,27px);margin:7px 0 3px}.live-indicator{font-size:10px;letter-spacing:1px;color:#72d6a0;background:#163d2c;padding:7px 10px;border-radius:30px}.home-chart-wrap{width:min(100%,390px);height:300px;margin:6px auto 0;position:relative}.home-chart-wrap canvas{width:100%!important;height:100%!important}.home-chart-legend{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:8px auto 0;max-width:760px}.home-chart-legend button{border:1px solid #414a53;background:#252c33;color:#edf1f5;border-radius:30px;padding:8px 12px;font-size:12px;cursor:pointer}.home-chart-legend button:hover{border-color:#d6b46a}.home-bin-shortcuts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:15px}.home-bin-shortcuts button{border:1px solid #46515a;background:#1c242a;color:#fff;border-radius:12px;padding:9px 12px;cursor:pointer}.home-main-links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.home-link{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:7px;padding:17px;border-radius:17px;border:1px solid #39424a;background:var(--panel,#20252a);color:inherit;cursor:pointer;min-height:140px}.home-link>span{font-size:23px;color:#d7b46b}.home-link strong{font-size:16px}.home-link small{color:var(--muted,#aab2bb);line-height:1.4}.home-link b{font-size:11px;color:#d7b46b;margin-top:auto}.home-link:hover{transform:translateY(-2px);border-color:#d7b46b}@media(max-width:700px){.home-main-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.home-link{padding:13px;min-height:128px}.home-chart-wrap{height:260px}}
+
+/* MR FIX IT clean navigation and section menu */
+#app:has(#dashboard:not(.hidden)) .top{display:none}
+#app:has(#dashboard:not(.hidden)) nav{display:grid}
+#app>nav[aria-label="Main navigation"]{grid-template-columns:repeat(3,minmax(0,1fr))!important;width:min(440px,calc(100% - 24px))!important;height:68px!important;min-height:68px!important;max-height:68px!important;}
+#app>nav[aria-label="Main navigation"] .tab{position:relative;font-size:12px!important;gap:3px}
+#app>nav[aria-label="Main navigation"] .nav-icon{font-size:21px!important}
+.nav-count{position:absolute;top:3px;right:22%;min-width:17px;height:17px;border-radius:20px;background:#d94b4b;color:white;font-size:10px;line-height:17px;text-align:center;padding:0 4px}
+.home-bin-shortcuts,#homeChartLegend,.home-main-links{display:none!important}
+.more-groups{display:grid;gap:12px;margin-top:16px}
+.more-groups details{border:1px solid #49443a;background:#202326;border-radius:15px;overflow:hidden}
+.more-groups summary{cursor:pointer;list-style:none;padding:16px;font-size:16px;font-weight:800;color:#f0d18d}
+.more-groups summary::-webkit-details-marker{display:none}
+.more-groups summary:after{content:'＋';float:right;color:#e2bd72}
+.more-groups details[open] summary:after{content:'−'}
+.more-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 12px 13px}
+.more-links button{min-height:44px;text-align:left;background:#30343a;color:#f5f2ea;border:1px solid #4a5058;border-radius:10px;padding:10px 12px}
+#alerts .panel{border-color:#665039}
+@media(max-width:700px){#app>nav[aria-label="Main navigation"]{width:calc(100% - 24px)!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}#app>nav[aria-label="Main navigation"] .tab{font-size:12px!important}.more-links{grid-template-columns:1fr 1fr}}
+
 </style>
 </head>
 <body>
@@ -388,8 +408,8 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
 </section>
 <main id="app" class="hidden">
 <div class="top"><div><h2 id="pageTitle">Workshop dashboard</h2><div class="muted">Shared workshop inventory</div><div id="welcomeMessage" class="welcome-message" aria-live="polite">Welcome to Mr Fix It</div></div><div class="top-actions"><span id="whoami" class="muted"></span> <button type="button" class="settings-shortcut" onclick="go('settings')">⚙ Settings / Profile</button> <button type="button" onclick="registerPasskey()">Set up Face ID / fingerprint</button> <button type="button" onclick="signOut()">Sign out</button></div></div>
-<nav aria-label="Main navigation"><button class="tab active" data-page="dashboard"><span class="nav-icon">⌂</span><span>Home</span></button><button class="tab" data-page="tools"><span class="nav-icon">▦</span><span>Tools</span></button><button class="tab" data-page="bins"><span class="nav-icon">♙</span><span>My Tools</span></button><button class="tab" data-page="activity"><span class="nav-icon">↺</span><span>History</span></button><button class="tab" data-page="calendar"><span class="nav-icon">▣</span><span>Calendar</span></button><button class="tab" data-page="repairs"><span class="nav-icon">♧</span><span>Repairs</span></button><button class="tab" data-page="transfers" id="transfersNav"><span class="nav-icon">⇄</span><span>Requests</span><span id="transferNavCount" class="hidden"></span></button><button class="tab" data-page="settings"><span class="nav-icon">⚙</span><span>Settings</span></button><button class="tab admin-only hidden" data-page="usage" id="usageNav"><span class="nav-icon">▤</span><span>Usage</span></button></nav>
-<div id="transferAlert" class="transfer-alert" role="status" aria-live="polite"><span class="triangle">⚠</span><span id="transferAlertText">Tool transfer requests need attention.</span><button type="button" onclick="go('transfers')">View requests</button></div>
+<nav aria-label="Main navigation"><button class="tab active" data-page="dashboard"><span class="nav-icon">⌂</span><span>Home</span></button><button class="tab" data-page="alerts"><span class="nav-icon">♢</span><span>Alerts</span><span id="alertNavCount" class="nav-count hidden"></span></button><button class="tab" data-page="more"><span class="nav-icon">☰</span><span>More</span></button></nav>
+
 <section id="dashboard">
 <div class="dashboard-hero">
   <div class="hero-mascot-frame">
@@ -408,16 +428,35 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
  <div class="home-chart-panel">
   <div class="home-chart-heading"><div><span class="hero-kicker">LIVE WORKSHOP OVERVIEW</span><h3>Workshop at a glance</h3><p class="muted">Select any chart section to open its records.</p></div><span class="live-indicator">● LIVE</span></div>
   <div class="home-chart-wrap"><canvas id="homePieChart" aria-label="Interactive live workshop pie chart"></canvas></div>
-  <div id="homeChartLegend" class="home-chart-legend"></div>
-  <div id="homeBinShortcuts" class="home-bin-shortcuts"></div>
+
  </div>
- <div class="home-main-links" aria-label="Main sections">
-  <button class="home-link" type="button" onclick="go('tools')"><span>▦</span><strong>Workshop</strong><small>Tools, borrowing, requests & reminders</small><b>Open section →</b></button>
-  <button class="home-link" type="button" onclick="go('repairs')"><span>⚒</span><strong>Maintenance</strong><small>Damaged tools, usage & repairs</small><b>Open section →</b></button>
-  <button class="home-link" type="button" onclick="go('calendar')"><span>▣</span><strong>Calendar</strong><small>Tool activity & login register</small><b>Open section →</b></button>
-  <button class="home-link" type="button" onclick="go('settings')"><span>⚙</span><strong>Settings</strong><small>Profile & Security / Sign-in</small><b>Open section →</b></button>
- </div>
+
 </div>
+</section>
+<section id="alerts" class="hidden">
+ <div class="panel"><strong>Workshop alerts</strong><p class="muted">Requests awaiting approval or receipt, damaged tools and tools needing attention.</p>
+  <div id="alertsSummary" class="muted" style="margin:10px 0"></div>
+  <div id="alertsContent"></div>
+  <div class="actions" style="margin-top:14px"><button type="button" onclick="go('transfers')">Open tool requests</button><button type="button" onclick="go('calendar')">Open reminders</button></div>
+ </div>
+</section>
+<section id="more" class="hidden">
+ <div class="panel"><strong>More sections</strong><p class="muted">Choose a section to see its sub-menus. Your access level determines which records are available.</p>
+  <div class="more-groups">
+   <details open><summary>🔧 Workshop</summary><div class="more-links">
+    <button type="button" onclick="openStatusPage('In Use')">In / Borrowed</button><button type="button" onclick="window.toolStatusFilter=null;go('tools')">Tool List</button><button type="button" onclick="go('usage')">Tool Register</button><button type="button" onclick="go('transfers')">Request</button><button type="button" onclick="openStatusPage('Available')">Available</button>
+   </div></details>
+   <details><summary>🛠 Maintenance</summary><div class="more-links">
+    <button type="button" onclick="openStatusPage('Damaged')">Damaged</button><button type="button" onclick="go('usage')">Usage</button><button type="button" onclick="go('repairs')">Repairs</button>
+   </div></details>
+   <details><summary>⚙ Settings</summary><div class="more-links">
+    <button type="button" onclick="go('bins')">Technician Bins</button><button type="button" onclick="go('settings')">Profile</button><button type="button" onclick="go('settings')">Security &amp; Sign-in</button><button type="button" onclick="go('settings');setTimeout(()=>document.getElementById('profileNewPassword')?.scrollIntoView({behavior:'smooth',block:'center'}),80)">Password</button>
+   </div></details>
+   <details><summary>▦ Calendar</summary><div class="more-links">
+    <button type="button" onclick="go('calendar')">Reminders &amp; Calendar</button><button type="button" onclick="go('activity')">Activity Logs</button><button type="button" onclick="openLoginRegister()">Login Register</button>
+   </div></details>
+  </div>
+ </div>
 </section>
 <section id="tools" class="hidden"><div class="panel"><div class="row"><div><strong>Tool register</strong><div class="muted">Only Omm can add or edit tool details. Technicians can scan, borrow, return and report damage. A unique QR code is generated from each tool ID.</div></div><button class="primary" id="addBtn" onclick="showForm()">＋ Add tool</button></div>
 <div id="toolForm" class="hidden"><h3 id="toolFormTitle">Register a new tool</h3><form id="addToolForm"><div class="fields"><div><label>Tool name *</label><input id="fName" required></div><div><label>Make</label><input id="fMake"></div><div><label>Model</label><input id="fModel"></div><div><label>Serial number</label><input id="fSerial"></div>
@@ -1834,7 +1873,32 @@ async function loadData(){
  if(tr.error||pr.error||hr.error||dr.error||mr.error||lr.error||(isAdmin()&&us.error)||tf.error){const err=tr.error||pr.error||hr.error||dr.error||mr.error||lr.error||us.error||tf.error;alert("Could not load workshop records. Check that the consolidated MR FIX IT SQL upgrade has been run. Details: "+err.message);console.error(tr.error,pr.error,hr.error,dr.error,mr.error,lr.error,us.error,tf.error);return}
  tools=tr.data||[];people=pr.data||[];history=hr.data||[];damageReports=dr.data||[];maintenanceRecords=mr.data||[];loginActivity=lr.data||[];usageRulesReady=!ur?.error;usageRules=ur?.error?[]:(ur?.data||[]);usageSessionRows=us?.data||[];transferRequests=tf.data||[];if(!selectedBin)selectedBin=profile.id;render();renderScannedToolDetails($("scanId")?.value||new URLSearchParams(location.search).get("tool")||"");
 }
-function go(page){if(page==="usage"&&!isAdmin())return alert("Administrator access required.");document.querySelectorAll("main>section").forEach(s=>s.classList.add("hidden"));$(page).classList.remove("hidden");document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("pageTitle").textContent=({dashboard:"Workshop dashboard",tools:"Tool register",bins:"Technician bins",activity:"Activity history",calendar:"Borrowing calendar",repairs:"Damage & Maintenance",settings:"Settings / Profile",usage:"Tool Usage Register",transfers:"Tool Requests & Transfers"})[page];if(page==="transfers")renderTransferRequests();if(page==="settings")renderSettings();if(page==="usage")renderUsageRegister()}
+function go(page){
+ if(page==="usage"&&!isAdmin())return alert("Administrator access required.");
+ if(page==="bins"&&!isAdmin())selectedBin=profile?.id||selectedBin;
+ const target=$(page);if(!target)return;
+ document.querySelectorAll("main>section").forEach(s=>s.classList.add("hidden"));target.classList.remove("hidden");
+ document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+ const titles={dashboard:"Workshop dashboard",alerts:"Alerts",more:"More",tools:"Tool List",bins:"Technician Bins",activity:"Activity Logs",calendar:"Calendar & Reminders",repairs:"Damaged & Repairs",settings:"Settings",usage:"Tool Usage Register",transfers:"Tool Requests"};
+ const title=$("pageTitle");if(title)title.textContent=titles[page]||"MR FIX IT";
+ if(page==="transfers")renderTransferRequests();if(page==="settings")renderSettings();if(page==="usage")renderUsageRegister();if(page==="alerts")renderAlerts();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function openStatusPage(status){window.toolStatusFilter=status;go("tools");renderToolRegister();}
+function openLoginRegister(){go("settings");document.getElementById("myLoginRegisterTitle")?.scrollIntoView({behavior:"smooth",block:"start"});}
+function renderAlerts(){
+ const host=$("alertsContent");if(!host||!profile)return;
+ const active=activeTransferRequests();const overdue=tools.filter(t=>t.borrower_id&&t.borrowed_at&&Date.now()-new Date(t.borrowed_at).getTime()>=7*86400000);
+ const damaged=tools.filter(t=>toolStatus(t)==="Damaged");const rows=[];
+ if(active.length)rows.push(`<div class="notice"><strong>${active.length} request / handover alert${active.length===1?"":"s"}</strong><p>Some tools are awaiting approval or physical receipt.</p><button type="button" onclick="go('transfers')">Review requests</button></div>`);
+ if(overdue.length)rows.push(`<div class="notice"><strong>${overdue.length} long-running borrowing${overdue.length===1?"":"s"}</strong><p>${overdue.map(t=>esc(t.name)+" — "+esc(people.find(p=>p.id===t.borrower_id)?.full_name||"Technician")).join(" · ")}</p><button type="button" onclick="openStatusPage('In Use')">View borrowed tools</button></div>`);
+ if(damaged.length)rows.push(`<div class="notice"><strong>${damaged.length} damaged tool${damaged.length===1?"":"s"}</strong><p>${damaged.map(t=>esc(t.name)).join(" · ")}</p><button type="button" onclick="openStatusPage('Damaged')">View damaged tools</button></div>`);
+ if(!rows.length)rows.push('<div class="empty">No active workshop alerts right now.</div>');
+ host.innerHTML=rows.join("");
+ const summary=$("alertsSummary");if(summary)summary.textContent=`${active.length} requests · ${overdue.length} long-running borrowings · ${damaged.length} damaged tools`;
+ const count=$("alertNavCount");if(count){const n=active.length+overdue.length+damaged.length;count.textContent=n>99?"99+":String(n);count.classList.toggle("hidden",!n)}
+}
+
 function renderSettings(){
  if(!profile)return;
  $("settingsFullName").textContent=profile.full_name||"Team member";
@@ -1987,7 +2051,7 @@ function renderToolRegister(){
  const category= $("categoryFilter")?.value||"";
  const filtered=tools.filter(t=>{
   const haystack=[t.name,t.make,t.model,t.serial_number,t.tool_code,t.category,t.location,t.condition].join(" ").toLowerCase();
-  return (!query||haystack.includes(query))&&(!category||(t.category||"Uncategorised")===category);
+  return (!query||haystack.includes(query))&&(!category||(t.category||"Uncategorised")===category)&&(!window.toolStatusFilter||toolStatus(t)===window.toolStatusFilter||(window.toolStatusFilter==="In Use"&&!!t.borrower_id));
  });
  if($("toolCount"))$("toolCount").textContent=`Showing ${filtered.length} of ${tools.length} tools`;
  if(!tools.length){$("toolList").innerHTML='<div class="empty">No tools registered yet.</div>';return;}
@@ -2113,9 +2177,8 @@ function renderHomeOverview(){
  ];
  const labels=statuses;const nonzero=labels.filter(x=>x.count>0);const chartLabels=nonzero.length?nonzero:statuses;
  if(homePie)homePie.destroy();
- if(typeof Chart!=="undefined")homePie=new Chart(canvas,{type:"doughnut",data:{labels:chartLabels.map(x=>x.label),datasets:[{data:chartLabels.map(x=>x.count),backgroundColor:chartLabels.map(x=>x.color),borderColor:"#20252a",borderWidth:4,hoverOffset:13}]},options:{responsive:true,maintainAspectRatio:false,cutout:"64%",plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw} tool${c.raw===1?"":"s"}`}}},onClick:(evt,elements)=>{if(!elements.length)return;const item=chartLabels[elements[0].index];if(item.personId){selectedBin=item.personId;go("bins");showBin(item.personId)}else go(item.page)}}});
- const legend=$("homeChartLegend");if(legend)legend.innerHTML=chartLabels.map((x,i)=>`<button type="button" onclick="openHomeChartItem(${i})"><span style="color:${x.color}">●</span> ${esc(x.label)} · ${x.count}</button>`).join("");
- const shortcuts=$("homeBinShortcuts");if(shortcuts)shortcuts.innerHTML=(isAdmin()?people:people.filter(p=>p.id===profile.id)).map(p=>`<button type="button" onclick="openTechnicianBin('${p.id}')">♙ ${esc(p.full_name)} · ${tools.filter(t=>t.borrower_id===p.id).length} tools</button>`).join("");
+ if(typeof Chart!=="undefined")homePie=new Chart(canvas,{type:"doughnut",data:{labels:chartLabels.map(x=>x.label),datasets:[{data:chartLabels.map(x=>x.count),backgroundColor:chartLabels.map(x=>x.color),borderColor:"#20252a",borderWidth:4,hoverOffset:13}]},options:{responsive:true,maintainAspectRatio:false,cutout:"64%",plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw} tool${c.raw===1?"":"s"}`}}},onClick:(evt,elements)=>{if(!elements.length)return;const item=chartLabels[elements[0].index];if(item.personId){selectedBin=item.personId;go("bins");showBin(item.personId)}else openStatusPage(item.label==="In Use / Borrowed"?"In Use":item.label)}}});
+
  window.homeChartItems=chartLabels;
 }
 function openHomeChartItem(i){const x=window.homeChartItems?.[i];if(!x)return;if(x.personId)openTechnicianBin(x.personId);else go(x.page)}
@@ -2124,7 +2187,7 @@ function render(){
 const borrowed=tools.filter(t=>t.borrower_id),inUse=tools.filter(t=>toolStatus(t)==="In Use"||t.borrower_id),maintenance=tools.filter(t=>toolStatus(t)==="Under Maintenance"),damaged=tools.filter(t=>toolStatus(t)==="Damaged"),available=tools.filter(t=>toolStatus(t)==="Available"),review=borrowed.filter(t=>t.borrowed_at&&Date.now()-new Date(t.borrowed_at).getTime()>=7*86400000);
  $("total").textContent=tools.length;$("available").textContent=available.length;$("borrowed").textContent=inUse.length;$("maintenanceCount").textContent=maintenance.length;$("damagedCount").textContent=damaged.length;$("overdue").textContent=review.length;renderHomeOverview();
  $("addBtn").disabled=!isAdmin();$("usageNav").classList.toggle("hidden",!isAdmin());
- renderToolRegister();renderRepairLists();populateDamageTools();renderCalendar();renderTransferAlerts();if(isAdmin())renderUsageRegister();
+ renderToolRegister();renderRepairLists();populateDamageTools();renderCalendar();renderTransferAlerts();renderAlerts();if(isAdmin())renderUsageRegister();
  const visiblePeople=isAdmin()?people:people.filter(p=>p.id===profile.id);
  $("dashPeople").innerHTML=visiblePeople.map(p=>`<div class="person"><strong>${esc(p.full_name)}</strong><small>${esc(p.job_title||"Technician")}${p.is_admin?" · Admin":""}</small><div class="count">${borrowed.filter(t=>t.borrower_id===p.id).length}</div><small>tools in bin</small></div>`).join("");
  $("binList").innerHTML=visiblePeople.map(p=>`<div class="person" onclick="showBin('${p.id}')" style="cursor:pointer"><strong>${esc(p.full_name)}</strong><small>${esc(p.job_title||"Technician")}</small><div class="count">${borrowed.filter(t=>t.borrower_id===p.id).length}</div><small>tools assigned</small></div>`).join("");if(!isAdmin())selectedBin=profile.id;showBin(selectedBin);
