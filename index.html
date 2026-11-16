@@ -428,6 +428,8 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
  <div class="home-chart-panel">
   <div class="home-chart-heading"><div><span class="hero-kicker">LIVE WORKSHOP OVERVIEW</span><h3>Workshop at a glance</h3><p class="muted">Select any chart section to open its records.</p></div><span class="live-indicator">● LIVE</span></div>
   <div class="home-chart-wrap"><canvas id="homePieChart" aria-label="Interactive live workshop pie chart"></canvas></div>
+  <div id="homePieLegend" class="home-chart-legend" aria-label="Dashboard categories"></div>
+  <p class="muted" style="text-align:center;font-size:11px;margin:8px 0 0">Percentages show each menu item’s share of the combined dashboard activity counts. Some categories overlap.</p>
 
  </div>
 
@@ -2168,51 +2170,53 @@ async function saveTechnicianColour(id,colour){
 let homePie=null;
 function renderHomeOverview(){
  const canvas=$("homePieChart");if(!canvas||!profile)return;
- const statuses=[
-  {label:"Available",count:tools.filter(t=>toolStatus(t)==="Available").length,page:"tools",color:"#36b98a"},
-  {label:"In Use / Borrowed",count:tools.filter(t=>toolStatus(t)==="In Use"||!!t.borrower_id).length,page:"bins",color:"#e5ad4f"},
-  {label:"Under Maintenance",count:tools.filter(t=>toolStatus(t)==="Under Maintenance").length,page:"repairs",color:"#659be8"},
-  {label:"Damaged",count:tools.filter(t=>toolStatus(t)==="Damaged").length,page:"repairs",color:"#e16b72"},
-  {label:"Lost",count:tools.filter(t=>toolStatus(t)==="Lost").length,page:"tools",color:"#9b83d8"}
+ const sessions=usageSessions();
+ const usageCount=[...sessions.values()].reduce((n,a)=>n+a.length,0);
+ const inUse=tools.filter(t=>toolStatus(t)==="In Use"||!!t.borrower_id);
+ const available=tools.filter(t=>toolStatus(t)==="Available");
+ const damaged=tools.filter(t=>toolStatus(t)==="Damaged");
+ const overdue=inUse.filter(t=>t.borrowed_at&&Date.now()-new Date(t.borrowed_at).getTime()>=7*86400000);
+ const activeRequests=activeTransferRequests().filter(r=>isAdmin()||r.requester_id===profile.id||r.holder_id===profile.id);
+ const myHistory=history.filter(h=>isAdmin()||h.actor_id===profile.id);
+ const myLogins=loginActivity.filter(x=>isAdmin()||x.user_id===profile.id);
+ const visiblePeople=isAdmin()?people:people.filter(p=>p.id===profile.id);
+ const items=[
+  {section:"Workshop",label:"In / Borrowed",count:inUse.length,color:"#e5ad4f",action:()=>openStatusPage("In Use")},
+  {section:"Workshop",label:"Tool List",count:tools.length,color:"#36b98a",action:()=>{window.toolStatusFilter=null;go("tools");renderToolRegister()}},
+  ...(isAdmin()?[{section:"Workshop",label:"Tool Register",count:usageCount,color:"#5e9ee8",action:()=>go("usage")}]:[]),
+  {section:"Workshop",label:"Request",count:activeRequests.length,color:"#d68b53",action:()=>go("transfers")},
+  {section:"Workshop",label:"Available",count:available.length,color:"#79c7a2",action:()=>openStatusPage("Available")},
+  {section:"Maintenance",label:"Damaged",count:damaged.length,color:"#e16b72",action:()=>openStatusPage("Damaged")},
+  ...(isAdmin()?[{section:"Maintenance",label:"Usage",count:usageCount,color:"#8b83d8",action:()=>go("usage")}]:[]),
+  {section:"Maintenance",label:"Repairs",count:maintenanceRecords.length,color:"#659be8",action:()=>go("repairs")},
+  {section:"Settings",label:"Technician Bins",count:visiblePeople.length,color:"#c48bdc",action:()=>{go("bins");if(!isAdmin())showBin(profile.id)}},
+  {section:"Settings",label:"Profile",count:1,color:"#d8b66b",action:()=>{go("settings");setTimeout(()=>$('settingsFullName')?.scrollIntoView({behavior:"smooth",block:"center"}),80)}},
+  {section:"Settings",label:"Security & Sign-in",count:myLogins.length,color:"#7fa5c9",action:()=>{go("settings");setTimeout(()=>$('myLoginRegisterTitle')?.scrollIntoView({behavior:"smooth",block:"center"}),80)}},
+  {section:"Settings",label:"Password",count:1,color:"#bd9a70",action:()=>{go("settings");setTimeout(()=>$('profilePasswordForm')?.scrollIntoView({behavior:"smooth",block:"center"}),80)}},
+  {section:"Calendar",label:"Reminders",count:overdue.length+activeRequests.length,color:"#d58a70",action:()=>go("alerts")},
+  {section:"Calendar",label:"Activity Logs",count:myHistory.length,color:"#70a9ad",action:()=>go("activity")},
+  {section:"Calendar",label:"Login Register",count:myLogins.length,color:"#9c9bd6",action:()=>{if(isAdmin())go("calendar");else{go("settings");setTimeout(()=>$('myLoginRegisterTitle')?.scrollIntoView({behavior:"smooth",block:"center"}),80)}}}
  ];
- const labels=statuses;const nonzero=labels.filter(x=>x.count>0);const chartLabels=nonzero.length?nonzero:statuses;
- if(homePie && typeof homePie.destroy==="function")homePie.destroy();
- const selectChartItem=(index)=>{const item=chartLabels[index];if(!item)return;if(item.personId){selectedBin=item.personId;go("bins");showBin(item.personId)}else openStatusPage(item.label==="In Use / Borrowed"?"In Use":item.label)};
- // Draw directly on canvas rather than relying on an external chart library.
- // This avoids blank charts when a CDN is blocked or Chart.js initialises while hidden.
- const drawFallback=()=>{
-  const box=canvas.getBoundingClientRect();
-  const w=Math.max(220,box.width||320),h=Math.max(220,box.height||300),dpr=Math.max(1,window.devicePixelRatio||1);
+ const total=items.reduce((n,x)=>n+Math.max(0,Number(x.count)||0),0);
+ items.forEach(x=>x.percent=total?x.count/total*100:100/items.length);
+ if(homePie&&typeof homePie.destroy==="function")homePie.destroy();
+ const legend=$("homePieLegend");
+ if(legend)legend.innerHTML=items.map((x,i)=>`<button type="button" data-chart-item="${i}" title="Open ${esc(x.section)} — ${esc(x.label)}"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${x.color};margin-right:6px"></span>${esc(x.label)} <strong>${x.percent.toFixed(1)}%</strong> <small style="color:#b7c0c9">(${x.count})</small></button>`).join("");
+ const activate=i=>{const x=items[i];if(x?.action)x.action()};
+ const draw=()=>{
+  const box=canvas.getBoundingClientRect();if(!box.width||!box.height)return;
+  const w=box.width,h=box.height,dpr=Math.max(1,window.devicePixelRatio||1);
   canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
-  const ctx=canvas.getContext("2d");if(!ctx)return;
-  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
-  const total=chartLabels.reduce((n,x)=>n+Math.max(0,Number(x.count)||0),0);
-  const cx=w/2,cy=h/2,r=Math.min(w*.39,h*.43),inner=r*.63;
-  let angle=-Math.PI/2;
-  chartLabels.forEach(item=>{
-   const value=Math.max(0,Number(item.count)||0);
-   const span=total?value/total*Math.PI*2:Math.PI*2/chartLabels.length;
-   item._start=angle;item._end=angle+span;
-   ctx.beginPath();ctx.arc(cx,cy,r,angle,angle+span);ctx.arc(cx,cy,inner,angle+span,angle,true);ctx.closePath();
-   ctx.fillStyle=item.color;ctx.fill();ctx.strokeStyle="#20252a";ctx.lineWidth=3;ctx.stroke();angle+=span;
-  });
-  ctx.fillStyle="#f3f4f6";ctx.textAlign="center";ctx.font="700 24px system-ui";ctx.fillText(String(total),cx,cy-2);
-  ctx.fillStyle="#aab2bb";ctx.font="12px system-ui";ctx.fillText("TOOLS",cx,cy+18);
+  const ctx=canvas.getContext("2d");if(!ctx)return;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+  const cx=w/2,cy=h/2,r=Math.min(w*.39,h*.43),inner=r*.58;let angle=-Math.PI/2;
+  items.forEach((x,i)=>{const span=(x.percent/100)*Math.PI*2;x._start=angle;x._end=angle+span;x._index=i;ctx.beginPath();ctx.arc(cx,cy,r,angle,angle+span);ctx.arc(cx,cy,inner,angle+span,angle,true);ctx.closePath();ctx.fillStyle=x.color;ctx.fill();ctx.strokeStyle="#20252a";ctx.lineWidth=2;ctx.stroke();
+   if(x.percent>=4.5){const mid=angle+span/2,rr=(r+inner)/2;ctx.fillStyle="#111820";ctx.font="700 10px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(x.percent.toFixed(0)+"%",cx+Math.cos(mid)*rr,cy+Math.sin(mid)*rr);}angle+=span;});
+  ctx.fillStyle="#f3f4f6";ctx.textAlign="center";ctx.textBaseline="middle";ctx.font="700 23px system-ui";ctx.fillText(String(total),cx,cy-7);ctx.fillStyle="#aab2bb";ctx.font="11px system-ui";ctx.fillText("MENU COUNTS",cx,cy+13);
  };
- drawFallback();
- if(canvas._mrfixResize)window.removeEventListener("resize",canvas._mrfixResize);
- canvas._mrfixResize=drawFallback;window.addEventListener("resize",drawFallback);
- canvas.onclick=(ev)=>{
-  const rect=canvas.getBoundingClientRect(),x=ev.clientX-rect.left,y=ev.clientY-rect.top,w=rect.width,h=rect.height;
-  const cx=w/2,cy=h/2,dx=x-cx,dy=y-cy,r=Math.hypot(dx,dy),outer=Math.min(w*.39,h*.43),inner=outer*.63;
-  if(r<inner||r>outer)return;
-  let a=Math.atan2(dy,dx);if(a< -Math.PI/2)a+=Math.PI*2;
-  const hit=chartLabels.findIndex(item=>a>=item._start&&a<=item._end);
-  if(hit>=0)selectChartItem(hit);
- };
- // Repaint once the dashboard has completed layout (important after login/tab changes).
- requestAnimationFrame(()=>{if(canvas.isConnected)drawFallback();});
- window.homeChartItems=chartLabels;
+ draw();if(canvas._mrfixResize)window.removeEventListener("resize",canvas._mrfixResize);canvas._mrfixResize=draw;window.addEventListener("resize",draw);
+ canvas.onclick=ev=>{const rect=canvas.getBoundingClientRect(),x=ev.clientX-rect.left,y=ev.clientY-rect.top,w=rect.width,h=rect.height,cx=w/2,cy=h/2,dx=x-cx,dy=y-cy,r=Math.hypot(dx,dy),outer=Math.min(w*.39,h*.43),inner=outer*.58;if(r<inner||r>outer)return;let a=Math.atan2(dy,dx);if(a< -Math.PI/2)a+=Math.PI*2;const hit=items.findIndex(x=>a>=x._start&&a<=x._end);if(hit>=0)activate(hit);};
+ if(legend)legend.querySelectorAll("[data-chart-item]").forEach(b=>b.addEventListener("click",()=>activate(Number(b.dataset.chartItem))));
+ requestAnimationFrame(()=>{if(canvas.isConnected)draw()});window.homeChartItems=items;
 }
 function openHomeChartItem(i){const x=window.homeChartItems?.[i];if(!x)return;if(x.personId)openTechnicianBin(x.personId);else go(x.page)}
 function openTechnicianBin(id){if(!isAdmin()&&id!==profile.id)return;selectedBin=id;go("bins");showBin(id)}
