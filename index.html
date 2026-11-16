@@ -395,6 +395,14 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
 #alerts .panel{border-color:#665039}
 @media(max-width:700px){#app>nav[aria-label="Main navigation"]{width:calc(100% - 24px)!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}#app>nav[aria-label="Main navigation"] .tab{font-size:12px!important}.more-links{grid-template-columns:1fr 1fr}}
 
+
+/* MR FIX IT infographic-style radial chart */
+.home-chart-wrap{width:min(100%,620px);height:500px;margin:8px auto 0;position:relative}
+.home-chart-wrap canvas{width:100%!important;height:100%!important;display:block}
+.home-chart-legend{max-width:900px}
+.home-chart-legend .mrfix-submenu-links button{background:#20262d;color:#f4f5f7;border:1px solid #47515b;border-radius:18px;cursor:pointer}
+.home-chart-legend .mrfix-submenu-links button:hover{filter:brightness(1.25);transform:translateY(-1px)}
+@media(max-width:700px){.home-chart-wrap{width:min(100%,430px);height:390px}.home-chart-legend .mrfix-submenu-links{gap:5px!important}.home-chart-legend .mrfix-submenu-links button{font-size:10px!important;padding:6px 8px!important}}
 </style>
 </head>
 <body>
@@ -1864,6 +1872,9 @@ async function startApp(){
  const {data:p,error:pe}=await db.from("profiles").select("id,full_name,job_title,is_admin,active,calendar_color").eq("id",user.id).single();
  if(pe||!p||!p.active){await db.auth.signOut();showError("loginError","Your Supabase login is valid, but your MR FIX IT team profile is missing or inactive. Run the updated setup SQL in your Supabase SQL Editor, then sign in again.");return}
  profile=p;await recordLogin(user.id);$("welcomeMessage").textContent="Welcome back, "+(p.full_name||"Team member")+"!";$("heroWelcomeName").textContent=(p.full_name||"Team member");$("login").classList.add("hidden");$("app").classList.remove("hidden");$("whoami").textContent=p.full_name+(p.is_admin?" · Administrator":" · Technician");
+ // Draw the chart immediately so it is visible even while database records are loading.
+ // loadData() calls render() again when live records arrive.
+ try{renderHomeOverview();}catch(chartError){console.error("Initial workshop chart could not render:",chartError);}
  await loadData();
  const incomingTool=new URLSearchParams(location.search).get("tool");
  if(incomingTool){$("scanId").value=incomingTool;go("dashboard");renderScannedToolDetails(incomingTool);}
@@ -2197,34 +2208,91 @@ function renderHomeOverview(){
   {section:"Calendar",label:"Activity Logs",count:myHistory.length,color:"#06B6D4",action:()=>go("activity")},
   {section:"Calendar",label:"Login Register",count:myLogins.length,color:"#0EA5E9",action:()=>{if(isAdmin())go("calendar");else{go("settings");setTimeout(()=>$('myLoginRegisterTitle')?.scrollIntoView({behavior:"smooth",block:"center"}),80)}}}
  ];
- const total=items.reduce((n,x)=>n+Math.max(0,Number(x.count)||0),0);
- items.forEach(x=>x.percent=total?x.count/total*100:100/items.length);
- if(homePie&&typeof homePie.destroy==="function")homePie.destroy();
+ const groups=items.map((item,i)=>({
+  ...item,
+  section:item.section,
+  title:item.label,
+  icon:({
+   "In / Borrowed":"↗","Tool List":"▤","Tool Register":"▣","Request":"⇄","Available":"✓",
+   "Damaged":"!","Usage":"◷","Repairs":"🔧","Technician Bins":"▦","Profile":"●",
+   "Security & Sign-in":"🔐","Password":"✦","Reminders":"◷","Activity Logs":"≋","Login Register":"⌁"
+  })[item.label]||"•",
+  count:Math.max(0,Number(item.count)||0),
+  menuPercent:items.length?100/items.length:0,
+  recordShare:0,
+  action:item.action
+ }));
+ const recordTotal=groups.reduce((n,x)=>n+x.count,0);
+ groups.forEach(g=>g.recordShare=recordTotal?g.count/recordTotal*100:0);
  const legend=$("homePieLegend");
- if(legend)legend.innerHTML=items.map((x,i)=>`<button type="button" data-chart-item="${i}" title="Open ${esc(x.section)} — ${esc(x.label)}"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${x.color};margin-right:6px"></span>${esc(x.label)} <strong>${x.percent.toFixed(1)}%</strong> <small style="color:#b7c0c9">(${x.count})</small></button>`).join("");
- const activate=i=>{const x=items[i];if(x?.action)x.action()};
+ if(legend){
+  legend.innerHTML=groups.map((g,i)=>`<button type="button" data-section="${i}" title="Open ${esc(g.section)} — ${esc(g.label)}" style="border-color:${g.color}"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${g.color};margin-right:6px"></span>${esc(g.label)} <strong>${g.count}</strong></button>`).join("");
+ }
+ const activate=i=>{const g=groups[i];if(g?.action)g.action()};
  const hoverBox=$("homePieHoverInfo");
- const describe=i=>{const x=items[i];if(!x||!hoverBox)return;hoverBox.innerHTML=`<strong>${esc(x.label)}</strong><div>${esc(x.section)}</div><div>${Number(x.count)||0} record${Number(x.count)===1?"":"s"} · ${x.percent.toFixed(1)}%</div><div style="color:#e5c77f;margin-top:4px">Click to open details</div>`;hoverBox.classList.add("show")};
+ const describe=i=>{
+  const g=groups[i];if(!g||!hoverBox)return;
+  hoverBox.innerHTML=`<strong>${g.icon} ${esc(g.label)}</strong><div>Main section: ${esc(g.section)}</div><div>${g.count} live record${g.count===1?"":"s"}</div><div>Menu share: ${g.menuPercent.toFixed(1)}%</div><div>Share of counted records: ${g.recordShare.toFixed(1)}%</div><div style="color:#e5c77f;margin-top:5px">Click to open ${esc(g.label)}</div>`;
+  hoverBox.classList.add("show");
+ };
  const hideDescribe=()=>hoverBox?.classList.remove("show");
  const draw=()=>{
   const box=canvas.getBoundingClientRect();if(!box.width||!box.height)return;
   const w=box.width,h=box.height,dpr=Math.max(1,window.devicePixelRatio||1);
   canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
-  const ctx=canvas.getContext("2d");if(!ctx)return;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
-  const cx=w/2,cy=h/2,r=Math.min(w*.39,h*.43),inner=r*.58;let angle=-Math.PI/2;
-  items.forEach((x,i)=>{const span=(x.percent/100)*Math.PI*2;x._start=angle;x._end=angle+span;x._index=i;ctx.beginPath();ctx.arc(cx,cy,r,angle,angle+span);ctx.arc(cx,cy,inner,angle+span,angle,true);ctx.closePath();ctx.fillStyle=x.color;ctx.fill();ctx.strokeStyle="#20252a";ctx.lineWidth=2;ctx.stroke();
-   if(x.percent>=4.5){const mid=angle+span/2,rr=(r+inner)/2;ctx.fillStyle="#111820";ctx.font="700 10px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(x.percent.toFixed(0)+"%",cx+Math.cos(mid)*rr,cy+Math.sin(mid)*rr);}angle+=span;});
-  ctx.fillStyle="#f3f4f6";ctx.textAlign="center";ctx.textBaseline="middle";ctx.font="700 23px system-ui";ctx.fillText(String(total),cx,cy-7);ctx.fillStyle="#aab2bb";ctx.font="11px system-ui";ctx.fillText("MENU COUNTS",cx,cy+13);
+  const ctx=canvas.getContext("2d");if(!ctx)return;
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+  const cx=w/2,cy=h/2,r=Math.min(w*.45,h*.48),inner=r*.39;
+  let angle=-Math.PI/2;
+  const span=groups.length?Math.PI*2/groups.length:Math.PI*2;
+  groups.forEach((g,i)=>{
+   g._start=angle;g._end=angle+span;g._index=i;
+   ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,angle,angle+span);ctx.closePath();
+   ctx.fillStyle=g.color;ctx.fill();ctx.strokeStyle="#171b20";ctx.lineWidth=3;ctx.stroke();
+   const mid=angle+span/2,rr=r*.70,tx=cx+Math.cos(mid)*rr,ty=cy+Math.sin(mid)*rr;
+   ctx.save();ctx.translate(tx,ty);ctx.rotate(mid+Math.PI/2);
+   ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#fff";
+   const shortLabel=({
+    "In / Borrowed":"IN / OUT","Tool List":"TOOLS","Tool Register":"REGISTER","Request":"REQUEST","Available":"READY",
+    "Damaged":"DAMAGED","Usage":"USAGE","Repairs":"REPAIRS","Technician Bins":"BINS","Profile":"PROFILE",
+    "Security & Sign-in":"SECURITY","Password":"PASSWORD","Reminders":"REMIND","Activity Logs":"ACTIVITY","Login Register":"LOGINS"
+   })[g.label]||g.label.toUpperCase();
+   ctx.font="800 8px system-ui";ctx.fillText(shortLabel,0,-5);
+   ctx.font="700 11px system-ui";ctx.fillText(String(g.count),0,8);
+   ctx.restore();
+   angle+=span;
+  });
+  // Central hub follows the supplied circular infographic reference.
+  ctx.beginPath();ctx.arc(cx,cy,inner,0,Math.PI*2);ctx.fillStyle="#f7f8fa";ctx.fill();
+  ctx.lineWidth=7;ctx.strokeStyle="#d8dce1";ctx.stroke();
+  ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#263246";
+  ctx.font="900 20px system-ui";ctx.fillText("MR FIX IT",cx,cy-9);
+  ctx.fillStyle="#657080";ctx.font="10px system-ui";ctx.fillText("LIVE WORKSHOP",cx,cy+11);
  };
- draw();if(canvas._mrfixResize)window.removeEventListener("resize",canvas._mrfixResize);canvas._mrfixResize=draw;window.addEventListener("resize",draw);
- const chartHit=ev=>{const rect=canvas.getBoundingClientRect(),x=ev.clientX-rect.left,y=ev.clientY-rect.top,w=rect.width,h=rect.height,cx=w/2,cy=h/2,dx=x-cx,dy=y-cy,r=Math.hypot(dx,dy),outer=Math.min(w*.39,h*.43),inner=outer*.58;if(r<inner||r>outer)return -1;let a=Math.atan2(dy,dx);if(a< -Math.PI/2)a+=Math.PI*2;return items.findIndex(item=>a>=item._start&&a<=item._end);};
+ draw();
+ if(canvas._mrfixResize)window.removeEventListener("resize",canvas._mrfixResize);
+ canvas._mrfixResize=draw;window.addEventListener("resize",draw);
+ const chartHit=ev=>{
+  const rect=canvas.getBoundingClientRect(),dx=ev.clientX-rect.left-rect.width/2,dy=ev.clientY-rect.top-rect.height/2;
+  const rad=Math.hypot(dx,dy),outer=Math.min(rect.width*.45,rect.height*.48),inner=outer*.39;
+  if(rad<inner||rad>outer)return -1;
+  let a=Math.atan2(dy,dx);if(a< -Math.PI/2)a+=Math.PI*2;
+  return groups.findIndex(g=>a>=g._start&&a<g._end);
+ };
  canvas.onclick=ev=>{const hit=chartHit(ev);if(hit>=0)activate(hit)};
- canvas.onmousemove=ev=>{const hit=chartHit(ev);if(hit>=0){describe(hit);const wrap=canvas.parentElement,rect=wrap.getBoundingClientRect();hoverBox.style.left=Math.min(Math.max(8,ev.clientX-rect.left+14),rect.width-240)+"px";hoverBox.style.top=Math.min(Math.max(8,ev.clientY-rect.top+14),rect.height-95)+"px";}else hideDescribe()};
+ canvas.onmousemove=ev=>{
+  const hit=chartHit(ev);
+  if(hit>=0){describe(hit);const wrap=canvas.parentElement,rect=wrap.getBoundingClientRect();
+   hoverBox.style.left=Math.min(Math.max(8,ev.clientX-rect.left+14),Math.max(8,rect.width-240))+"px";
+   hoverBox.style.top=Math.min(Math.max(8,ev.clientY-rect.top+14),Math.max(8,rect.height-130))+"px";
+  }else hideDescribe();
+ };
  canvas.onmouseleave=hideDescribe;
- if(legend)legend.querySelectorAll("[data-chart-item]").forEach(b=>b.addEventListener("click",()=>activate(Number(b.dataset.chartItem))));
- requestAnimationFrame(()=>{if(canvas.isConnected)draw()});window.homeChartItems=items;
+ if(legend)legend.querySelectorAll("[data-section]").forEach(b=>b.addEventListener("click",()=>activate(Number(b.dataset.section))));
+ requestAnimationFrame(()=>{if(canvas.isConnected)draw()});
+ window.homeChartItems=items;window.homeChartGroups=groups;
 }
-function openHomeChartItem(i){const x=window.homeChartItems?.[i];if(!x)return;if(x.personId)openTechnicianBin(x.personId);else go(x.page)}
+function openHomeChartItem(i){const x=window.homeChartItems?.[i];if(!x)return;if(x.action)x.action();}
 function openTechnicianBin(id){if(!isAdmin()&&id!==profile.id)return;selectedBin=id;go("bins");showBin(id)}
 function render(){
 const borrowed=tools.filter(t=>t.borrower_id),inUse=tools.filter(t=>toolStatus(t)==="In Use"||t.borrower_id),maintenance=tools.filter(t=>toolStatus(t)==="Under Maintenance"),damaged=tools.filter(t=>toolStatus(t)==="Damaged"),available=tools.filter(t=>toolStatus(t)==="Available"),review=borrowed.filter(t=>t.borrowed_at&&Date.now()-new Date(t.borrowed_at).getTime()>=7*86400000);
