@@ -1860,15 +1860,39 @@ async function signInPasskey(){ $("loginError").innerHTML="";try{const {error}=a
 async function registerPasskey(){try{const {data,error}=await db.auth.registerPasskey();if(error){alert("Could not set up passkey: "+error.message);return}alert("Passkey registered on this device. Next time, use the Face ID / fingerprint button to sign in.")}catch(e){alert("Passkey setup is not available yet: "+(e.message||e))}}
 async function signOut(){if(profile)sessionStorage.removeItem("mrfix_login_logged_"+profile.id);await db.auth.signOut();profile=null;$("app").classList.add("hidden");$("login").classList.remove("hidden")}
 async function startApp(){
- const {data:{user},error}=await db.auth.getUser();if(error||!user)return;
+ const {data:{user},error}=await db.auth.getUser();
+ if(error||!user)return;
  const {data:p,error:pe}=await db.from("profiles").select("id,full_name,job_title,is_admin,active,calendar_color").eq("id",user.id).single();
- if(pe||!p||!p.active){await db.auth.signOut();showError("loginError","Your Supabase login is valid, but your MR FIX IT team profile is missing or inactive. Run the updated setup SQL in your Supabase SQL Editor, then sign in again.");return}
- profile=p;await recordLogin(user.id);$("welcomeMessage").textContent="Welcome back, "+(p.full_name||"Team member")+"!";$("heroWelcomeName").textContent=(p.full_name||"Team member");$("login").classList.add("hidden");$("app").classList.remove("hidden");$("whoami").textContent=p.full_name+(p.is_admin?" · Administrator":" · Technician");
- await loadData();
+ if(pe||!p||!p.active){
+  await db.auth.signOut();
+  showError("loginError","Your Supabase login is valid, but your MR FIX IT team profile is missing or inactive. Please contact Omm.");
+  return;
+ }
+ profile=p;
+ $("welcomeMessage").textContent="Welcome back, "+(p.full_name||"Team member")+"!";
+ $("heroWelcomeName").textContent=(p.full_name||"Team member");
+ $("login").classList.add("hidden");
+ $("app").classList.remove("hidden");
+ $("whoami").textContent=p.full_name+(p.is_admin?" · Administrator":" · Technician");
+ // Show the dashboard immediately; logging and data loading run in the background.
+ try{go("dashboard");render();}catch(uiError){console.warn("Initial dashboard display:",uiError);}
+ recordLogin(user.id).catch(e=>console.warn("Login activity could not be recorded:",e));
+ loadData().catch(e=>{
+  console.error("MR FIX IT data load failed:",e);
+  const host=$("homePieHoverInfo");
+  if(host){host.textContent="Could not load live workshop data. Check your connection and Supabase permissions, then refresh.";host.classList.add("show");}
+ });
  const incomingTool=new URLSearchParams(location.search).get("tool");
  if(incomingTool){$("scanId").value=incomingTool;go("dashboard");renderScannedToolDetails(incomingTool);}
  db.removeAllChannels();
- db.channel("mr-fix-it-live").on("postgres_changes",{event:"*",schema:"public",table:"profiles"},scheduleMrfixRealtimeRefresh).on("postgres_changes",{event:"*",schema:"public",table:"tools"},scheduleMrfixRealtimeRefresh).on("postgres_changes",{event:"*",schema:"public",table:"tool_movements"},scheduleMrfixRealtimeRefresh).on("postgres_changes",{event:"*",schema:"public",table:"damage_reports"},scheduleMrfixRealtimeRefresh).on("postgres_changes",{event:"*",schema:"public",table:"maintenance_records"},scheduleMrfixRealtimeRefresh).on("postgres_changes",{event:"*",schema:"public",table:"tool_transfer_requests"},scheduleMrfixRealtimeRefresh).subscribe();
+ db.channel("mr-fix-it-live")
+  .on("postgres_changes",{event:"*",schema:"public",table:"profiles"},scheduleMrfixRealtimeRefresh)
+  .on("postgres_changes",{event:"*",schema:"public",table:"tools"},scheduleMrfixRealtimeRefresh)
+  .on("postgres_changes",{event:"*",schema:"public",table:"tool_movements"},scheduleMrfixRealtimeRefresh)
+  .on("postgres_changes",{event:"*",schema:"public",table:"damage_reports"},scheduleMrfixRealtimeRefresh)
+  .on("postgres_changes",{event:"*",schema:"public",table:"maintenance_records"},scheduleMrfixRealtimeRefresh)
+  .on("postgres_changes",{event:"*",schema:"public",table:"tool_transfer_requests"},scheduleMrfixRealtimeRefresh)
+  .subscribe();
 }
 let mrfixLoadPromise=null,mrfixLoadAgain=false,mrfixRealtimeTimer=null;
 async function loadData(){
