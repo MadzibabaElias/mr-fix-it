@@ -1881,7 +1881,7 @@ function go(page){
  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
  const titles={dashboard:"Workshop dashboard",alerts:"Alerts",more:"More",tools:"Tool List",bins:"Technician Bins",activity:"Activity Logs",calendar:"Calendar & Reminders",repairs:"Damaged & Repairs",settings:"Settings",usage:"Tool Usage Register",transfers:"Tool Requests"};
  const title=$("pageTitle");if(title)title.textContent=titles[page]||"MR FIX IT";
- if(page==="transfers")renderTransferRequests();if(page==="settings")renderSettings();if(page==="usage")renderUsageRegister();if(page==="alerts")renderAlerts();
+ if(page==="transfers")renderTransferRequests();if(page==="settings")renderSettings();if(page==="usage")renderUsageRegister();if(page==="alerts")renderAlerts();if(page==="dashboard")requestAnimationFrame(()=>{if(profile)renderHomeOverview();});
  window.scrollTo({top:0,behavior:"smooth"});
 }
 function openStatusPage(status){window.toolStatusFilter=status;go("tools");renderToolRegister();}
@@ -2178,21 +2178,40 @@ function renderHomeOverview(){
  const labels=statuses;const nonzero=labels.filter(x=>x.count>0);const chartLabels=nonzero.length?nonzero:statuses;
  if(homePie && typeof homePie.destroy==="function")homePie.destroy();
  const selectChartItem=(index)=>{const item=chartLabels[index];if(!item)return;if(item.personId){selectedBin=item.personId;go("bins");showBin(item.personId)}else openStatusPage(item.label==="In Use / Borrowed"?"In Use":item.label)};
- if(typeof Chart!=="undefined"){
-  homePie=new Chart(canvas,{type:"doughnut",data:{labels:chartLabels.map(x=>x.label),datasets:[{data:chartLabels.map(x=>x.count),backgroundColor:chartLabels.map(x=>x.color),borderColor:"#20252a",borderWidth:4,hoverOffset:13}]},options:{responsive:true,maintainAspectRatio:false,cutout:"64%",plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw} tool${c.raw===1?"":"s"}`}}},onClick:(evt,elements)=>{if(elements.length)selectChartItem(elements[0].index)}}});
- }else{
-  // Native canvas fallback keeps the live chart visible and clickable if Chart.js cannot load.
-  const drawFallback=()=>{
-   const box=canvas.getBoundingClientRect(),w=Math.max(220,box.width||320),h=Math.max(220,box.height||260),dpr=Math.max(1,window.devicePixelRatio||1);
-   canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
-   const ctx=canvas.getContext("2d");if(!ctx)return;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
-   const total=chartLabels.reduce((n,x)=>n+Math.max(0,Number(x.count)||0),0),cx=w/2,cy=h/2,r=Math.min(w*.39,h*.43),inner=r*.63;let angle=-Math.PI/2;
-   chartLabels.forEach(item=>{const value=Math.max(0,Number(item.count)||0),span=total?value/total*Math.PI*2:Math.PI*2/chartLabels.length;ctx.beginPath();ctx.arc(cx,cy,r,angle,angle+span);ctx.arc(cx,cy,inner,angle+span,angle,true);ctx.closePath();ctx.fillStyle=item.color;ctx.fill();ctx.strokeStyle="#20252a";ctx.lineWidth=3;ctx.stroke();item._start=angle;item._end=angle+span;angle+=span;});
-   ctx.fillStyle="#f3f4f6";ctx.textAlign="center";ctx.font="700 24px system-ui";ctx.fillText(String(total),cx,cy-2);ctx.fillStyle="#aab2bb";ctx.font="12px system-ui";ctx.fillText("TOOLS",cx,cy+18);
-  };
-  drawFallback();if(canvas._mrfixResize)window.removeEventListener("resize",canvas._mrfixResize);canvas._mrfixResize=drawFallback;window.addEventListener("resize",drawFallback);
-  canvas.onclick=(ev)=>{const rect=canvas.getBoundingClientRect(),x=ev.clientX-rect.left,y=ev.clientY-rect.top,w=rect.width,h=rect.height,cx=w/2,cy=h/2,dx=x-cx,dy=y-cy,r=Math.hypot(dx,dy),outer=Math.min(w*.39,h*.43),inner=outer*.63;if(r<inner||r>outer)return;let a=Math.atan2(dy,dx);if(a< -Math.PI/2)a+=Math.PI*2;const hit=chartLabels.findIndex(item=>a>=item._start&&a<=item._end);if(hit>=0)selectChartItem(hit);};
- }
+ // Draw directly on canvas rather than relying on an external chart library.
+ // This avoids blank charts when a CDN is blocked or Chart.js initialises while hidden.
+ const drawFallback=()=>{
+  const box=canvas.getBoundingClientRect();
+  const w=Math.max(220,box.width||320),h=Math.max(220,box.height||300),dpr=Math.max(1,window.devicePixelRatio||1);
+  canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
+  const ctx=canvas.getContext("2d");if(!ctx)return;
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+  const total=chartLabels.reduce((n,x)=>n+Math.max(0,Number(x.count)||0),0);
+  const cx=w/2,cy=h/2,r=Math.min(w*.39,h*.43),inner=r*.63;
+  let angle=-Math.PI/2;
+  chartLabels.forEach(item=>{
+   const value=Math.max(0,Number(item.count)||0);
+   const span=total?value/total*Math.PI*2:Math.PI*2/chartLabels.length;
+   item._start=angle;item._end=angle+span;
+   ctx.beginPath();ctx.arc(cx,cy,r,angle,angle+span);ctx.arc(cx,cy,inner,angle+span,angle,true);ctx.closePath();
+   ctx.fillStyle=item.color;ctx.fill();ctx.strokeStyle="#20252a";ctx.lineWidth=3;ctx.stroke();angle+=span;
+  });
+  ctx.fillStyle="#f3f4f6";ctx.textAlign="center";ctx.font="700 24px system-ui";ctx.fillText(String(total),cx,cy-2);
+  ctx.fillStyle="#aab2bb";ctx.font="12px system-ui";ctx.fillText("TOOLS",cx,cy+18);
+ };
+ drawFallback();
+ if(canvas._mrfixResize)window.removeEventListener("resize",canvas._mrfixResize);
+ canvas._mrfixResize=drawFallback;window.addEventListener("resize",drawFallback);
+ canvas.onclick=(ev)=>{
+  const rect=canvas.getBoundingClientRect(),x=ev.clientX-rect.left,y=ev.clientY-rect.top,w=rect.width,h=rect.height;
+  const cx=w/2,cy=h/2,dx=x-cx,dy=y-cy,r=Math.hypot(dx,dy),outer=Math.min(w*.39,h*.43),inner=outer*.63;
+  if(r<inner||r>outer)return;
+  let a=Math.atan2(dy,dx);if(a< -Math.PI/2)a+=Math.PI*2;
+  const hit=chartLabels.findIndex(item=>a>=item._start&&a<=item._end);
+  if(hit>=0)selectChartItem(hit);
+ };
+ // Repaint once the dashboard has completed layout (important after login/tab changes).
+ requestAnimationFrame(()=>{if(canvas.isConnected)drawFallback();});
  window.homeChartItems=chartLabels;
 }
 function openHomeChartItem(i){const x=window.homeChartItems?.[i];if(!x)return;if(x.personId)openTechnicianBin(x.personId);else go(x.page)}
