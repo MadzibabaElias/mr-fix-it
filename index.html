@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MR FIX IT — Workshop Tool Management</title>
+<meta name="mrfixit-build" content="technician-save-admin-permissions-2026-11-17">
 <style>
 :root{--navy:#101c2c;--blue:#237bdb;--bg:#f3f6fa;--ink:#172536;--muted:#65758a;--line:#e1e8f0;--green:#168653;--red:#c44343}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
@@ -403,6 +404,15 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
 .home-chart-legend .mrfix-submenu-links button{background:#20262d;color:#f4f5f7;border:1px solid #47515b;border-radius:18px;cursor:pointer}
 .home-chart-legend .mrfix-submenu-links button:hover{filter:brightness(1.25);transform:translateY(-1px)}
 @media(max-width:700px){.home-chart-wrap{width:min(100%,430px);height:390px}.home-chart-legend .mrfix-submenu-links{gap:5px!important}.home-chart-legend .mrfix-submenu-links button{font-size:10px!important;padding:6px 8px!important}}
+
+.scan-entry input{background:#151a1f;color:#fff;border:1px solid #515a63;border-radius:10px;padding:11px}.scan-entry button{min-height:42px}
+#binScanResult .tool,#transferScanResult .tool{background:linear-gradient(135deg,#202a2c,#202329)}
+
+/* Personal bin actions */
+#binDetail .tool button.primary{white-space:nowrap}
+#binDetail h4{color:#e8c477}
+#binDetail .notice{margin:10px 0}
+@media(max-width:650px){#binDetail .tool{align-items:stretch!important;flex-wrap:wrap}#binDetail .tool button{width:100%}}
 </style>
 </head>
 <body>
@@ -454,7 +464,7 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
  <div class="panel"><strong>More sections</strong><p class="muted">Choose a section to see its sub-menus. Your access level determines which records are available.</p>
   <div class="more-groups">
    <details open><summary>🔧 Workshop</summary><div class="more-links">
-    <button type="button" onclick="openStatusPage('In Use')">In / Borrowed</button><button type="button" onclick="window.toolStatusFilter=null;go('tools')">Tool List</button><button type="button" onclick="go('usage')">Tool Register</button><button type="button" onclick="go('transfers')">Request</button><button type="button" onclick="openStatusPage('Available')">Available</button>
+    <button type="button" onclick="openStatusPage('In Use')">Borrowed</button><button type="button" onclick="window.toolStatusFilter=null;go('tools')">Tool List</button><button type="button" onclick="go('usage')">Tool Register</button><button type="button" onclick="go('transfers')">Request</button><button type="button" onclick="openStatusPage('Available')">Available</button>
    </div></details>
    <details><summary>🛠 Maintenance</summary><div class="more-links">
     <button type="button" onclick="openStatusPage('Damaged')">Damaged</button><button type="button" onclick="go('usage')">Usage</button><button type="button" onclick="go('repairs')">Repairs</button>
@@ -475,7 +485,7 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
 </select></div>
 <div><label>Location *</label><select id="fLocation" required><option value="">Select location</option><option>Workshop</option><option>Storeroom</option><option>HQ</option><option>Other</option></select></div>
 <div><label>Condition</label><select id="fCondition"><option>Good</option><option>New</option><option>Worn</option><option>Damaged</option><option>Faulty</option></select></div><div><label>Tool photo</label><input id="fPhoto" type="file" accept="image/jpeg,image/png,image/webp"><small>JPG, PNG or WEBP. Maximum size: 30 MB.</small><div id="photoPreviewWrap" class="hidden" style="margin-top:8px"><img id="photoPreview" alt="Selected tool photo preview" style="width:120px;height:100px;object-fit:cover;border-radius:10px"></div></div></div><div class="actions" style="margin-top:12px"><button class="primary" id="saveToolButton">Save tool</button><button type="button" onclick="hideForm()">Cancel</button></div></form></div><div class="tool-controls"><input id="toolSearch" type="search" placeholder="Search tools by name, make, model, serial number or tool ID..."><select id="categoryFilter"><option value="">All tool types</option><option>Power Tools</option><option>Hand Tools</option><option>Electrical Tools</option><option>Measuring Tools</option><option>Safety Equipment</option><option>Building Tools</option><option>Painting Tools</option><option>Other</option></select></div><div id="toolCount" class="muted tool-count"></div><div id="toolList"></div></div></section>
-<section id="bins" class="hidden"><div class="panel"><strong>Personal tool bins</strong><p class="muted">Select a technician to view assigned tools.</p><div id="binList" class="people"></div><div id="binDetail" style="margin-top:16px"></div></div></section>
+<section id="bins" class="hidden"><div class="panel"><strong>Personal tool bins</strong><p class="muted">Scan a tool to open your bin and see the correct action.</p><div class="scan-entry" style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0"><input id="binScanCode" placeholder="Scan or enter tool ID" autocomplete="off" style="flex:1;min-width:180px"><button type="button" class="primary" onclick="handleManualToolScan()">Open tool</button><button type="button" onclick="startToolCameraScan()">Use camera</button></div><div id="toolCameraWrap" class="hidden" style="margin:10px 0"><video id="toolCameraVideo" playsinline muted style="width:min(100%,420px);border-radius:14px;background:#000"></video><div class="actions"><button type="button" onclick="stopToolCameraScan()">Stop camera</button></div><div id="cameraScanMessage" class="muted">Point the camera at the tool QR code.</div></div><div id="binScanResult"></div><div id="binList" class="people"></div><div id="binDetail" style="margin-top:16px"></div></div></section>
 <section id="activity" class="hidden"><div class="panel"><strong>Transaction history</strong><div id="historyList"></div></div></section>
 <section id="calendar" class="hidden">
  <div class="panel">
@@ -490,10 +500,10 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
  <div class="panel" id="calendarColourPanel"><strong>Technician colours</strong><p class="muted">Administrators can assign permanent colours. Changes are saved in Supabase and shared across devices.</p><div id="calendarColourSettings" class="colour-settings"></div></div>
 </section>
 <section id="repairs" class="hidden">
- <div class="panel"><strong>Report damaged tool</strong><p class="muted">Technicians must complete all details. The report is saved in the tool history and Omm is notified by email.</p>
- <form id="damageForm"><div class="fields"><div><label>Tool *</label><select id="damageTool" required></select></div><div><label>Date damage happened *</label><input id="damageDate" type="date" required></div><div><label>Where did it happen? *</label><input id="damageLocation" required placeholder="e.g. Customer site / Workshop"></div><div><label>Photo evidence</label><input id="damagePhoto" type="file" accept="image/jpeg,image/png,image/webp" required><small>Required: JPG, PNG or WEBP, maximum 30 MB.</small></div></div><label>Describe the damage *</label><textarea id="damageDescription" rows="3" required placeholder="Explain what happened and what is damaged"></textarea><div class="actions" style="margin-top:12px"><button class="primary">Submit damage report</button></div></form></div>
- <div class="panel"><strong>Maintenance records</strong><p class="muted">Only Omm (administrator) can send tools for maintenance or mark repairs as complete.</p><div id="maintenanceList"></div></div>
- <div class="panel"><strong>Damage reports</strong><div id="damageList"></div></div>
+ <div class="panel"><strong>Report damaged tool</strong><p class="muted">Technicians must complete all details. When you save the report, it is submitted to Omm for review automatically.</p>
+ <form id="damageForm"><div class="fields"><div><label>Tool *</label><select id="damageTool" required></select></div><div><label>Date damage happened *</label><input id="damageDate" type="date" required></div><div><label>Where did it happen? *</label><input id="damageLocation" required placeholder="e.g. Customer site / Workshop"></div><div><label>Photo evidence</label><input id="damagePhoto" type="file" accept="image/jpeg,image/png,image/webp" required><small>Required: JPG, PNG or WEBP, maximum 30 MB.</small></div></div><label>Describe the damage *</label><textarea id="damageDescription" rows="3" required placeholder="Explain what happened and what is damaged"></textarea><div class="actions" style="margin-top:12px"><button class="primary" type="submit">Save &amp; Submit Report to Omm</button></div></form></div>
+ <div class="panel" id="adminMaintenancePanel"><strong>Maintenance records</strong><p class="muted">Administrator only: Omm can review reports, send tools for maintenance and close repairs.</p><div id="maintenanceList"></div></div>
+ <div class="panel" id="adminDamageReportsPanel"><strong>Submitted damage &amp; maintenance reports</strong><div id="damageList"></div></div>
 </section>
 <section id="usage" class="hidden">
  <div class="panel"><div class="row"><div><strong>Tool Usage Register</strong><p class="muted">Administrator-only utilisation analysis. Borrow and return times are calculated from the transaction history.</p></div><button type="button" onclick="exportUsageCsv()">Export CSV</button></div>
@@ -502,7 +512,7 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
  <div id="usageRegisterList"></div></div>
  <div class="panel"><strong>Set preventive maintenance milestones</strong><p class="muted">Set a separate inspection trigger for each tool. Reaching a trigger raises an inspection flag for Omm; it does not automatically mark a tool damaged or unavailable.</p><div class="fields"><div><label>Tool</label><select id="usageRuleTool"></select></div><div><label>Inspect every (borrowings)</label><input id="usageRuleBorrows" type="number" min="1" placeholder="e.g. 25"></div><div><label>Inspect every (usage hours)</label><input id="usageRuleHours" type="number" min="1" step="0.5" placeholder="e.g. 100"></div><div><label>Maintenance / inspection notes</label><input id="usageRuleNotes" placeholder="e.g. inspect chuck and brushes"></div></div><div class="actions" style="margin-top:10px"><button class="primary" type="button" onclick="saveUsageRule()">Save milestone</button><button type="button" onclick="markToolInspected()">Mark inspection completed</button></div><div id="usageRuleStatus" class="muted" style="margin-top:10px"></div></div>
 </section>
-<section id="transfers" class="hidden"><div class="panel"><strong>Tool requests & transfers</strong><p class="muted">Request a tool from its current holder. The holder or Omm can approve. Approval does not move the tool: the recipient must physically receive and scan it to complete the transfer.</p><div id="transferRequestList"></div></div></section>
+<section id="transfers" class="hidden"><div class="panel"><strong>Tool requests & transfers</strong><p class="muted">If a scanned tool is already in another technician’s bin, request it here. The holder or Omm can approve. The tool only moves after you physically receive and scan it.</p><div id="transferScanResult"></div><div id="transferRequestList"></div></div></section>
 <section id="settings" class="hidden">
  <div class="panel">
   <strong>My Profile</strong>
@@ -1850,6 +1860,7 @@ async function recordLogin(userId){
 }
 function renderLoginRegister(){
  if(!profile)return;
+ const ownPanel=$("myLoginRegisterTitle")?.closest(".panel");if(ownPanel)ownPanel.classList.toggle("hidden",!isAdmin());
  const mine=loginActivity.filter(x=>x.user_id===profile.id);
  $("myLoginRegisterTitle").textContent=(profile.full_name||"My")+" — Login Register";
  $("myLoginStats").textContent="Name: "+(profile.full_name||"Team member")+" · Total sign-ins: "+mine.length+" · Last sign-in: "+(mine[0]?.created_at?new Date(mine[0].created_at).toLocaleString():"No sign-ins recorded yet");
@@ -1877,17 +1888,17 @@ async function startApp(){
  try{renderHomeOverview();}catch(chartError){console.error("Initial workshop chart could not render:",chartError);}
  await loadData();
  const incomingTool=new URLSearchParams(location.search).get("tool");
- if(incomingTool){$("scanId").value=incomingTool;go("dashboard");renderScannedToolDetails(incomingTool);}
+ if(incomingTool){openScannedTool(incomingTool);}
  db.removeAllChannels();
  db.channel("mr-fix-it-live").on("postgres_changes",{event:"*",schema:"public",table:"profiles"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"tools"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"tool_movements"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"damage_reports"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"maintenance_records"},loadData).on("postgres_changes",{event:"*",schema:"public",table:"tool_transfer_requests"},loadData).subscribe();
 }
 async function loadData(){
- const [tr,pr,hr,dr,mr,lr,ur,us,tf]=await Promise.all([db.from("tools").select("*").order("created_at",{ascending:false}),db.from("profiles").select("id,full_name,job_title,is_admin,calendar_color").eq("active",true).order("full_name"),db.from("tool_movements").select("*").order("created_at",{ascending:false}).limit(1000),db.from("damage_reports").select("*").order("created_at",{ascending:false}).limit(100),db.from("maintenance_records").select("*").order("created_at",{ascending:false}).limit(100),db.from("login_activity").select("id,user_id,created_at,device_info").order("created_at",{ascending:false}).limit(500),isAdmin()?db.from("tool_usage_rules").select("*"):Promise.resolve({data:[],error:null}),isAdmin()?db.rpc("mrfix_get_tool_usage_sessions"):Promise.resolve({data:[],error:null}),db.from("tool_transfer_requests").select("*").order("created_at",{ascending:false}).limit(200)]);
+ const [tr,pr,hr,dr,mr,lr,ur,us,tf]=await Promise.all([db.from("tools").select("*").order("created_at",{ascending:false}),db.from("profiles").select("id,full_name,job_title,is_admin,calendar_color").eq("active",true).order("full_name"),db.from("tool_movements").select("*").order("created_at",{ascending:false}).limit(1000),db.from("damage_reports").select("*").order("created_at",{ascending:false}).limit(100),db.from("maintenance_records").select("*").order("created_at",{ascending:false}).limit(100),isAdmin()?db.from("login_activity").select("id,user_id,created_at,device_info").order("created_at",{ascending:false}).limit(500):Promise.resolve({data:[],error:null}),isAdmin()?db.from("tool_usage_rules").select("*"):Promise.resolve({data:[],error:null}),isAdmin()?db.rpc("mrfix_get_tool_usage_sessions"):Promise.resolve({data:[],error:null}),db.from("tool_transfer_requests").select("*").order("created_at",{ascending:false}).limit(200)]);
  if(tr.error||pr.error||hr.error||dr.error||mr.error||lr.error||(isAdmin()&&us.error)||tf.error){const err=tr.error||pr.error||hr.error||dr.error||mr.error||lr.error||us.error||tf.error;alert("Could not load workshop records. Check that the consolidated MR FIX IT SQL upgrade has been run. Details: "+err.message);console.error(tr.error,pr.error,hr.error,dr.error,mr.error,lr.error,us.error,tf.error);return}
- tools=tr.data||[];people=pr.data||[];history=hr.data||[];damageReports=dr.data||[];maintenanceRecords=mr.data||[];loginActivity=lr.data||[];usageRulesReady=!ur?.error;usageRules=ur?.error?[]:(ur?.data||[]);usageSessionRows=us?.data||[];transferRequests=tf.data||[];if(!selectedBin)selectedBin=profile.id;render();renderScannedToolDetails($("scanId")?.value||new URLSearchParams(location.search).get("tool")||"");
+ tools=tr.data||[];people=pr.data||[];history=hr.data||[];damageReports=dr.data||[];maintenanceRecords=mr.data||[];loginActivity=lr.data||[];usageRulesReady=!ur?.error;usageRules=ur?.error?[]:(ur?.data||[]);usageSessionRows=us?.data||[];transferRequests=tf.data||[];if(!selectedBin)selectedBin=profile.id;render();
 }
 function go(page){
- if(page==="usage"&&!isAdmin())return alert("Administrator access required.");
+ if(["usage","activity"].includes(page)&&!isAdmin())return alert("Administrator access required.");
  if(page==="bins"&&!isAdmin())selectedBin=profile?.id||selectedBin;
  const target=$(page);if(!target)return;
  document.querySelectorAll("main>section").forEach(s=>s.classList.add("hidden"));target.classList.remove("hidden");
@@ -1898,7 +1909,7 @@ function go(page){
  window.scrollTo({top:0,behavior:"smooth"});
 }
 function openStatusPage(status){window.toolStatusFilter=status;go("tools");renderToolRegister();}
-function openLoginRegister(){go("settings");document.getElementById("myLoginRegisterTitle")?.scrollIntoView({behavior:"smooth",block:"start"});}
+function openLoginRegister(){if(!isAdmin())return alert("The Login Register is an administrator-only function.");go("settings");document.getElementById("myLoginRegisterTitle")?.scrollIntoView({behavior:"smooth",block:"start"});}
 function renderAlerts(){
  const host=$("alertsContent");if(!host||!profile)return;
  const active=activeTransferRequests();const overdue=tools.filter(t=>t.borrower_id&&t.borrowed_at&&Date.now()-new Date(t.borrowed_at).getTime()>=7*86400000);
@@ -1933,38 +1944,84 @@ function validatePhoto(file){
 }
 function toolStatus(t){return t.status||(t.borrower_id?"In Use":"Available")}
 function statusPill(t){const st=toolStatus(t);const cls=st==="Available"?"green":st==="Damaged"?"red":st==="Under Maintenance"?"orange":st==="Lost"?"grey":"red";return `<span class="pill ${cls}">${esc(st)}</span>`}
+function stopToolCameraScan(){
+ if(window.mrfixCameraFrame)cancelAnimationFrame(window.mrfixCameraFrame);
+ window.mrfixCameraFrame=null;
+ if(window.mrfixCameraStream){window.mrfixCameraStream.getTracks().forEach(t=>t.stop());window.mrfixCameraStream=null;}
+ const wrap=$("toolCameraWrap");if(wrap)wrap.classList.add("hidden");
+}
+async function startToolCameraScan(){
+ if(!navigator.mediaDevices?.getUserMedia)return alert("Camera scanning is not available here. Enter the tool ID manually instead.");
+ if(!("BarcodeDetector" in window))return alert("This browser does not support built-in QR scanning. Please use Chrome on Android or enter the tool ID manually.");
+ try{
+  stopToolCameraScan();
+  const detector=new BarcodeDetector({formats:["qr_code"]});
+  const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});
+  window.mrfixCameraStream=stream;
+  const video=$("toolCameraVideo"),wrap=$("toolCameraWrap"),msg=$("cameraScanMessage");
+  video.srcObject=stream;wrap.classList.remove("hidden");await video.play();
+  const scanFrame=async()=>{
+   if(!window.mrfixCameraStream)return;
+   try{
+    if(video.readyState>=2){const codes=await detector.detect(video);if(codes.length){const raw=codes[0].rawValue||"";let code=raw;try{const u=new URL(raw);code=u.searchParams.get("tool")||raw;}catch{}stopToolCameraScan();openScannedTool(code);return;}}
+   }catch(e){if(msg)msg.textContent="Keep the QR code in view and try again.";}
+   window.mrfixCameraFrame=requestAnimationFrame(scanFrame);
+  };
+  window.mrfixCameraFrame=requestAnimationFrame(scanFrame);
+ }catch(e){stopToolCameraScan();alert("Could not open the camera: "+(e.message||e)+". Check camera permission or enter the tool ID manually.");}
+}
+function handleManualToolScan(){const code=$("binScanCode")?.value.trim();if(!code)return alert("Scan a QR code or enter the tool ID first.");openScannedTool(code);}
+function openScannedTool(code){
+ const value=String(code||"").trim();if(!value)return;
+ const t=tools.find(x=>(x.tool_code||"").toLowerCase()===value.toLowerCase()||(x.id||"").toLowerCase()===value.toLowerCase());
+ if(!t){go("bins");showBin(profile.id);const host=$("binScanResult");if(host)host.innerHTML='<div class="error">Tool ID not found. Check the QR code or enter the correct ID.</div>';return;}
+ if(t.borrower_id&&t.borrower_id!==profile.id){go("transfers");renderScannedToolDetails(value);}
+ else{go("bins");showBin(profile.id);renderScannedToolDetails(value);}
+ const input=$("binScanCode");if(input)input.value=value;
+ const target=t.borrower_id&&t.borrower_id!==profile.id?$("transferScanResult") : $("binScanResult");
+ target?.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
 function renderScannedToolDetails(code){
- const panel=$("scannedToolPanel");if(!panel)return;
  const value=String(code||"").trim();
  const t=tools.find(x=>(x.tool_code||"").toLowerCase()===value.toLowerCase()||(x.id||"").toLowerCase()===value.toLowerCase());
- if(!value||!t){panel.classList.add("hidden");panel.innerHTML="";return;}
+ if(!t)return;
+ const otherHolder=!!t.borrower_id&&t.borrower_id!==profile.id;
+ const host=otherHolder?$("transferScanResult") : $("binScanResult");
+ if(!host)return;
  const borrower=people.find(p=>p.id===t.borrower_id);
  const safePhotoUrl=(()=>{try{const u=new URL(t.photo_url||"");return u.protocol==="https:"?u.href:""}catch{return ""}})();
- const photo=safePhotoUrl?`<img loading="lazy" src="${esc(safePhotoUrl)}" alt="${esc(t.name)}" style="width:112px;height:112px;object-fit:cover;border-radius:12px;border:1px solid #51432d">`:"";
- const date=v=>v?new Date(v).toLocaleDateString():"Not recorded";
- panel.classList.remove("hidden");
- panel.innerHTML=`
-  <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
-   ${photo}
-   <div style="flex:1;min-width:190px">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-     <strong style="font-size:19px;color:#f0c777">${esc(t.name||"Unnamed tool")}</strong>${statusPill(t)}
-    </div>
-    <div class="muted">Tool ID: <strong>${esc(t.tool_code||t.id)}</strong></div>
-    <div style="margin-top:8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:7px">
-     <div><small>Make / Model</small><div>${esc([t.make,t.model].filter(Boolean).join(" ")||"Not recorded")}</div></div>
-     <div><small>Serial number</small><div>${esc(t.serial_number||"Not recorded")}</div></div>
-     <div><small>Category</small><div>${esc(t.category||"Not recorded")}</div></div>
-     <div><small>Condition</small><div>${esc(t.condition||"Not recorded")}</div></div>
-     <div><small>Location</small><div>${esc(t.location||"Not recorded")}</div></div>
-     <div><small>Borrowed by</small><div>${esc(borrower?.full_name||(t.borrower_id?"Assigned technician":"Nobody"))}</div></div>
-     <div><small>Borrowed date</small><div>${esc(date(t.borrowed_at))}</div></div>
-     <div><small>Time out</small><div>${t.borrowed_at?((Math.max(0,Date.now()-new Date(t.borrowed_at).getTime())/3600000).toFixed(1)+" hours and counting"):"Not currently borrowed"}</div></div>
-     <div><small>Job reference</small><div>${esc(t.job_reference||"Not recorded")}</div></div>
-    </div>
-    ${transferRequests.filter(r=>r.tool_id===t.id&&r.requester_id===profile.id&&r.status==="Approved - Awaiting Receipt").map(r=>`<div class="notice" style="margin-top:10px">Transfer approved. After physically receiving this tool, confirm the handover below.<br><button type="button" class="primary" onclick="completeToolTransfer('${esc(r.id)}')">Confirm received & move to my bin</button></div>`).join("")}
-   </div>
-  </div>`;
+ const photo=safePhotoUrl?`<img loading="lazy" src="${esc(safePhotoUrl)}" alt="${esc(t.name)}" style="width:92px;height:92px;object-fit:cover;border-radius:12px">`:"";
+ const pending=transferRequests.find(r=>r.tool_id===t.id&&r.requester_id===profile.id&&["Pending Approval","Approved - Awaiting Receipt"].includes(r.status));
+ let actions="";
+ if(otherHolder){
+  if(pending?.status==="Approved - Awaiting Receipt")actions=`<div class="notice">Request approved. Once you physically receive this tool, scan it again and confirm receipt.<div class="actions"><button class="primary" type="button" onclick="completeToolTransfer('${esc(pending.id)}')">Confirm received & move to my bin</button></div></div>`;
+  else if(pending?.status==="Pending Approval")actions='<div class="notice">Your request is waiting for '+esc(borrower?.full_name||"the current holder")+' or Omm to approve it.</div>';
+  else actions=`<button class="primary" type="button" onclick="requestToolTransfer('${esc(t.id)}')">Request this tool from ${esc(borrower?.full_name||"current holder")}</button>`;
+ }else if(t.borrower_id===profile.id){
+  actions=`<div class="notice">This tool is in your bin. You are the current holder and can return it.</div><button class="primary" type="button" onclick="returnScannedTool('${esc(t.id)}')">Save Return</button>`;
+ }else if(toolStatus(t)==="Available"){
+  actions=`<div class="fields" style="margin-top:10px"><div><label>Job card / site reference *</label><input id="scanJobReference" required placeholder="Enter job reference"></div><div><label>Work to be performed *</label><input id="scanWorkDescription" required placeholder="What will this tool be used for?"></div></div><button class="primary" type="button" onclick="borrowScannedTool('${esc(t.id)}')">Save Borrowing</button>`;
+ }else{
+  actions=`<div class="notice">This tool cannot be borrowed. Current status: <strong>${esc(toolStatus(t))}</strong>. Please contact Omm if it needs attention.</div>`;
+ }
+ host.innerHTML=`<div class="tool" style="display:block;border:1px solid #d6b46a;margin:10px 0;padding:14px"><div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">${photo}<div style="flex:1;min-width:170px"><strong style="font-size:18px">${esc(t.name||"Tool")}</strong><div class="muted">Tool ID: ${esc(t.tool_code||t.id)} · ${esc(t.category||"Uncategorised")}</div><div style="margin-top:6px">${statusPill(t)}</div><div class="muted">${otherHolder?"Current holder: "+esc(borrower?.full_name||"Technician"):t.borrower_id===profile.id?"Assigned to your bin":"Available for borrowing"}</div></div></div><div style="margin-top:12px">${actions}</div></div>`;
+}
+async function borrowScannedTool(toolId){
+ const t=tools.find(x=>x.id===toolId);if(!t)return alert("Tool record not found.");
+ if(t.borrower_id||toolStatus(t)!=="Available")return alert("This tool is not available. Scan again to see its current status.");
+ const job=$("scanJobReference")?.value.trim(),work=$("scanWorkDescription")?.value.trim();
+ if(!job)return alert("Enter the job card or site reference.");if(!work)return alert("Describe the work this tool will be used for.");
+ const {error}=await db.rpc("mrfix_borrow_tool",{p_tool_id:t.id,p_job_reference:job,p_due_date:null,p_work_description:work});
+ if(error)return alert("Borrow failed: "+error.message);
+ await notifyOmm("borrowed",t.id,{job_reference:job,work_description:work,borrower:profile.full_name});
+ await loadData();openScannedTool(t.tool_code);alert("Tool borrowed successfully and added to your bin.");
+}
+async function returnScannedTool(toolId){
+ const t=tools.find(x=>x.id===toolId);if(!t||t.borrower_id!==profile.id)return alert("Only the technician currently holding this tool can return it.");
+ const condition=prompt("SAVE RETURN — Enter the tool condition (Good / Worn / Damaged / Faulty):",t.condition||"Good");if(condition===null)return;
+ const {error}=await db.rpc("mrfix_return_tool",{p_tool_id:t.id,p_condition:condition});if(error)return alert("Return failed: "+error.message);
+ if(/damag|faulty|broken|needs repair/i.test(condition))await notifyOmm("damaged",t.id,{description:"Tool returned with condition: "+condition,location:t.location||"Not specified",incident_date:today()});
+ await loadData();openScannedTool(t.tool_code);alert("Tool returned successfully.");
 }
 async function notifyOmm(event,toolId,details={}){
  try{const {data:{session}}=await db.auth.getSession();if(!session?.access_token)return;const {error}=await db.functions.invoke("mr-fix-it-notify",{body:{event,toolId,details}});if(error)console.warn("Email notification could not be sent:",error.message)}catch(err){console.warn("Email notification error:",err)}
@@ -2192,7 +2249,7 @@ function renderHomeOverview(){
  const myLogins=loginActivity.filter(x=>isAdmin()||x.user_id===profile.id);
  const visiblePeople=isAdmin()?people:people.filter(p=>p.id===profile.id);
  const items=[
-  {section:"Workshop",label:"In / Borrowed",count:inUse.length,color:"#F97316",action:()=>openStatusPage("In Use")},
+  {section:"Workshop",label:"Borrowed",count:inUse.length,color:"#F97316",action:()=>openStatusPage("In Use")},
   {section:"Workshop",label:"Tool List",count:tools.length,color:"#FBBF24",action:()=>{window.toolStatusFilter=null;go("tools");renderToolRegister()}},
   ...(isAdmin()?[{section:"Workshop",label:"Tool Register",count:usageCount,color:"#EAB308",action:()=>go("usage")}]:[]),
   {section:"Workshop",label:"Request",count:activeRequests.length,color:"#FB7185",action:()=>go("transfers")},
@@ -2297,7 +2354,7 @@ function openTechnicianBin(id){if(!isAdmin()&&id!==profile.id)return;selectedBin
 function render(){
 const borrowed=tools.filter(t=>t.borrower_id),inUse=tools.filter(t=>toolStatus(t)==="In Use"||t.borrower_id),maintenance=tools.filter(t=>toolStatus(t)==="Under Maintenance"),damaged=tools.filter(t=>toolStatus(t)==="Damaged"),available=tools.filter(t=>toolStatus(t)==="Available"),review=borrowed.filter(t=>t.borrowed_at&&Date.now()-new Date(t.borrowed_at).getTime()>=7*86400000);
  $("total").textContent=tools.length;$("available").textContent=available.length;$("borrowed").textContent=inUse.length;$("maintenanceCount").textContent=maintenance.length;$("damagedCount").textContent=damaged.length;$("overdue").textContent=review.length;renderHomeOverview();
- $("addBtn").disabled=!isAdmin();$("usageNav").classList.toggle("hidden",!isAdmin());
+ $("addBtn").classList.toggle("hidden",!isAdmin());$("addBtn").disabled=!isAdmin();$("toolForm").classList.add("hidden");$("usageNav").classList.toggle("hidden",!isAdmin());const loginMenu=[...document.querySelectorAll(".more-links button")].find(b=>b.textContent.trim()==="Login Register");if(loginMenu)loginMenu.classList.toggle("hidden",!isAdmin());const activityMenu=[...document.querySelectorAll(".more-links button")].find(b=>b.textContent.trim()==="Activity Logs");if(activityMenu)activityMenu.classList.toggle("hidden",!isAdmin());
  renderToolRegister();renderRepairLists();populateDamageTools();renderCalendar();renderTransferAlerts();renderAlerts();if(isAdmin())renderUsageRegister();
  const visiblePeople=isAdmin()?people:people.filter(p=>p.id===profile.id);
  $("dashPeople").innerHTML=visiblePeople.map(p=>`<div class="person"><strong>${esc(p.full_name)}</strong><small>${esc(p.job_title||"Technician")}${p.is_admin?" · Admin":""}</small><div class="count">${borrowed.filter(t=>t.borrower_id===p.id).length}</div><small>tools in bin</small></div>`).join("");
@@ -2308,10 +2365,10 @@ const borrowed=tools.filter(t=>t.borrower_id),inUse=tools.filter(t=>toolStatus(t
 function transferPerson(id){return people.find(p=>p.id===id)?.full_name||"Team member"}
 function activeTransferRequests(){return transferRequests.filter(r=>["Pending Approval","Approved - Awaiting Receipt"].includes(r.status))}
 function renderTransferAlerts(){const active=activeTransferRequests();const banner=$("transferAlert"),count=$("transferNavCount");if(!banner)return;banner.classList.toggle("show",active.length>0);$("transferAlertText").textContent=active.length?`${active.length} tool request${active.length===1?"":"s"} need attention or physical handover.`:"";if(count){count.textContent=active.length;count.classList.toggle("hidden",!active.length)} }
-async function requestToolTransfer(toolId){const t=tools.find(x=>x.id===toolId);if(!t||!t.borrower_id||t.borrower_id===profile.id)return alert("This tool is not currently held by another technician.");const holder=transferPerson(t.borrower_id);if(!confirm(`Request ${t.name} from ${holder}?`))return;const {error}=await db.rpc("mrfix_request_tool_transfer",{p_tool_id:toolId,p_message:null});if(error)return alert("Could not send request: "+error.message);await loadData();go("transfers");}
+async function requestToolTransfer(toolId){const t=tools.find(x=>x.id===toolId);if(!t||!t.borrower_id||t.borrower_id===profile.id)return alert("This tool is not currently held by another technician.");const holder=transferPerson(t.borrower_id);if(!confirm(`Request ${t.name} from ${holder}?`))return;const {error}=await db.rpc("mrfix_request_tool_transfer",{p_tool_id:toolId,p_message:null});if(error)return alert("Could not send request: "+error.message);await loadData();go("transfers");renderScannedToolDetails(t.tool_code||t.id);}
 async function respondToolTransfer(requestId,decision){const {error}=await db.rpc(decision==="approve"?"mrfix_approve_tool_transfer":"mrfix_decline_tool_transfer",{p_request_id:requestId});if(error)return alert("Could not update request: "+error.message);await loadData();}
 async function completeToolTransfer(requestId){const r=transferRequests.find(x=>x.id===requestId);if(!r||r.requester_id!==profile.id||r.status!=="Approved - Awaiting Receipt")return alert("This approved transfer is not assigned to your profile.");const t=tools.find(x=>x.id===r.tool_id);if(!t)return alert("Tool record not found.");if(!confirm(`Confirm that you have physically received and scanned ${t.name}? This will move it into your bin.`))return;const {error}=await db.rpc("mrfix_complete_tool_transfer",{p_request_id:requestId});if(error)return alert("Transfer could not be completed: "+error.message);await loadData();alert("Transfer completed. The tool is now assigned to your bin.");}
-function renderTransferRequests(){const host=$("transferRequestList");if(!host)return;const rows=transferRequests.filter(r=>isAdmin()||r.requester_id===profile.id||r.holder_id===profile.id);host.innerHTML=rows.length?rows.map(r=>{const t=tools.find(x=>x.id===r.tool_id),pending=r.status==="Pending Approval",awaiting=r.status==="Approved - Awaiting Receipt",canDecide=pending&&(profile.id===r.holder_id||isAdmin()),canReceive=awaiting&&profile.id===r.requester_id;return `<div class="tool" style="display:block;margin-top:10px"><div class="row"><div><strong>${esc(t?.name||"Tool")}</strong><div class="muted">Requested by ${esc(transferPerson(r.requester_id))} · Current holder ${esc(transferPerson(r.holder_id))}</div><small>${new Date(r.created_at).toLocaleString()}</small></div><span class="transfer-status">${esc(r.status)}</span></div>${r.message?`<p>${esc(r.message)}</p>`:""}${pending?`<div class="muted">The tool remains with its current holder until a transfer is approved and physically received.</div>`:""}${awaiting?`<div class="muted">Approved by ${esc(transferPerson(r.approved_by))}. Waiting for ${esc(transferPerson(r.requester_id))} to physically receive and scan the tool.</div>`:""}<div class="actions" style="margin-top:8px">${canDecide?`<button class="primary" type="button" onclick="respondToolTransfer('${esc(r.id)}','approve')">Approve</button><button class="danger" type="button" onclick="respondToolTransfer('${esc(r.id)}','decline')">Decline</button>`:""}${canReceive?`<button class="primary" type="button" onclick="go('dashboard');$('scanId').value='${esc(t?.tool_code||r.tool_id)}';renderScannedToolDetails($('scanId').value)">Scan tool to confirm receipt</button>`:""}</div></div>`}).join(""):'<div class="empty">No tool requests or transfers yet.</div>';}
+function renderTransferRequests(){const host=$("transferRequestList");if(!host)return;const rows=transferRequests.filter(r=>isAdmin()||r.requester_id===profile.id||r.holder_id===profile.id);host.innerHTML=rows.length?rows.map(r=>{const t=tools.find(x=>x.id===r.tool_id),pending=r.status==="Pending Approval",awaiting=r.status==="Approved - Awaiting Receipt",canDecide=pending&&(profile.id===r.holder_id||isAdmin()),canReceive=awaiting&&profile.id===r.requester_id;return `<div class="tool" style="display:block;margin-top:10px"><div class="row"><div><strong>${esc(t?.name||"Tool")}</strong><div class="muted">Requested by ${esc(transferPerson(r.requester_id))} · Current holder ${esc(transferPerson(r.holder_id))}</div><small>${new Date(r.created_at).toLocaleString()}</small></div><span class="transfer-status">${esc(r.status)}</span></div>${r.message?`<p>${esc(r.message)}</p>`:""}${pending?`<div class="muted">The tool remains with its current holder until a transfer is approved and physically received.</div>`:""}${awaiting?`<div class="muted">Approved by ${esc(transferPerson(r.approved_by))}. Waiting for ${esc(transferPerson(r.requester_id))} to physically receive and scan the tool.</div>`:""}<div class="actions" style="margin-top:8px">${canDecide?`<button class="primary" type="button" onclick="respondToolTransfer('${esc(r.id)}','approve')">Approve</button><button class="danger" type="button" onclick="respondToolTransfer('${esc(r.id)}','decline')">Decline</button>`:""}${canReceive?`<button class="primary" type="button" onclick="openScannedTool('${esc(t?.tool_code||r.tool_id)}')">Scan tool to confirm receipt</button>`:""}</div></div>`}).join(""):'<div class="empty">No tool requests or transfers yet.</div>';}
 
 function usageSessions(){
  const byTool=new Map();
@@ -2335,19 +2392,40 @@ function exportUsageCsv(){if(!isAdmin())return;const sessions=usageSessions();co
 function populateDamageTools(){const sel=$("damageTool");if(!sel)return;const old=sel.value;sel.innerHTML='<option value="">Select a tool</option>'+tools.map(t=>`<option value="${esc(t.id)}">${esc(t.tool_code||"")} · ${esc(t.name)}</option>`).join("");if(old)sel.value=old;}
 function openDamageReport(id){go("repairs");$("damageTool").value=id;$("damageDate").value=today();$("damageLocation").focus();}
 async function uploadEvidence(file){if(!file)return null;validatePhoto(file);const ext=file.type.split("/")[1].replace("jpeg","jpg");const path="damage/"+crypto.randomUUID()+"."+ext;const {error}=await db.storage.from("tool-photos").upload(path,file,{upsert:false,contentType:file.type});if(error)throw error;return db.storage.from("tool-photos").getPublicUrl(path).data.publicUrl;}
-async function submitDamage(e){e.preventDefault();const toolId=$("damageTool").value,description=$("damageDescription").value.trim(),locationText=$("damageLocation").value.trim(),incidentDate=$("damageDate").value,file=$("damagePhoto").files[0];if(!toolId||!description||!locationText||!incidentDate||!file)return alert("Complete all required damage report fields and attach a photo as evidence.");try{const photo_url=await uploadEvidence(file);const {error}=await db.from("damage_reports").insert({tool_id:toolId,reported_by:profile.id,description,location:locationText,incident_date:incidentDate,photo_url});if(error)throw error;const {error:upError}=await db.rpc("mrfix_mark_tool_damaged",{p_tool_id:toolId});if(upError)throw upError;await db.from("tool_movements").insert({tool_id:toolId,actor_id:profile.id,action:"Damage Reported",condition:description,job_reference:locationText});await notifyOmm("damaged",toolId,{description,location:locationText,incident_date:incidentDate,reporter:profile.full_name,photo_url});e.target.reset();$("damageDate").value=today();await loadData();alert("Damage report saved. The email alert will be sent once the notification service is configured.");}catch(err){alert("Could not submit damage report: "+err.message);}}
+async function submitDamage(e){e.preventDefault();const toolId=$("damageTool").value,description=$("damageDescription").value.trim(),locationText=$("damageLocation").value.trim(),incidentDate=$("damageDate").value,file=$("damagePhoto").files[0];if(!toolId||!description||!locationText||!incidentDate||!file)return alert("Complete all required damage report fields and attach a photo as evidence.");try{const photo_url=await uploadEvidence(file);const {error}=await db.from("damage_reports").insert({tool_id:toolId,reported_by:profile.id,description,location:locationText,incident_date:incidentDate,photo_url});if(error)throw error;const {error:upError}=await db.rpc("mrfix_mark_tool_damaged",{p_tool_id:toolId});if(upError)throw upError;await db.from("tool_movements").insert({tool_id:toolId,actor_id:profile.id,action:"Damage Reported",condition:description,job_reference:locationText});await notifyOmm("damaged",toolId,{description,location:locationText,incident_date:incidentDate,reporter:profile.full_name,photo_url});e.target.reset();$("damageDate").value=today();await loadData();alert("Report saved successfully and submitted to Omm for review. If the notification service is configured, Omm will also receive an email alert.");}catch(err){alert("Could not submit damage report: "+err.message);}}
 async function sendForMaintenance(toolId){if(!isAdmin())return alert("Only Omm can approve maintenance.");const t=tools.find(x=>x.id===toolId);if(!t)return;const reason=prompt("Reason for maintenance / repair:");if(!reason?.trim())return;const provider=prompt("Service provider or maintenance location:",t.location||"Workshop");if(provider===null)return;const {data:rec,error}=await db.from("maintenance_records").insert({tool_id:toolId,sent_by:profile.id,reason:reason.trim(),service_location:provider.trim(),sent_at:new Date().toISOString(),status:"In Progress"}).select("*").single();if(error)return alert("Could not create maintenance record: "+error.message);const {error:upError}=await db.from("tools").update({status:"Under Maintenance"}).eq("id",toolId);if(upError)return alert("Record saved, but tool status could not be updated: "+upError.message);await db.from("tool_movements").insert({tool_id:toolId,actor_id:profile.id,action:"Sent for Maintenance",condition:reason.trim(),job_reference:provider.trim()});await notifyOmm("maintenance_started",toolId,{reason:reason.trim(),service_location:provider.trim()});await loadData();}
 async function completeMaintenance(toolId){if(!isAdmin())return alert("Only Omm can mark a tool repaired.");const rec=maintenanceRecords.find(r=>r.tool_id===toolId&&r.status==="In Progress");if(!rec)return alert("No active maintenance record was found.");if(!confirm("Confirm that this tool has been repaired and is ready to use?"))return;const {error}=await db.from("maintenance_records").update({status:"Completed",completed_at:new Date().toISOString(),completed_by:profile.id}).eq("id",rec.id);if(error)return alert("Could not complete maintenance: "+error.message);const {error:upError}=await db.from("tools").update({status:"Available",condition:"Good"}).eq("id",toolId);if(upError)return alert("Maintenance was completed, but tool status could not be updated: "+upError.message);await db.from("tool_movements").insert({tool_id:toolId,actor_id:profile.id,action:"Maintenance Completed",condition:"Repaired and marked available"});await notifyOmm("maintenance_completed",toolId,{completed_at:today()});await loadData();}
-function renderRepairLists(){const name=id=>tools.find(t=>t.id===id)?.name||"Tool";$("maintenanceList").innerHTML=maintenanceRecords.length?maintenanceRecords.map(r=>`<div class="tool"><div style="flex:1"><strong>${esc(name(r.tool_id))}</strong><div class="muted">${esc(r.reason)} · ${esc(r.service_location||"Location not recorded")}</div><small>Sent ${new Date(r.sent_at).toLocaleDateString()} · ${r.completed_at?"Completed "+new Date(r.completed_at).toLocaleDateString():"In progress"}</small></div><span class="pill ${r.status==="Completed"?"green":"orange"}">${esc(r.status)}</span></div>`).join(""):'<div class="empty">No maintenance records yet.</div>';
+function renderRepairLists(){const adminMaintenance=$("adminMaintenancePanel"),adminReports=$("adminDamageReportsPanel");if(adminMaintenance)adminMaintenance.classList.toggle("hidden",!isAdmin());if(adminReports)adminReports.classList.toggle("hidden",!isAdmin());if(!isAdmin())return;const name=id=>tools.find(t=>t.id===id)?.name||"Tool";$("maintenanceList").innerHTML=maintenanceRecords.length?maintenanceRecords.map(r=>`<div class="tool"><div style="flex:1"><strong>${esc(name(r.tool_id))}</strong><div class="muted">${esc(r.reason)} · ${esc(r.service_location||"Location not recorded")}</div><small>Sent ${new Date(r.sent_at).toLocaleDateString()} · ${r.completed_at?"Completed "+new Date(r.completed_at).toLocaleDateString():"In progress"}</small></div><span class="pill ${r.status==="Completed"?"green":"orange"}">${esc(r.status)}</span></div>`).join(""):'<div class="empty">No maintenance records yet.</div>';
  $("damageList").innerHTML=damageReports.length?damageReports.map(r=>`<div class="tool"><div style="flex:1"><strong>${esc(name(r.tool_id))}</strong><div class="muted">${esc(r.description)}</div><small>${esc(r.location)} · Happened ${esc(r.incident_date)} · Reported ${new Date(r.created_at).toLocaleString()}</small>${r.photo_url?`<div><a href="${esc(r.photo_url)}" target="_blank" rel="noopener">View evidence photo</a></div>`:""}</div><span class="pill red">Damaged</span></div>`).join(""):'<div class="empty">No damage reports yet.</div>';}
 
-function showBin(id){selectedBin=id;const p=people.find(x=>x.id===id);if(!$("binDetail"))return;const items=tools.filter(t=>t.borrower_id===id);$("binDetail").innerHTML=`<h3>${esc(p?.full_name||"Technician")}'s bin</h3>`+(items.length?items.map(t=>`<div class="tool"><div style="flex:1"><strong>${esc(t.name)}</strong><div class="muted">${esc(t.tool_code)} · Job ${esc(t.job_reference)}</div><small>Borrowed ${new Date(t.borrowed_at).toLocaleDateString()} · Currently out</small></div><span class="pill ${Date.now()-new Date(t.borrowed_at).getTime()>=7*86400000?"red":"green"}">${Date.now()-new Date(t.borrowed_at).getTime()>=7*86400000?"7-day check":"Assigned"}</span></div>`).join(""):'<div class="empty">No tools currently assigned.</div>')}
+function showBin(id){
+ if(!isAdmin()&&id!==profile.id)id=profile.id;
+ selectedBin=id;
+ const p=people.find(x=>x.id===id);
+ const host=$("binDetail");
+ if(!host)return;
+ const held=tools.filter(t=>t.borrower_id===id);
+ const isOwnBin=id===profile.id;
+ const available=tools.filter(t=>!t.borrower_id&&toolStatus(t)==="Available");
+ const heldMarkup=held.length?held.map(t=>{
+  const age=t.borrowed_at?Math.floor((Date.now()-new Date(t.borrowed_at).getTime())/86400000):0;
+  const canReturn=isOwnBin&&t.borrower_id===profile.id;
+  return `<div class="tool" style="align-items:center"><div style="flex:1;min-width:0"><strong>${esc(t.name)}</strong><div class="muted">${esc(t.tool_code||"")} · Job ${esc(t.job_reference||"Not recorded")}</div><small>Borrowed ${t.borrowed_at?new Date(t.borrowed_at).toLocaleString():"Date not recorded"} · ${age} day${age===1?"":"s"} in bin</small></div><span class="pill ${age>=7?"red":"green"}">${age>=7?"7-day check":"In your bin"}</span>${canReturn?`<button class="primary" type="button" onclick="returnScannedTool('${esc(t.id)}')">Save Return</button>`:""}</div>`;
+ }).join(""):'<div class="empty">No tools are currently assigned to this bin.</div>';
+ const availableMarkup=isOwnBin?(available.length?available.map(t=>`<div class="tool" style="align-items:center"><div style="flex:1;min-width:0"><strong>${esc(t.name)}</strong><div class="muted">${esc(t.tool_code||"")} · ${esc(t.category||"Uncategorised")}</div><small>${esc(t.make||"")} ${esc(t.model||"")} · ${esc(t.location||"")}</small></div>${statusPill(t)}<button class="primary" type="button" onclick="openScannedTool('${esc(t.tool_code||t.id)}')">Borrow to my bin</button></div>`).join(""):'<div class="empty">No available tools to borrow right now.</div>'):'<div class="muted">Available tools and borrowing controls are shown in your own personal bin.</div>';
+ host.innerHTML=`<h3>${esc(p?.full_name||"Technician")}'s bin</h3>
+ <div class="notice">${isOwnBin?"Tools you borrow will appear here. You can return only tools currently assigned to your bin.":"Administrator view: you can inspect this technician's bin. Only the current holder can return a tool."}</div>
+ <h4 style="margin:14px 0 8px">Tools in this bin (${held.length})</h4>
+ ${heldMarkup}
+ ${isOwnBin?`<h4 style="margin:18px 0 8px">Available tools (${available.length})</h4><p class="muted">Choose a tool to start borrowing. Enter the job reference and work description when prompted.</p>${availableMarkup}`:""}
+ `;
+}
 $("loginForm").addEventListener("submit",signIn);
 $("addToolForm").addEventListener("submit",saveTool);
 $("damageForm").addEventListener("submit",submitDamage);
 $("damageDate").value=today();
 $("toolSearch").addEventListener("input",renderToolRegister);
-$("scanId").addEventListener("input",()=>renderScannedToolDetails($("scanId").value));
+$("binScanCode")?.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();handleManualToolScan();}});
 $("categoryFilter").addEventListener("change",renderToolRegister);
 $("fPhoto").addEventListener("change",()=>{
  const file=$("fPhoto").files[0];
