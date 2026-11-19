@@ -478,14 +478,14 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
   </div>
  </div>
 </section>
-<section id="tools" class="hidden"><div class="panel"><div class="row"><div><strong>Tool register</strong><div class="muted">Only Omm can add or edit tool details. Technicians can scan, borrow, return and report damage. A unique QR code is generated from each tool ID.</div></div><button class="primary" id="addBtn" onclick="showForm()">＋ Add tool</button></div>
-<div id="toolForm" class="hidden"><h3 id="toolFormTitle">Register a new tool</h3><form id="addToolForm"><div class="fields"><div><label>Tool name *</label><input id="fName" required></div><div><label>Make</label><input id="fMake"></div><div><label>Model</label><input id="fModel"></div><div><label>Serial number</label><input id="fSerial"></div>
+<section id="tools" class="hidden"><div class="panel"><div class="row"><div><strong>Tool register</strong><div class="muted">Only Omm can add or edit tool details. Technicians can scan, borrow, return and report damage. A unique QR code is generated from each tool ID.</div></div><div class="actions"><button type="button" class="primary" id="scanCreateBtn" onclick="startScanToCreate()">▦ Scan &amp; Create</button><button class="primary" id="addBtn" onclick="showForm()">＋ Add tool</button></div></div>
+<div id="toolForm" class="hidden"><h3 id="toolFormTitle">Register a new tool</h3><form id="addToolForm"><div class="fields"><div><label>Tool ID / scanned code</label><input id="fToolCode" placeholder="Scan a code or leave blank to generate automatically"></div><div><label>Tool name *</label><input id="fName" required></div><div><label>Make</label><input id="fMake"></div><div><label>Model</label><input id="fModel"></div><div><label>Serial number</label><input id="fSerial"></div>
 <div><label>Category *</label><select id="fCategory" required>
 <option value="">Select category</option><option>Power Tools</option><option>Hand Tools</option><option>Electrical Tools</option><option>Measuring Tools</option><option>Safety Equipment</option><option>Building Tools</option><option>Painting Tools</option><option>Other</option>
 </select></div>
 <div><label>Location *</label><select id="fLocation" required><option value="">Select location</option><option>Workshop</option><option>Storeroom</option><option>HQ</option><option>Other</option></select></div>
 <div><label>Condition</label><select id="fCondition"><option>Good</option><option>New</option><option>Worn</option><option>Damaged</option><option>Faulty</option></select></div><div><label>Tool photo</label><input id="fPhoto" type="file" accept="image/jpeg,image/png,image/webp"><small>JPG, PNG or WEBP. Maximum size: 30 MB.</small><div id="photoPreviewWrap" class="hidden" style="margin-top:8px"><img id="photoPreview" alt="Selected tool photo preview" style="width:120px;height:100px;object-fit:cover;border-radius:10px"></div></div></div><div class="actions" style="margin-top:12px"><button class="primary" id="saveToolButton">Save tool</button><button type="button" onclick="hideForm()">Cancel</button></div></form></div><div class="tool-controls"><input id="toolSearch" type="search" placeholder="Search tools by name, make, model, serial number or tool ID..."><select id="categoryFilter"><option value="">All tool types</option><option>Power Tools</option><option>Hand Tools</option><option>Electrical Tools</option><option>Measuring Tools</option><option>Safety Equipment</option><option>Building Tools</option><option>Painting Tools</option><option>Other</option></select></div><div id="toolCount" class="muted tool-count"></div><div id="toolList"></div></div></section>
-<section id="bins" class="hidden"><div class="panel"><strong>Personal tool bins</strong><p class="muted">Scan a tool to open your bin and see the correct action.</p><div class="scan-entry" style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0"><input id="binScanCode" placeholder="Scan or enter tool ID" autocomplete="off" style="flex:1;min-width:180px"><button type="button" class="primary" onclick="handleManualToolScan()">Open tool</button><button type="button" onclick="startToolCameraScan()">Use camera</button></div><div id="toolCameraWrap" class="hidden" style="margin:10px 0"><video id="toolCameraVideo" playsinline muted style="width:min(100%,420px);border-radius:14px;background:#000"></video><div class="actions"><button type="button" onclick="stopToolCameraScan()">Stop camera</button></div><div id="cameraScanMessage" class="muted">Point the camera at the tool QR code.</div></div><div id="binScanResult"></div><div id="binList" class="people"></div><div id="binDetail" style="margin-top:16px"></div></div></section>
+<section id="bins" class="hidden"><div class="panel"><strong>Personal tool bins</strong><p class="muted">Scan a tool to open your bin and see the correct action.</p><div class="scan-entry" style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0"><input id="binScanCode" placeholder="Scan or enter tool ID" autocomplete="off" style="flex:1;min-width:180px"><button type="button" class="primary" onclick="handleManualToolScan()">Open tool</button><button type="button" onclick="startToolCameraScan()">Scan tool</button><button type="button" class="primary" onclick="startScanToReturn()">▦ Scan to Return</button><button type="button" onclick="handleManualReturn()">Return by Tool ID</button></div><div id="toolCameraWrap" class="hidden" style="margin:10px 0"><video id="toolCameraVideo" playsinline muted style="width:min(100%,420px);border-radius:14px;background:#000"></video><div class="actions"><button type="button" onclick="stopToolCameraScan()">Stop camera</button></div><div id="cameraScanMessage" class="muted">Point the camera at the tool QR code.</div></div><div id="binScanResult"></div><div id="binList" class="people"></div><div id="binDetail" style="margin-top:16px"></div></div></section>
 <section id="activity" class="hidden"><div class="panel"><strong>Transaction history</strong><div id="historyList"></div></div></section>
 <section id="calendar" class="hidden">
  <div class="panel">
@@ -512,7 +512,7 @@ label{color:#d9c9a8}small,.muted{color:#aaa69d}
  <div id="usageRegisterList"></div></div>
  <div class="panel"><strong>Set preventive maintenance milestones</strong><p class="muted">Set a separate inspection trigger for each tool. Reaching a trigger raises an inspection flag for Omm; it does not automatically mark a tool damaged or unavailable.</p><div class="fields"><div><label>Tool</label><select id="usageRuleTool"></select></div><div><label>Inspect every (borrowings)</label><input id="usageRuleBorrows" type="number" min="1" placeholder="e.g. 25"></div><div><label>Inspect every (usage hours)</label><input id="usageRuleHours" type="number" min="1" step="0.5" placeholder="e.g. 100"></div><div><label>Maintenance / inspection notes</label><input id="usageRuleNotes" placeholder="e.g. inspect chuck and brushes"></div></div><div class="actions" style="margin-top:10px"><button class="primary" type="button" onclick="saveUsageRule()">Save milestone</button><button type="button" onclick="markToolInspected()">Mark inspection completed</button></div><div id="usageRuleStatus" class="muted" style="margin-top:10px"></div></div>
 </section>
-<section id="transfers" class="hidden"><div class="panel"><strong>Tool requests & transfers</strong><p class="muted">If a scanned tool is already in another technician’s bin, request it here. The holder or Omm can approve. The tool only moves after you physically receive and scan it.</p><div id="transferScanResult"></div><div id="transferRequestList"></div></div></section>
+<section id="transfers" class="hidden"><div class="panel"><strong>Tool requests & transfers</strong><p class="muted">If a scanned tool is already in another technician’s bin, request it here. The holder or Omm can approve. The tool only moves after you physically receive and scan it.</p><div class="scan-entry" style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0"><input id="requestToolCode" placeholder="Enter Tool ID to request" autocomplete="off" style="flex:1;min-width:180px"><button type="button" class="primary" onclick="requestToolByCode()">Request by Tool ID</button></div><div id="transferScanResult"></div><div id="transferRequestList"></div></div></section>
 <section id="settings" class="hidden">
  <div class="panel">
   <strong>My Profile</strong>
@@ -1950,7 +1950,10 @@ function stopToolCameraScan(){
  if(window.mrfixCameraStream){window.mrfixCameraStream.getTracks().forEach(t=>t.stop());window.mrfixCameraStream=null;}
  const wrap=$("toolCameraWrap");if(wrap)wrap.classList.add("hidden");
 }
-async function startToolCameraScan(){
+window.mrfixScanMode="open";
+function extractScannedToolCode(raw){let code=String(raw||"").trim();try{const u=new URL(code);code=u.searchParams.get("tool")||u.searchParams.get("tool_id")||u.searchParams.get("id")||code;}catch{}return code;}
+function handleScannedToolCode(raw){const code=extractScannedToolCode(raw);if(!code)return;if(window.mrfixScanMode==="create"){stopToolCameraScan();if(!isAdmin())return alert("Only Omm can register new tools.");if(tools.some(t=>(t.tool_code||"").toLowerCase()===code.toLowerCase()))return alert("This Tool ID is already registered. Use Scan to Return or request the existing tool instead.");showForm();$("fToolCode").value=code;$("toolFormTitle").textContent="Register scanned tool · "+code;$("toolForm").scrollIntoView({behavior:"smooth",block:"start"});alert("Code captured. Complete the tool details and select Save tool.");return;}if(window.mrfixScanMode==="return"){stopToolCameraScan();const t=tools.find(x=>(x.tool_code||"").toLowerCase()===code.toLowerCase()||(x.id||"").toLowerCase()===code.toLowerCase());if(!t)return alert("Tool ID not found. Check the code and try again.");if(t.borrower_id!==profile.id)return alert(t.borrower_id?"This tool is not in your bin. Only its current holder can return it.":"This tool is not currently borrowed, so there is nothing to return.");go("bins");showBin(profile.id);returnScannedTool(t.id);return;}stopToolCameraScan();openScannedTool(code);}
+async function startToolCameraScan(mode="open"){window.mrfixScanMode=mode;
  if(!navigator.mediaDevices?.getUserMedia)return alert("Camera scanning is not available here. Enter the tool ID manually instead.");
  if(!("BarcodeDetector" in window))return alert("This browser does not support built-in QR scanning. Please use Chrome on Android or enter the tool ID manually.");
  try{
@@ -1963,7 +1966,7 @@ async function startToolCameraScan(){
   const scanFrame=async()=>{
    if(!window.mrfixCameraStream)return;
    try{
-    if(video.readyState>=2){const codes=await detector.detect(video);if(codes.length){const raw=codes[0].rawValue||"";let code=raw;try{const u=new URL(raw);code=u.searchParams.get("tool")||raw;}catch{}stopToolCameraScan();openScannedTool(code);return;}}
+    if(video.readyState>=2){const codes=await detector.detect(video);if(codes.length){const raw=codes[0].rawValue||"";handleScannedToolCode(raw);return;}}
    }catch(e){if(msg)msg.textContent="Keep the QR code in view and try again.";}
    window.mrfixCameraFrame=requestAnimationFrame(scanFrame);
   };
@@ -1971,6 +1974,10 @@ async function startToolCameraScan(){
  }catch(e){stopToolCameraScan();alert("Could not open the camera: "+(e.message||e)+". Check camera permission or enter the tool ID manually.");}
 }
 function handleManualToolScan(){const code=$("binScanCode")?.value.trim();if(!code)return alert("Scan a QR code or enter the tool ID first.");openScannedTool(code);}
+function startScanToReturn(){startToolCameraScan("return");}
+function handleManualReturn(){const code=$("binScanCode")?.value.trim();if(!code)return alert("Enter the Tool ID in the box first.");const t=tools.find(x=>(x.tool_code||"").toLowerCase()===code.toLowerCase()||(x.id||"").toLowerCase()===code.toLowerCase());if(!t)return alert("Tool ID not found. Check the code and try again.");if(t.borrower_id!==profile.id)return alert(t.borrower_id?"This tool is not in your bin. Only its current holder can return it.":"This tool is not currently borrowed, so there is nothing to return.");returnScannedTool(t.id);}
+function startScanToCreate(){if(!isAdmin())return alert("Only Omm can register new tools.");startToolCameraScan("create");}
+function requestToolByCode(){const code=$("requestToolCode")?.value.trim();if(!code)return alert("Enter the Tool ID you want to request.");const t=tools.find(x=>(x.tool_code||"").toLowerCase()===code.toLowerCase()||(x.id||"").toLowerCase()===code.toLowerCase());if(!t)return alert("Tool ID not found. Check the ID and try again.");if(!t.borrower_id)return alert("This tool is not currently in another technician’s bin. It may be available to borrow from the Available tools list.");if(t.borrower_id===profile.id)return alert("This tool is already in your own bin.");requestToolTransfer(t.id);}
 function openScannedTool(code){
  const value=String(code||"").trim();if(!value)return;
  const t=tools.find(x=>(x.tool_code||"").toLowerCase()===value.toLowerCase()||(x.id||"").toLowerCase()===value.toLowerCase());
@@ -2026,13 +2033,13 @@ async function returnScannedTool(toolId){
 async function notifyOmm(event,toolId,details={}){
  try{const {data:{session}}=await db.auth.getSession();if(!session?.access_token)return;const {error}=await db.functions.invoke("mr-fix-it-notify",{body:{event,toolId,details}});if(error)console.warn("Email notification could not be sent:",error.message)}catch(err){console.warn("Email notification error:",err)}
 }
-function showForm(){if(!isAdmin())return;editingToolId=null;$("addToolForm").reset();$("toolFormTitle").textContent="Register a new tool";$("saveToolButton").textContent="Save tool";$("photoPreviewWrap").classList.add("hidden");$("toolForm").classList.remove("hidden")}
+function showForm(){if(!isAdmin())return;editingToolId=null;$("addToolForm").reset();$("fToolCode").readOnly=false;$("toolFormTitle").textContent="Register a new tool";$("saveToolButton").textContent="Save tool";$("photoPreviewWrap").classList.add("hidden");$("toolForm").classList.remove("hidden")}
 function editTool(id){
  if(!isAdmin())return alert("Only Omm can edit tool details.");
  const t=tools.find(x=>x.id===id);if(!t)return;
  editingToolId=id;
  $("fName").value=t.name||"";$("fMake").value=t.make||"";$("fModel").value=t.model||"";
- $("fSerial").value=t.serial_number||"";$("fCategory").value=t.category||"";
+ $("fSerial").value=t.serial_number||"";$("fToolCode").value=t.tool_code||"";$("fToolCode").readOnly=true;$("fCategory").value=t.category||"";
  $("fLocation").value=t.location||"";$("fCondition").value=t.condition||"Good";
  $("fPhoto").value="";if(t.photo_url){$("photoPreview").src=t.photo_url;$("photoPreviewWrap").classList.remove("hidden")}else{$("photoPreviewWrap").classList.add("hidden")}
  $("toolFormTitle").textContent="Edit tool details · "+(t.tool_code||t.name);
@@ -2057,6 +2064,7 @@ async function saveTool(e){
   location:$("fLocation").value.trim(),condition:$("fCondition").value
  };
  if(photo_url)payload.photo_url=photo_url;
+ const enteredToolCode=$("fToolCode")?.value.trim();if(enteredToolCode)payload.tool_code=enteredToolCode;
  let error,saved;
  if(editingToolId){
   const result=await db.from("tools").update(payload).eq("id",editingToolId).select("*").single();
@@ -2354,7 +2362,7 @@ function openTechnicianBin(id){if(!isAdmin()&&id!==profile.id)return;selectedBin
 function render(){
 const borrowed=tools.filter(t=>t.borrower_id),inUse=tools.filter(t=>toolStatus(t)==="In Use"||t.borrower_id),maintenance=tools.filter(t=>toolStatus(t)==="Under Maintenance"),damaged=tools.filter(t=>toolStatus(t)==="Damaged"),available=tools.filter(t=>toolStatus(t)==="Available"),review=borrowed.filter(t=>t.borrowed_at&&Date.now()-new Date(t.borrowed_at).getTime()>=7*86400000);
  $("total").textContent=tools.length;$("available").textContent=available.length;$("borrowed").textContent=inUse.length;$("maintenanceCount").textContent=maintenance.length;$("damagedCount").textContent=damaged.length;$("overdue").textContent=review.length;renderHomeOverview();
- $("addBtn").classList.toggle("hidden",!isAdmin());$("addBtn").disabled=!isAdmin();$("toolForm").classList.add("hidden");$("usageNav").classList.toggle("hidden",!isAdmin());const loginMenu=[...document.querySelectorAll(".more-links button")].find(b=>b.textContent.trim()==="Login Register");if(loginMenu)loginMenu.classList.toggle("hidden",!isAdmin());const activityMenu=[...document.querySelectorAll(".more-links button")].find(b=>b.textContent.trim()==="Activity Logs");if(activityMenu)activityMenu.classList.toggle("hidden",!isAdmin());
+ $("addBtn").classList.toggle("hidden",!isAdmin());$("addBtn").disabled=!isAdmin();$("scanCreateBtn").classList.toggle("hidden",!isAdmin());$("scanCreateBtn").disabled=!isAdmin();$("toolForm").classList.add("hidden");$("usageNav").classList.toggle("hidden",!isAdmin());const loginMenu=[...document.querySelectorAll(".more-links button")].find(b=>b.textContent.trim()==="Login Register");if(loginMenu)loginMenu.classList.toggle("hidden",!isAdmin());const activityMenu=[...document.querySelectorAll(".more-links button")].find(b=>b.textContent.trim()==="Activity Logs");if(activityMenu)activityMenu.classList.toggle("hidden",!isAdmin());
  renderToolRegister();renderRepairLists();populateDamageTools();renderCalendar();renderTransferAlerts();renderAlerts();if(isAdmin())renderUsageRegister();
  const visiblePeople=isAdmin()?people:people.filter(p=>p.id===profile.id);
  $("dashPeople").innerHTML=visiblePeople.map(p=>`<div class="person"><strong>${esc(p.full_name)}</strong><small>${esc(p.job_title||"Technician")}${p.is_admin?" · Admin":""}</small><div class="count">${borrowed.filter(t=>t.borrower_id===p.id).length}</div><small>tools in bin</small></div>`).join("");
